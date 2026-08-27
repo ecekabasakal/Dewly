@@ -22,7 +22,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 4 — Onboarding` · **Next task:** _Build the skin-type / concerns / goals screens_
+> **Active phase:** `Phase 5 — Ingredient Analysis` · **Next task:** _Build the INCI paste + parse + analysis screen_
 
 ## 📊 Progress Dashboard
 
@@ -34,7 +34,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 1 | Design System | ✅ |
 | 2 | Data Model & Supabase Schema | ✅ |
 | 3 | Ingredient (INCI) Database | ✅ |
-| 4 | Onboarding (Skin Profile) | ⬜ |
+| 4 | Onboarding (Skin Profile) | ✅ |
 | 5 | Ingredient Analysis *(core)* | ⬜ |
 | 6 | Routine Builder | ⬜ |
 | 7 | Conflict/Interaction Engine ★ | ⬜ |
@@ -73,7 +73,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 - [x] `npx create-expo-app@latest dewly -t expo-template-blank-typescript`
 - [x] Run it and open on a device/emulator (`npx expo start`)
 - [ ] Install & configure ESLint + Prettier
-- [ ] Set up the folder structure: `app/`, `components/`, `lib/`, `data/`, `hooks/`, `theme/`, `types/` — `components/`, `data/`, `db/`, `lib/`, `scripts/`, `theme/`, `types/` exist; `app/` and `hooks/` still missing
+- [x] Set up the folder structure: `app/`, `components/`, `lib/`, `data/`, `hooks/`, `theme/`, `types/` — all present, plus `db/` and `scripts/`
 - [x] Decide a commit convention (e.g. `feat:`, `fix:`, `chore:`, `docs:`)
 
 **Supabase**
@@ -93,7 +93,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 - [x] `theme/typography.ts` — type scale for Fraunces (headings) + a body font (e.g. Inter)
 - [x] Load fonts (`expo-font` / `@expo-google-fonts/fraunces`, `@expo-google-fonts/inter`)
 - [x] Set up NativeWind (or your chosen styling approach) + config — chose typed theme tokens + `StyleSheet` over NativeWind
-- [ ] Navigation: install `expo-router`, set up the base tab/stack structure
+- [x] Navigation: install `expo-router`, set up the base tab/stack structure — file-based routes under `app/`, stack nav; entry point is now `expo-router/entry`
 - [x] Base components: `Screen` (safe-area container), `Text`, `Button`, `Card`, `Chip`, `Badge`
 - [x] `app.json` → bind the app icon PNG to the `icon` field
 - [x] `app.json` → bind the splash image + butter background color to the `splash` field
@@ -137,11 +137,17 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 4 — Onboarding (Skin Profile)
 
-- [ ] Skin-type screen (dry / oily / combination / sensitive / normal)
-- [ ] Concern-selection screen (acne, hyperpigmentation, aging, redness, dryness — multi-select)
-- [ ] Goal-selection screen (hydration, glow, firming, etc.)
-- [ ] Store the profile in state (`hooks/useProfile`)
-- [ ] Show onboarding only on first launch (flag)
+- [x] Skin-type screen (dry / oily / combination / sensitive / normal)
+- [x] Concern-selection screen (acne, hyperpigmentation, aging, redness, dryness — multi-select) — all 11 values match `targets_concerns` in the dataset, so Phase 5 can map profile → ingredients
+- [x] Goal-selection screen (hydration, glow, firming, etc.) — optional step, skippable
+- [x] Age-range screen (under 18 / 18–24 / 25–34 / 35–44 / 45+)
+- [x] Sensitivity-level screen (not sensitive / slightly / very)
+- [x] Multi-step flow chrome: one question per screen, progress indicator, back/next
+- [x] Store the profile in state (`hooks/useProfile`) — draft + saved profile in context
+- [x] Persist locally via AsyncStorage behind a `ProfileStore` interface, so Phase 8 can swap in Supabase without touching call sites
+- [x] Show onboarding only on first launch (flag) — `app/index.tsx` gates on the saved profile
+- [x] Reset control for testing (Home screen, with confirm)
+- [x] Placeholder Home screen showing the saved profile summary
 
 **Definition of Done:** User can build a skin profile and it's accessible throughout the app.
 
