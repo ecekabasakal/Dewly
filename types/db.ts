@@ -33,6 +33,10 @@ export type Database = {
           functions: string[];
           targets_concerns: string[];
           cautions: string | null;
+          description_en: string | null;
+          description_tr: string | null;
+          caution_en: string | null;
+          caution_tr: string | null;
           comedogenic_rating: number | null;
           is_active: boolean;
           created_at: string;
@@ -45,6 +49,10 @@ export type Database = {
           functions?: string[];
           targets_concerns?: string[];
           cautions?: string | null;
+          description_en?: string | null;
+          description_tr?: string | null;
+          caution_en?: string | null;
+          caution_tr?: string | null;
           comedogenic_rating?: number | null;
           is_active?: boolean;
           created_at?: string;
@@ -57,6 +65,10 @@ export type Database = {
           functions?: string[];
           targets_concerns?: string[];
           cautions?: string | null;
+          description_en?: string | null;
+          description_tr?: string | null;
+          caution_en?: string | null;
+          caution_tr?: string | null;
           comedogenic_rating?: number | null;
           is_active?: boolean;
           created_at?: string;

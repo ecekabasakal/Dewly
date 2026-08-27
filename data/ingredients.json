@@ -1,0 +1,2227 @@
+[
+  {
+    "inci_name": "Glycerin",
+    "common_name": "Glycerin",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A core humectant that draws water into the skin; gentle and suitable for all skin types.",
+    "description_tr": "Cilde su çeken temel bir nemlendirici (humektant); nazik ve her cilt tipine uygun.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Sodium Hyaluronate",
+    "common_name": "Hyaluronic Acid (salt form)",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "plumping"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "aging"
+    ],
+    "description_en": "The salt form of hyaluronic acid; lower molecular weight penetrates better for lasting hydration.",
+    "description_tr": "Hyaluronik asidin tuz formu; düşük molekül ağırlığıyla daha iyi nüfuz ederek kalıcı nemlendirme sağlar.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Hyaluronic Acid",
+    "common_name": "Hyaluronic Acid",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "plumping"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "aging"
+    ],
+    "description_en": "A powerful humectant that can hold many times its weight in water, plumping the skin.",
+    "description_tr": "Ağırlığının çok katı suyu tutabilen güçlü bir humektant; cildi dolgunlaştırır.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Betaine",
+    "common_name": "Betaine",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "sensitivity"
+    ],
+    "description_en": "A gentle amino-acid-derived humectant that hydrates and soothes.",
+    "description_tr": "Amino asit kaynaklı, nazik bir humektant; nemlendirir ve yatıştırır.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Panthenol",
+    "common_name": "Pro-Vitamin B5",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "soothing",
+      "barrier-repair"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "redness",
+      "barrier"
+    ],
+    "description_en": "Pro-vitamin B5 that hydrates, soothes and supports barrier repair; great for compromised skin.",
+    "description_tr": "B5 provitamini; nemlendirir, yatıştırır ve bariyer onarımını destekler; hassas/hasarlı cilt için ideal.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Butylene Glycol",
+    "common_name": "Butylene Glycol",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "solvent"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A lightweight humectant and solvent that also improves product texture.",
+    "description_tr": "Hafif bir humektant ve çözücü; ürün dokusunu da iyileştirir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Propanediol",
+    "common_name": "Propanediol",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "solvent"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A plant-derived humectant and solvent; a gentler alternative to propylene glycol.",
+    "description_tr": "Bitki kaynaklı humektant ve çözücü; propilen glikole daha nazik bir alternatif.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Sodium PCA",
+    "common_name": "Sodium PCA",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A natural moisturizing factor (NMF) component that binds water in the skin.",
+    "description_tr": "Ciltte suyu bağlayan doğal nemlendirme faktörü (NMF) bileşeni.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Trehalose",
+    "common_name": "Trehalose",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "protective"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A sugar-based humectant that protects cells against dehydration stress.",
+    "description_tr": "Şeker bazlı humektant; hücreleri kuruluk stresine karşı korur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Urea",
+    "common_name": "Urea",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "gentle-exfoliation"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "texture"
+    ],
+    "description_en": "At low levels hydrates; at higher levels gently exfoliates and softens rough skin.",
+    "description_tr": "Düşük oranda nemlendirir; yüksek oranda nazikçe eksfoliye eder ve pürüzlü cildi yumuşatır.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Aloe Barbadensis Leaf Juice",
+    "common_name": "Aloe Vera",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "redness",
+      "dryness",
+      "sensitivity"
+    ],
+    "description_en": "Soothing plant extract that calms and lightly hydrates irritated skin.",
+    "description_tr": "Yatıştırıcı bitki özütü; tahriş olmuş cildi sakinleştirir ve hafifçe nemlendirir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Honey",
+    "common_name": "Honey",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant",
+      "antibacterial"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "acne"
+    ],
+    "description_en": "A natural humectant with mild antibacterial properties.",
+    "description_tr": "Doğal bir humektant; hafif antibakteriyel özellik taşır.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Snail Secretion Filtrate",
+    "common_name": "Snail Mucin",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "barrier-repair",
+      "soothing",
+      "healing"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "texture",
+      "redness",
+      "barrier"
+    ],
+    "description_en": "A K-beauty icon rich in glycoproteins; hydrates, supports repair and improves texture.",
+    "description_tr": "Glikoproteince zengin bir K-beauty klasiği; nemlendirir, onarımı destekler ve dokuyu iyileştirir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Centella Asiatica Extract",
+    "common_name": "Cica / Gotu Kola",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "antioxidant",
+      "healing",
+      "barrier-repair"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity",
+      "barrier",
+      "acne"
+    ],
+    "description_en": "Cica; calms redness, supports barrier repair and is beloved for sensitive skin.",
+    "description_tr": "Cica; kızarıklığı yatıştırır, bariyer onarımını destekler; hassas cildin favorisi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Centella Asiatica Leaf Water",
+    "common_name": "Cica Water",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "antioxidant",
+      "hydration"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity",
+      "barrier"
+    ],
+    "description_en": "A gentle centella-infused water base that soothes reactive skin.",
+    "description_tr": "Centella özlü nazik su bazı; reaktif cildi yatıştırır.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Madecassoside",
+    "common_name": "Madecassoside (Cica active)",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "healing",
+      "barrier-repair"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity",
+      "barrier"
+    ],
+    "description_en": "A purified active from centella; potent for calming and repairing the barrier.",
+    "description_tr": "Centella'dan saflaştırılmış aktif; yatıştırma ve bariyer onarımında güçlü.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Propolis Extract",
+    "common_name": "Propolis",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "soothing",
+      "antibacterial",
+      "healing"
+    ],
+    "targets_concerns": [
+      "acne",
+      "redness",
+      "barrier"
+    ],
+    "description_en": "Bee-derived propolis; antioxidant and mildly antibacterial, popular for glow and blemishes.",
+    "description_tr": "Arı kaynaklı propolis; antioksidan ve hafif antibakteriyel; parlaklık ve sivilce için popüler.",
+    "caution_en": "May trigger allergy in those sensitive to bee products.",
+    "caution_tr": "Arı ürünlerine duyarlı kişilerde alerji yapabilir.",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Oryza Sativa (Rice) Extract",
+    "common_name": "Rice Extract",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "brightening",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "dullness",
+      "hyperpigmentation"
+    ],
+    "description_en": "Rice-derived extract prized in K-beauty for brightening and a smooth glow.",
+    "description_tr": "Pirinç kaynaklı özüt; K-beauty'de aydınlatma ve pürüzsüz parlaklık için değerli.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Panax Ginseng Root Extract",
+    "common_name": "Ginseng",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "revitalizing",
+      "circulation"
+    ],
+    "targets_concerns": [
+      "dullness",
+      "aging"
+    ],
+    "description_en": "Traditional revitalizing root extract; antioxidant and energizing for tired skin.",
+    "description_tr": "Geleneksel canlandırıcı kök özütü; antioksidan ve yorgun cilde enerji verir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Artemisia Vulgaris Extract",
+    "common_name": "Mugwort",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "antioxidant",
+      "antibacterial"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity",
+      "acne"
+    ],
+    "description_en": "Mugwort; a calming K-beauty herbal extract for reactive, blemish-prone skin.",
+    "description_tr": "Mugwort (pelin otu); reaktif ve sivilceye yatkın cilt için yatıştırıcı bir K-beauty bitki özütü.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Houttuynia Cordata Extract",
+    "common_name": "Heartleaf",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "antioxidant",
+      "antibacterial"
+    ],
+    "targets_concerns": [
+      "redness",
+      "acne",
+      "sensitivity"
+    ],
+    "description_en": "Heartleaf; calms irritation and helps blemish-prone, sensitive skin.",
+    "description_tr": "Heartleaf (balık nanesi); tahrişi yatıştırır, sivilceye yatkın ve hassas cilde yardımcı olur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Camellia Sinensis Leaf Extract",
+    "common_name": "Green Tea",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "soothing",
+      "sebum-control"
+    ],
+    "targets_concerns": [
+      "oiliness",
+      "redness",
+      "aging"
+    ],
+    "description_en": "Green tea; rich in antioxidant polyphenols, soothing and helpful for oily skin.",
+    "description_tr": "Yeşil çay; antioksidan polifenollerce zengin; yatıştırıcı ve yağlı cilde faydalı.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Galactomyces Ferment Filtrate",
+    "common_name": "Galactomyces",
+    "category": "antioxidant",
+    "functions": [
+      "brightening",
+      "antioxidant",
+      "hydration"
+    ],
+    "targets_concerns": [
+      "dullness",
+      "texture",
+      "pores"
+    ],
+    "description_en": "A fermented yeast filtrate popular in essences for brightening and refining skin.",
+    "description_tr": "Fermente maya filtratı; aydınlatma ve cildi inceltme için esanslarda popüler.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Saccharomyces Ferment Filtrate",
+    "common_name": "Ferment Filtrate (Pitera-type)",
+    "category": "antioxidant",
+    "functions": [
+      "brightening",
+      "hydration",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "dullness",
+      "texture"
+    ],
+    "description_en": "A fermented ingredient prized for luminosity and smoothing skin texture.",
+    "description_tr": "Parlaklık ve cilt dokusunu pürüzsüzleştirmek için değer gören fermente bir bileşen.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Bifida Ferment Lysate",
+    "common_name": "Bifida Ferment",
+    "category": "antioxidant",
+    "functions": [
+      "barrier-repair",
+      "soothing",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "barrier",
+      "sensitivity",
+      "aging"
+    ],
+    "description_en": "A probiotic-derived ferment that supports the skin barrier and resilience.",
+    "description_tr": "Probiyotik kaynaklı ferment; cilt bariyerini ve dayanıklılığını destekler.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Lactobacillus Ferment",
+    "common_name": "Lactobacillus Ferment",
+    "category": "antioxidant",
+    "functions": [
+      "barrier-repair",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "barrier",
+      "sensitivity"
+    ],
+    "description_en": "A postbiotic ferment that helps balance and calm the skin.",
+    "description_tr": "Cildi dengelemeye ve sakinleştirmeye yardımcı postbiyotik ferment.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Portulaced Oleracea Extract",
+    "common_name": "Purslane",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity"
+    ],
+    "description_en": "Purslane; a calming antioxidant extract for sensitive, reddened skin.",
+    "description_tr": "Semizotu; hassas ve kızarık cilt için yatıştırıcı antioksidan özüt.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Niacinamide",
+    "common_name": "Vitamin B3",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "barrier-repair",
+      "sebum-control",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "hyperpigmentation",
+      "oiliness",
+      "pores",
+      "barrier",
+      "dullness"
+    ],
+    "description_en": "A versatile active: brightens, regulates oil, strengthens the barrier and minimizes pores.",
+    "description_tr": "Çok yönlü bir aktif: aydınlatır, yağı dengeler, bariyeri güçlendirir ve gözenekleri küçültür.",
+    "caution_en": "Very high concentrations may cause flushing in sensitive skin.",
+    "caution_tr": "Çok yüksek konsantrasyonlar hassas ciltte kızarıklık yapabilir.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Retinol",
+    "common_name": "Retinol (Vitamin A)",
+    "category": "active",
+    "functions": [
+      "anti-aging",
+      "cell-turnover",
+      "acne-treatment"
+    ],
+    "targets_concerns": [
+      "aging",
+      "acne",
+      "texture",
+      "hyperpigmentation"
+    ],
+    "description_en": "A gold-standard retinoid that boosts cell turnover, softens lines and clears breakouts.",
+    "description_tr": "Hücre yenilenmesini artıran, çizgileri yumuşatan ve sivilceyi temizleyen altın standart retinoid.",
+    "caution_en": "Can irritate; introduce slowly, avoid with AHA/BHA same night, always use SPF.",
+    "caution_tr": "Tahriş edebilir; yavaş başla, aynı gece AHA/BHA ile kullanma, mutlaka SPF kullan.",
+    "comedogenic_rating": 1,
+    "is_active": true
+  },
+  {
+    "inci_name": "Retinal",
+    "common_name": "Retinaldehyde",
+    "category": "active",
+    "functions": [
+      "anti-aging",
+      "cell-turnover",
+      "antibacterial"
+    ],
+    "targets_concerns": [
+      "aging",
+      "acne",
+      "texture"
+    ],
+    "description_en": "Retinaldehyde; a more potent retinoid than retinol that works faster with similar tolerability.",
+    "description_tr": "Retinaldehit; retinolden daha güçlü, benzer tolere edilebilirlikle daha hızlı etki eden bir retinoid.",
+    "caution_en": "Potent retinoid; same cautions as retinol — SPF essential.",
+    "caution_tr": "Güçlü retinoid; retinolle aynı uyarılar — SPF şart.",
+    "comedogenic_rating": 1,
+    "is_active": true
+  },
+  {
+    "inci_name": "Bakuchiol",
+    "common_name": "Bakuchiol",
+    "category": "active",
+    "functions": [
+      "anti-aging",
+      "soothing",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "aging",
+      "texture",
+      "sensitivity"
+    ],
+    "description_en": "A plant-based retinol alternative offering anti-aging benefits with less irritation.",
+    "description_tr": "Bitki bazlı retinol alternatifi; daha az tahrişle yaşlanma karşıtı fayda sunar.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": true
+  },
+  {
+    "inci_name": "Ascorbic Acid",
+    "common_name": "Vitamin C (L-ascorbic acid)",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "antioxidant",
+      "collagen-support"
+    ],
+    "targets_concerns": [
+      "hyperpigmentation",
+      "dullness",
+      "aging"
+    ],
+    "description_en": "Pure vitamin C; a potent antioxidant that brightens and supports collagen. Unstable at high pH.",
+    "description_tr": "Saf C vitamini; aydınlatan ve kolajeni destekleyen güçlü antioksidan. Yüksek pH'ta stabil değildir.",
+    "caution_en": "Can irritate; may pill with some actives. Store away from light/air.",
+    "caution_tr": "Tahriş edebilir; bazı aktiflerle topaklanabilir. Işık/havadan uzak sakla.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Sodium Ascorbyl Phosphate",
+    "common_name": "Vitamin C (stable derivative)",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "antioxidant",
+      "sebum-control"
+    ],
+    "targets_concerns": [
+      "hyperpigmentation",
+      "dullness",
+      "acne"
+    ],
+    "description_en": "A stable vitamin C derivative that brightens and is gentler than L-ascorbic acid.",
+    "description_tr": "Stabil bir C vitamini türevi; aydınlatır ve L-askorbik asitten daha naziktir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Ascorbyl Glucoside",
+    "common_name": "Vitamin C (stable derivative)",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "hyperpigmentation",
+      "dullness"
+    ],
+    "description_en": "A stable, gentle vitamin C derivative suited to sensitive skin.",
+    "description_tr": "Stabil ve nazik bir C vitamini türevi; hassas cilde uygun.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Glycolic Acid",
+    "common_name": "AHA (Glycolic)",
+    "category": "active",
+    "functions": [
+      "exfoliation",
+      "brightening",
+      "anti-aging"
+    ],
+    "targets_concerns": [
+      "texture",
+      "dullness",
+      "hyperpigmentation",
+      "aging"
+    ],
+    "description_en": "A small-molecule AHA that exfoliates the surface for smoother, brighter skin.",
+    "description_tr": "Küçük moleküllü bir AHA; yüzeyi eksfoliye ederek daha pürüzsüz ve parlak cilt sağlar.",
+    "caution_en": "Increases sun sensitivity; don't mix with retinoids same night; use SPF.",
+    "caution_tr": "Güneş hassasiyetini artırır; aynı gece retinoidle kullanma; SPF kullan.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Lactic Acid",
+    "common_name": "AHA (Lactic)",
+    "category": "active",
+    "functions": [
+      "exfoliation",
+      "hydration",
+      "brightening"
+    ],
+    "targets_concerns": [
+      "texture",
+      "dryness",
+      "dullness"
+    ],
+    "description_en": "A gentler AHA that exfoliates while also hydrating; good for drier or sensitive skin.",
+    "description_tr": "Daha nazik bir AHA; eksfoliye ederken nemlendirir; kuru veya hassas cilde uygun.",
+    "caution_en": "Increases sun sensitivity; pair carefully with other actives; use SPF.",
+    "caution_tr": "Güneş hassasiyetini artırır; diğer aktiflerle dikkatli birleştir; SPF kullan.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Mandelic Acid",
+    "common_name": "AHA (Mandelic)",
+    "category": "active",
+    "functions": [
+      "exfoliation",
+      "brightening",
+      "antibacterial"
+    ],
+    "targets_concerns": [
+      "acne",
+      "hyperpigmentation",
+      "texture"
+    ],
+    "description_en": "A large-molecule AHA that exfoliates gently; well tolerated by sensitive and acne-prone skin.",
+    "description_tr": "İri moleküllü bir AHA; nazikçe eksfoliye eder; hassas ve sivilceye yatkın cilt iyi tolere eder.",
+    "caution_en": "Still photosensitizing; use SPF.",
+    "caution_tr": "Yine de fotosensitize eder; SPF kullan.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Salicylic Acid",
+    "common_name": "BHA (Salicylic)",
+    "category": "active",
+    "functions": [
+      "exfoliation",
+      "sebum-control",
+      "pore-clearing",
+      "anti-inflammatory"
+    ],
+    "targets_concerns": [
+      "acne",
+      "pores",
+      "oiliness",
+      "texture"
+    ],
+    "description_en": "An oil-soluble BHA that clears pores and controls oil; ideal for blackheads and acne.",
+    "description_tr": "Yağda çözünen bir BHA; gözenekleri temizler ve yağı dengeler; siyah nokta ve sivilce için ideal.",
+    "caution_en": "Can dry/irritate; avoid stacking with other strong exfoliants; use SPF.",
+    "caution_tr": "Kurutabilir/tahriş edebilir; diğer güçlü eksfoliantlarla üst üste kullanma; SPF kullan.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Azelaic Acid",
+    "common_name": "Azelaic Acid",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "anti-inflammatory",
+      "antibacterial",
+      "sebum-control"
+    ],
+    "targets_concerns": [
+      "acne",
+      "hyperpigmentation",
+      "redness"
+    ],
+    "description_en": "A multitasking active for acne, post-acne marks and redness; well tolerated.",
+    "description_tr": "Sivilce, sivilce izi ve kızarıklık için çok görevli bir aktif; iyi tolere edilir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Adapalene",
+    "common_name": "Adapalene (Retinoid)",
+    "category": "active",
+    "functions": [
+      "acne-treatment",
+      "cell-turnover",
+      "anti-aging"
+    ],
+    "targets_concerns": [
+      "acne",
+      "texture",
+      "aging"
+    ],
+    "description_en": "A stable OTC retinoid especially effective for acne and clogged pores.",
+    "description_tr": "Stabil, reçetesiz bir retinoid; özellikle sivilce ve tıkalı gözeneklerde etkili.",
+    "caution_en": "Can irritate initially; use SPF; don't combine with other strong actives at first.",
+    "caution_tr": "Başta tahriş edebilir; SPF kullan; başlangıçta diğer güçlü aktiflerle birleştirme.",
+    "comedogenic_rating": 1,
+    "is_active": true
+  },
+  {
+    "inci_name": "Benzoyl Peroxide",
+    "common_name": "Benzoyl Peroxide",
+    "category": "active",
+    "functions": [
+      "acne-treatment",
+      "antibacterial"
+    ],
+    "targets_concerns": [
+      "acne"
+    ],
+    "description_en": "An antibacterial acne active that targets acne-causing bacteria.",
+    "description_tr": "Sivilceye neden olan bakteriyi hedefleyen antibakteriyel bir sivilce aktifi.",
+    "caution_en": "Can bleach fabrics; deactivates some forms of vitamin C/retinol if layered together.",
+    "caution_tr": "Kumaşları ağartabilir; birlikte katmanlanırsa bazı C vitamini/retinol formlarını etkisizleştirir.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Tranexamic Acid",
+    "common_name": "Tranexamic Acid",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "anti-pigment"
+    ],
+    "targets_concerns": [
+      "hyperpigmentation",
+      "redness"
+    ],
+    "description_en": "An active targeting stubborn discoloration and melasma; pairs well with niacinamide.",
+    "description_tr": "İnatçı renk düzensizliği ve melazmayı hedefleyen aktif; niasinamidle iyi gider.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Alpha-Arbutin",
+    "common_name": "Arbutin",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "anti-pigment"
+    ],
+    "targets_concerns": [
+      "hyperpigmentation",
+      "dullness"
+    ],
+    "description_en": "A gentle brightening active that fades dark spots by limiting melanin production.",
+    "description_tr": "Melanin üretimini sınırlayarak koyu lekeleri açan nazik bir aydınlatıcı aktif.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Kojic Acid",
+    "common_name": "Kojic Acid",
+    "category": "active",
+    "functions": [
+      "brightening",
+      "anti-pigment"
+    ],
+    "targets_concerns": [
+      "hyperpigmentation",
+      "dullness"
+    ],
+    "description_en": "A brightening active derived from fungi that targets pigmentation.",
+    "description_tr": "Mantar kaynaklı, pigmentasyonu hedefleyen aydınlatıcı bir aktif.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Retinyl Palmitate",
+    "common_name": "Retinyl Palmitate",
+    "category": "active",
+    "functions": [
+      "anti-aging",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "aging",
+      "texture"
+    ],
+    "description_en": "A mild, gentle retinoid ester; a good entry point for retinoid beginners.",
+    "description_tr": "Hafif ve nazik bir retinoid esteri; retinoide yeni başlayanlar için iyi bir giriş.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": true
+  },
+  {
+    "inci_name": "Tocopherol",
+    "common_name": "Vitamin E",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "barrier-support",
+      "emollient"
+    ],
+    "targets_concerns": [
+      "aging",
+      "barrier",
+      "dryness"
+    ],
+    "description_en": "A lipid antioxidant that protects the barrier and works synergistically with vitamin C.",
+    "description_tr": "Bariyeri koruyan ve C vitamini ile sinerjik çalışan yağ bazlı bir antioksidan.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 2,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ferulic Acid",
+    "common_name": "Ferulic Acid",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "stabilizing"
+    ],
+    "targets_concerns": [
+      "aging",
+      "dullness"
+    ],
+    "description_en": "An antioxidant that boosts and stabilizes vitamins C and E.",
+    "description_tr": "C ve E vitaminlerini güçlendiren ve stabilize eden bir antioksidan.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Resveratrol",
+    "common_name": "Resveratrol",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "aging",
+      "dullness",
+      "redness"
+    ],
+    "description_en": "A plant polyphenol antioxidant that fights environmental damage.",
+    "description_tr": "Çevresel hasarla savaşan bitki polifenolü antioksidan.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ubiquinone",
+    "common_name": "Coenzyme Q10",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "anti-aging"
+    ],
+    "targets_concerns": [
+      "aging"
+    ],
+    "description_en": "CoQ10; an antioxidant that supports skin energy and defends against aging.",
+    "description_tr": "CoQ10; cilt enerjisini destekleyen ve yaşlanmaya karşı savunan antioksidan.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Glutathione",
+    "common_name": "Glutathione",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "brightening"
+    ],
+    "targets_concerns": [
+      "dullness",
+      "hyperpigmentation"
+    ],
+    "description_en": "A master antioxidant associated with brightening and radiance.",
+    "description_tr": "Aydınlatma ve parlaklıkla ilişkilendirilen ana antioksidan.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Astaxanthin",
+    "common_name": "Astaxanthin",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "anti-aging"
+    ],
+    "targets_concerns": [
+      "aging",
+      "redness"
+    ],
+    "description_en": "A potent carotenoid antioxidant from algae, known for anti-aging support.",
+    "description_tr": "Alglerden elde edilen güçlü karotenoid antioksidan; yaşlanma karşıtı destekle bilinir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Coffea Arabica (Coffee) Seed Extract",
+    "common_name": "Coffee Extract",
+    "category": "antioxidant",
+    "functions": [
+      "antioxidant",
+      "circulation"
+    ],
+    "targets_concerns": [
+      "dullness",
+      "aging"
+    ],
+    "description_en": "A caffeine-rich antioxidant extract that energizes dull skin.",
+    "description_tr": "Kafeince zengin antioksidan özüt; donuk cilde enerji verir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Squalane",
+    "common_name": "Squalane",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "barrier-support",
+      "hydration"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A lightweight, stable emollient that mimics skin's own oils; non-greasy and non-comedogenic.",
+    "description_tr": "Cildin kendi yağlarını taklit eden hafif ve stabil bir emolyan; yağlı hissettirmez, gözenek tıkamaz.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Caprylic/Capric Triglyceride",
+    "common_name": "Fractionated Coconut Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "solvent"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A lightweight emollient derived from coconut that softens skin without heaviness.",
+    "description_tr": "Hindistan cevizinden elde edilen hafif bir emolyan; ağırlık yapmadan cildi yumuşatır.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Cetearyl Alcohol",
+    "common_name": "Cetearyl Alcohol",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "emulsifier",
+      "thickener"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A fatty alcohol that softens skin and stabilizes creams (not drying like simple alcohols).",
+    "description_tr": "Cildi yumuşatan ve kremleri stabilize eden yağ alkolü (basit alkoller gibi kurutmaz).",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 2,
+    "is_active": false
+  },
+  {
+    "inci_name": "Cetyl Alcohol",
+    "common_name": "Cetyl Alcohol",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "emulsifier"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A fatty alcohol emollient and emulsifier that gives products a smooth feel.",
+    "description_tr": "Ürünlere pürüzsüz his veren yağ alkolü emolyan ve emülgatör.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 2,
+    "is_active": false
+  },
+  {
+    "inci_name": "Butyrospermum Parkii (Shea) Butter",
+    "common_name": "Shea Butter",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "occlusive",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A rich butter that deeply nourishes dry skin and supports the barrier.",
+    "description_tr": "Kuru cildi derinlemesine besleyen ve bariyeri destekleyen zengin bir tereyağı.",
+    "caution_en": "Rich texture may feel heavy on oily/acne-prone skin.",
+    "caution_tr": "Zengin dokusu yağlı/sivilceye yatkın ciltte ağır gelebilir.",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Simmondsia Chinensis (Jojoba) Seed Oil",
+    "common_name": "Jojoba Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "barrier-support",
+      "sebum-balancing"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier",
+      "oiliness"
+    ],
+    "description_en": "A wax ester close to skin's sebum; balancing and well tolerated by most skin types.",
+    "description_tr": "Cildin sebumuna yakın bir vaks esteri; dengeleyici ve çoğu cilt tipince iyi tolere edilir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 2,
+    "is_active": false
+  },
+  {
+    "inci_name": "Rosa Canina Fruit Oil",
+    "common_name": "Rosehip Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "hyperpigmentation",
+      "aging"
+    ],
+    "description_en": "A dry oil rich in fatty acids and provitamin A, loved for scars and tone.",
+    "description_tr": "Yağ asitleri ve provitamin A'ca zengin kuru bir yağ; iz ve ton için sevilir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Argania Spinosa Kernel Oil",
+    "common_name": "Argan Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "antioxidant",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A nourishing oil rich in vitamin E that softens and conditions skin.",
+    "description_tr": "E vitaminince zengin besleyici yağ; cildi yumuşatır ve bakım sağlar.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Helianthus Annuus (Sunflower) Seed Oil",
+    "common_name": "Sunflower Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A linoleic-acid-rich oil that supports the barrier and is generally low-comedogenic.",
+    "description_tr": "Linoleik asitçe zengin yağ; bariyeri destekler ve genelde gözenek tıkama riski düşüktür.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Prunus Amygdalus Dulcis (Sweet Almond) Oil",
+    "common_name": "Sweet Almond Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "sensitivity"
+    ],
+    "description_en": "A gentle emollient oil suitable for softening dry, sensitive skin.",
+    "description_tr": "Kuru ve hassas cildi yumuşatmaya uygun nazik bir emolyan yağ.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 2,
+    "is_active": false
+  },
+  {
+    "inci_name": "Vitis Vinifera (Grape) Seed Oil",
+    "common_name": "Grapeseed Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "oiliness"
+    ],
+    "description_en": "A light, fast-absorbing oil with antioxidants; suits oilier skin.",
+    "description_tr": "Antioksidanlı, hafif ve hızlı emilen bir yağ; yağlı cilde uygundur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Macadamia Ternifolia Seed Oil",
+    "common_name": "Macadamia Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A rich, cushiony oil well suited to dry and mature skin.",
+    "description_tr": "Zengin ve dolgun bir yağ; kuru ve olgun cilde uygundur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 2,
+    "is_active": false
+  },
+  {
+    "inci_name": "Cocos Nucifera (Coconut) Oil",
+    "common_name": "Coconut Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "occlusive"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A rich emollient oil; effective moisturizer but can clog pores on facial skin.",
+    "description_tr": "Zengin bir emolyan yağ; etkili nemlendirici ama yüz cildinde gözenek tıkayabilir.",
+    "caution_en": "Highly comedogenic on the face for many; use cautiously.",
+    "caution_tr": "Birçok kişide yüzde yüksek komedojen; dikkatli kullan.",
+    "comedogenic_rating": 4,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ceramide NP",
+    "common_name": "Ceramide NP",
+    "category": "emollient",
+    "functions": [
+      "barrier-repair",
+      "emollient"
+    ],
+    "targets_concerns": [
+      "barrier",
+      "dryness",
+      "sensitivity"
+    ],
+    "description_en": "A key barrier lipid that restores and reinforces the skin's protective layer.",
+    "description_tr": "Cildin koruyucu tabakasını onaran ve güçlendiren temel bir bariyer lipidi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ceramide AP",
+    "common_name": "Ceramide AP",
+    "category": "emollient",
+    "functions": [
+      "barrier-repair",
+      "emollient"
+    ],
+    "targets_concerns": [
+      "barrier",
+      "dryness"
+    ],
+    "description_en": "A ceramide that helps rebuild and stabilize the skin barrier.",
+    "description_tr": "Cilt bariyerini yeniden inşa etmeye ve stabilize etmeye yardımcı bir seramid.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ceramide EOP",
+    "common_name": "Ceramide EOP",
+    "category": "emollient",
+    "functions": [
+      "barrier-repair",
+      "emollient"
+    ],
+    "targets_concerns": [
+      "barrier",
+      "dryness"
+    ],
+    "description_en": "A ceramide that supports the barrier's lipid matrix.",
+    "description_tr": "Bariyerin lipid matrisini destekleyen bir seramid.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Cholesterol",
+    "common_name": "Cholesterol",
+    "category": "emollient",
+    "functions": [
+      "barrier-repair",
+      "emollient"
+    ],
+    "targets_concerns": [
+      "barrier",
+      "dryness"
+    ],
+    "description_en": "A barrier lipid that works with ceramides and fatty acids to restore the barrier.",
+    "description_tr": "Seramidler ve yağ asitleriyle birlikte bariyeri onaran bir bariyer lipidi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Bis-PEG-18 Methyl Ether Dimethyl Silane",
+    "common_name": "Silicone Emollient",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "smoothing"
+    ],
+    "targets_concerns": [
+      "texture",
+      "dryness"
+    ],
+    "description_en": "A silicone-based emollient that gives a smooth, silky finish.",
+    "description_tr": "Pürüzsüz, ipeksi bir bitiş veren silikon bazlı emolyan.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Petrolatum",
+    "common_name": "Petroleum Jelly",
+    "category": "occlusive",
+    "functions": [
+      "occlusive",
+      "barrier-protection"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "The most effective occlusive; seals in moisture and protects compromised skin.",
+    "description_tr": "En etkili oklüzif; nemi hapseder ve hasarlı cildi korur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Dimethicone",
+    "common_name": "Dimethicone",
+    "category": "occlusive",
+    "functions": [
+      "occlusive",
+      "smoothing",
+      "barrier-protection"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "texture",
+      "barrier"
+    ],
+    "description_en": "A breathable silicone occlusive that smooths skin and reduces water loss.",
+    "description_tr": "Nefes alabilen silikon oklüzif; cildi pürüzsüzleştirir ve su kaybını azaltır.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Cera Alba",
+    "common_name": "Beeswax",
+    "category": "occlusive",
+    "functions": [
+      "occlusive",
+      "emollient",
+      "thickener"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A natural occlusive wax that locks in moisture and structures balms.",
+    "description_tr": "Nemi kilitleyen ve balmları yapılandıran doğal oklüzif vaks.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 2,
+    "is_active": false
+  },
+  {
+    "inci_name": "Lanolin",
+    "common_name": "Lanolin",
+    "category": "occlusive",
+    "functions": [
+      "occlusive",
+      "emollient"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A wool-derived occlusive that deeply moisturizes very dry skin.",
+    "description_tr": "Yünden elde edilen oklüzif; çok kuru cildi derinlemesine nemlendirir.",
+    "caution_en": "Possible allergen for some; patch test if sensitive.",
+    "caution_tr": "Bazıları için olası alerjen; hassassan yama testi yap.",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Hydrogenated Polyisobutene",
+    "common_name": "Occlusive Emollient",
+    "category": "occlusive",
+    "functions": [
+      "occlusive",
+      "emollient"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A lightweight occlusive alternative to mineral oil with a smooth feel.",
+    "description_tr": "Mineral yağa hafif bir oklüzif alternatif; pürüzsüz bir his verir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Zinc Oxide",
+    "common_name": "Zinc Oxide",
+    "category": "spf_filter",
+    "functions": [
+      "uv-protection",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "sensitivity",
+      "redness",
+      "acne"
+    ],
+    "description_en": "A broad-spectrum mineral UV filter that also soothes; good for sensitive skin.",
+    "description_tr": "Geniş spektrumlu mineral UV filtresi; aynı zamanda yatıştırır; hassas cilde uygundur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Titanium Dioxide",
+    "common_name": "Titanium Dioxide",
+    "category": "spf_filter",
+    "functions": [
+      "uv-protection"
+    ],
+    "targets_concerns": [
+      "sensitivity",
+      "redness"
+    ],
+    "description_en": "A gentle mineral UV filter effective against UVB and shorter UVA.",
+    "description_tr": "UVB'ye ve kısa UVA'ya etkili nazik bir mineral UV filtresi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ethylhexyl Methoxycinnamate",
+    "common_name": "Octinoxate",
+    "category": "spf_filter",
+    "functions": [
+      "uv-protection"
+    ],
+    "targets_concerns": [
+      "aging"
+    ],
+    "description_en": "A common chemical UVB filter used in many sunscreens.",
+    "description_tr": "Birçok güneş kreminde kullanılan yaygın bir kimyasal UVB filtresi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Butyl Methoxydibenzoylmethane",
+    "common_name": "Avobenzone",
+    "category": "spf_filter",
+    "functions": [
+      "uv-protection"
+    ],
+    "targets_concerns": [
+      "aging"
+    ],
+    "description_en": "A chemical filter providing broad UVA protection; often stabilized with other filters.",
+    "description_tr": "Geniş UVA koruması sağlayan kimyasal filtre; genelde diğer filtrelerle stabilize edilir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine",
+    "common_name": "Tinosorb S",
+    "category": "spf_filter",
+    "functions": [
+      "uv-protection",
+      "photostable"
+    ],
+    "targets_concerns": [
+      "aging"
+    ],
+    "description_en": "A modern, photostable broad-spectrum filter (UVA+UVB).",
+    "description_tr": "Modern, fotostabil geniş spektrumlu filtre (UVA+UVB).",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Diethylamino Hydroxybenzoyl Hexyl Benzoate",
+    "common_name": "Uvinul A Plus",
+    "category": "spf_filter",
+    "functions": [
+      "uv-protection"
+    ],
+    "targets_concerns": [
+      "aging"
+    ],
+    "description_en": "A photostable UVA filter common in Asian and European sunscreens.",
+    "description_tr": "Asya ve Avrupa güneş kremlerinde yaygın, fotostabil bir UVA filtresi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Phenoxyethanol",
+    "common_name": "Phenoxyethanol",
+    "category": "preservative",
+    "functions": [
+      "preservative"
+    ],
+    "targets_concerns": [],
+    "description_en": "A widely used, well-tolerated preservative that keeps products safe from microbes.",
+    "description_tr": "Yaygın kullanılan, iyi tolere edilen bir koruyucu; ürünleri mikroplardan korur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ethylhexylglycerin",
+    "common_name": "Ethylhexylglycerin",
+    "category": "preservative",
+    "functions": [
+      "preservative-booster",
+      "conditioning"
+    ],
+    "targets_concerns": [],
+    "description_en": "A gentle preservative booster and skin-conditioning agent.",
+    "description_tr": "Nazik bir koruyucu güçlendirici ve cilt bakım maddesi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Potassium Sorbate",
+    "common_name": "Potassium Sorbate",
+    "category": "preservative",
+    "functions": [
+      "preservative"
+    ],
+    "targets_concerns": [],
+    "description_en": "A mild preservative effective against yeast and mold.",
+    "description_tr": "Maya ve küfe karşı etkili hafif bir koruyucu.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Sodium Benzoate",
+    "common_name": "Sodium Benzoate",
+    "category": "preservative",
+    "functions": [
+      "preservative"
+    ],
+    "targets_concerns": [],
+    "description_en": "A common gentle preservative used in water-based formulas.",
+    "description_tr": "Su bazlı formüllerde kullanılan yaygın ve nazik bir koruyucu.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Chlorphenesin",
+    "common_name": "Chlorphenesin",
+    "category": "preservative",
+    "functions": [
+      "preservative"
+    ],
+    "targets_concerns": [],
+    "description_en": "A preservative often paired with others to broaden protection.",
+    "description_tr": "Korumayı genişletmek için genelde diğerleriyle birlikte kullanılan bir koruyucu.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Benzyl Alcohol",
+    "common_name": "Benzyl Alcohol",
+    "category": "preservative",
+    "functions": [
+      "preservative",
+      "solvent"
+    ],
+    "targets_concerns": [],
+    "description_en": "A preservative and solvent; can also occur naturally as a fragrance component.",
+    "description_tr": "Bir koruyucu ve çözücü; doğal bir koku bileşeni olarak da bulunabilir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Aqua",
+    "common_name": "Water",
+    "category": "solvent",
+    "functions": [
+      "solvent"
+    ],
+    "targets_concerns": [],
+    "description_en": "Purified water; the base solvent for most water-based formulations.",
+    "description_tr": "Saf su; çoğu su bazlı formülasyonun temel çözücüsü.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Alcohol Denat.",
+    "common_name": "Denatured Alcohol",
+    "category": "solvent",
+    "functions": [
+      "solvent",
+      "penetration-enhancer",
+      "astringent"
+    ],
+    "targets_concerns": [
+      "oiliness"
+    ],
+    "description_en": "A fast-drying solvent that gives a light feel; can be drying in high amounts.",
+    "description_tr": "Hızlı kuruyan bir çözücü; hafif his verir ama yüksek oranda kurutabilir.",
+    "caution_en": "High levels may dry or irritate sensitive/dry skin.",
+    "caution_tr": "Yüksek oranı hassas/kuru cildi kurutabilir veya tahriş edebilir.",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Dipropylene Glycol",
+    "common_name": "Dipropylene Glycol",
+    "category": "solvent",
+    "functions": [
+      "solvent",
+      "humectant"
+    ],
+    "targets_concerns": [],
+    "description_en": "A solvent and mild humectant that improves texture and ingredient delivery.",
+    "description_tr": "Doku ve bileşen iletimini iyileştiren bir çözücü ve hafif humektant.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Pentylene Glycol",
+    "common_name": "Pentylene Glycol",
+    "category": "solvent",
+    "functions": [
+      "solvent",
+      "humectant",
+      "preservative-booster"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "A multifunctional solvent and humectant with mild preservative-boosting effect.",
+    "description_tr": "Hafif koruyucu güçlendirici etkisi olan çok işlevli çözücü ve humektant.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Ethanol",
+    "common_name": "Ethanol",
+    "category": "solvent",
+    "functions": [
+      "solvent",
+      "astringent"
+    ],
+    "targets_concerns": [
+      "oiliness"
+    ],
+    "description_en": "An alcohol solvent used for texture and delivery; drying in high concentration.",
+    "description_tr": "Doku ve iletim için kullanılan alkol çözücü; yüksek konsantrasyonda kurutur.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Parfum",
+    "common_name": "Fragrance",
+    "category": "fragrance",
+    "functions": [
+      "fragrance"
+    ],
+    "targets_concerns": [],
+    "description_en": "Added scent; can be a common irritant/allergen for sensitive skin.",
+    "description_tr": "Eklenen koku; hassas ciltte yaygın bir tahriş edici/alerjen olabilir.",
+    "caution_en": "A frequent trigger for sensitive or reactive skin.",
+    "caution_tr": "Hassas veya reaktif cilt için sık bir tetikleyici.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Limonene",
+    "common_name": "Limonene",
+    "category": "fragrance",
+    "functions": [
+      "fragrance"
+    ],
+    "targets_concerns": [],
+    "description_en": "A citrus-derived fragrance component and potential allergen.",
+    "description_tr": "Narenciye kaynaklı bir koku bileşeni ve olası alerjen.",
+    "caution_en": "Listed allergen; may irritate sensitive skin.",
+    "caution_tr": "Bildirilen alerjen; hassas cildi tahriş edebilir.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Linalool",
+    "common_name": "Linalool",
+    "category": "fragrance",
+    "functions": [
+      "fragrance"
+    ],
+    "targets_concerns": [],
+    "description_en": "A floral fragrance component that can oxidize into an allergen.",
+    "description_tr": "Oksitlenerek alerjene dönüşebilen çiçeksi bir koku bileşeni.",
+    "caution_en": "Listed allergen; caution for sensitive skin.",
+    "caution_tr": "Bildirilen alerjen; hassas ciltte dikkat.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Citronellol",
+    "common_name": "Citronellol",
+    "category": "fragrance",
+    "functions": [
+      "fragrance"
+    ],
+    "targets_concerns": [],
+    "description_en": "A rose-like fragrance component and known allergen.",
+    "description_tr": "Gül benzeri bir koku bileşeni ve bilinen alerjen.",
+    "caution_en": "Listed allergen.",
+    "caution_tr": "Bildirilen alerjen.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Geraniol",
+    "common_name": "Geraniol",
+    "category": "fragrance",
+    "functions": [
+      "fragrance"
+    ],
+    "targets_concerns": [],
+    "description_en": "A floral fragrance component that is a known allergen.",
+    "description_tr": "Bilinen alerjen olan çiçeksi bir koku bileşeni.",
+    "caution_en": "Listed allergen.",
+    "caution_tr": "Bildirilen alerjen.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Eugenol",
+    "common_name": "Eugenol",
+    "category": "fragrance",
+    "functions": [
+      "fragrance"
+    ],
+    "targets_concerns": [],
+    "description_en": "A spicy, clove-like fragrance component and allergen.",
+    "description_tr": "Baharatlı, karanfil benzeri bir koku bileşeni ve alerjen.",
+    "caution_en": "Listed allergen.",
+    "caution_tr": "Bildirilen alerjen.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Lavandula Angustifolia (Lavender) Oil",
+    "common_name": "Lavender Oil",
+    "category": "fragrance",
+    "functions": [
+      "fragrance",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "redness"
+    ],
+    "description_en": "A fragrant essential oil with soothing lore but potential to irritate.",
+    "description_tr": "Yatıştırıcı olarak bilinen ama tahriş potansiyeli olan kokulu bir uçucu yağ.",
+    "caution_en": "Essential oil; can sensitize skin.",
+    "caution_tr": "Uçucu yağ; cildi hassaslaştırabilir.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Citrus Aurantium Dulcis (Orange) Peel Oil",
+    "common_name": "Orange Peel Oil",
+    "category": "fragrance",
+    "functions": [
+      "fragrance"
+    ],
+    "targets_concerns": [],
+    "description_en": "A citrus essential oil for scent; can be photosensitizing.",
+    "description_tr": "Koku için narenciye uçucu yağı; fotosensitize edebilir.",
+    "caution_en": "May increase sun sensitivity.",
+    "caution_tr": "Güneş hassasiyetini artırabilir.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Melaleuca Alternifolia (Tea Tree) Leaf Oil",
+    "common_name": "Tea Tree Oil",
+    "category": "fragrance",
+    "functions": [
+      "antibacterial",
+      "soothing",
+      "fragrance"
+    ],
+    "targets_concerns": [
+      "acne",
+      "oiliness"
+    ],
+    "description_en": "An essential oil with antibacterial properties popular for spot-treating blemishes.",
+    "description_tr": "Antibakteriyel özellikli uçucu yağ; sivilceye nokta uygulama için popüler.",
+    "caution_en": "Potent; dilute well, can irritate undiluted.",
+    "caution_tr": "Güçlü; iyi seyrelt, seyreltilmemiş halde tahriş edebilir.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Allantoin",
+    "common_name": "Allantoin",
+    "category": "humectant",
+    "functions": [
+      "soothing",
+      "healing",
+      "hydration"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity",
+      "barrier"
+    ],
+    "description_en": "A gentle soothing agent that calms irritation and supports healing.",
+    "description_tr": "Tahrişi yatıştıran ve iyileşmeyi destekleyen nazik bir yatıştırıcı.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Bisabolol",
+    "common_name": "Bisabolol",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "anti-inflammatory"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity"
+    ],
+    "description_en": "A chamomile-derived soother that calms redness and sensitivity.",
+    "description_tr": "Papatya kaynaklı yatıştırıcı; kızarıklık ve hassasiyeti sakinleştirir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Beta-Glucan",
+    "common_name": "Beta-Glucan",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "soothing",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "sensitivity",
+      "barrier"
+    ],
+    "description_en": "A soothing, hydrating polysaccharide that supports the barrier and calms skin.",
+    "description_tr": "Bariyeri destekleyen ve cildi sakinleştiren yatıştırıcı, nemlendirici bir polisakkarit.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Allantoin Comfrey Root",
+    "common_name": "Symphytum Officinale Root",
+    "category": "humectant",
+    "functions": [
+      "soothing",
+      "healing"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity"
+    ],
+    "description_en": "A comfrey-derived soothing extract that supports skin comfort.",
+    "description_tr": "Karakafes kaynaklı yatıştırıcı özüt; cilt konforunu destekler.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Zinc PCA",
+    "common_name": "Zinc PCA",
+    "category": "active",
+    "functions": [
+      "sebum-control",
+      "antibacterial",
+      "hydration"
+    ],
+    "targets_concerns": [
+      "oiliness",
+      "acne",
+      "pores"
+    ],
+    "description_en": "A zinc salt that regulates oil and helps blemish-prone, oily skin.",
+    "description_tr": "Yağı düzenleyen ve yağlı, sivilceye yatkın cilde yardımcı bir çinko tuzu.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Sodium Hyaluronate Crosspolymer",
+    "common_name": "HA Crosspolymer",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "humectant"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A cross-linked HA form for longer-lasting surface hydration.",
+    "description_tr": "Daha uzun süreli yüzey nemi için çapraz bağlı bir HA formu.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Adenosine",
+    "common_name": "Adenosine",
+    "category": "active",
+    "functions": [
+      "anti-aging",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "aging",
+      "texture"
+    ],
+    "description_en": "A well-tolerated anti-aging active that smooths fine lines.",
+    "description_tr": "İnce çizgileri yumuşatan, iyi tolere edilen yaşlanma karşıtı bir aktif.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Peptides (Palmitoyl Tripeptide-1)",
+    "common_name": "Peptide",
+    "category": "active",
+    "functions": [
+      "anti-aging",
+      "collagen-support"
+    ],
+    "targets_concerns": [
+      "aging",
+      "texture"
+    ],
+    "description_en": "A signal peptide that supports collagen for firmer-looking skin.",
+    "description_tr": "Daha sıkı görünümlü cilt için kolajeni destekleyen sinyal peptidi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Copper Tripeptide-1",
+    "common_name": "Copper Peptide",
+    "category": "active",
+    "functions": [
+      "anti-aging",
+      "healing",
+      "barrier-repair"
+    ],
+    "targets_concerns": [
+      "aging",
+      "barrier"
+    ],
+    "description_en": "A regenerative peptide associated with repair and firmness.",
+    "description_tr": "Onarım ve sıkılıkla ilişkilendirilen yenileyici bir peptit.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Allantoin Panthenol Complex",
+    "common_name": "Soothing Complex",
+    "category": "humectant",
+    "functions": [
+      "soothing",
+      "hydration"
+    ],
+    "targets_concerns": [
+      "redness",
+      "dryness"
+    ],
+    "description_en": "A soothing-hydrating blend for calming stressed skin.",
+    "description_tr": "Stresli cildi sakinleştirmek için yatıştırıcı-nemlendirici bir karışım.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Sea Water (Maris Aqua)",
+    "common_name": "Sea Water",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "mineral-rich"
+    ],
+    "targets_concerns": [
+      "dryness"
+    ],
+    "description_en": "Mineral-rich seawater used for hydration and trace minerals.",
+    "description_tr": "Nemlendirme ve eser mineraller için kullanılan mineralce zengin deniz suyu.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Camellia Japonica Seed Oil",
+    "common_name": "Camellia Oil",
+    "category": "emollient",
+    "functions": [
+      "emollient",
+      "antioxidant"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A silky Asian beauty oil rich in oleic acid; nourishing and fast-absorbing.",
+    "description_tr": "Oleik asitçe zengin ipeksi bir Asya güzellik yağı; besleyici ve hızlı emilir.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 1,
+    "is_active": false
+  },
+  {
+    "inci_name": "Hydrolyzed Collagen",
+    "common_name": "Hydrolyzed Collagen",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "film-forming"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "aging"
+    ],
+    "description_en": "A film-forming humectant that holds moisture on the skin surface.",
+    "description_tr": "Cilt yüzeyinde nemi tutan, film oluşturan bir humektant.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Allantoin Cica Blend",
+    "common_name": "Cica Repair Blend",
+    "category": "antioxidant",
+    "functions": [
+      "soothing",
+      "barrier-repair"
+    ],
+    "targets_concerns": [
+      "redness",
+      "barrier",
+      "sensitivity"
+    ],
+    "description_en": "A centella-based repair blend for calming and barrier support.",
+    "description_tr": "Yatıştırma ve bariyer desteği için centella bazlı bir onarım karışımı.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Niacinamide Zinc Complex",
+    "common_name": "Niacinamide + Zinc",
+    "category": "active",
+    "functions": [
+      "sebum-control",
+      "brightening",
+      "barrier-repair"
+    ],
+    "targets_concerns": [
+      "oiliness",
+      "acne",
+      "pores",
+      "hyperpigmentation"
+    ],
+    "description_en": "A pairing that controls oil and brightens while supporting the barrier.",
+    "description_tr": "Yağı kontrol eden, aydınlatan ve bariyeri destekleyen bir ikili.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  }
+]

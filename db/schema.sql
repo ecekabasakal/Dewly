@@ -77,6 +77,28 @@ create index if not exists ingredients_category_idx on ingredients (category);
 create index if not exists ingredients_active_idx on ingredients (is_active) where is_active;
 create index if not exists ingredients_concerns_idx on ingredients using gin (targets_concerns);
 
+-- Phase 3: bilingual copy for the ingredient cards (EN / TR).
+--
+-- Added as an ALTER rather than folded into the create table above, so that
+-- projects created before Phase 3 pick the columns up on a re-run. `add column
+-- if not exists` makes this a no-op once applied.
+--
+-- All four are nullable: most ingredients have no caution text, and the seed
+-- script writes NULL (not '') when a source field is blank.
+alter table ingredients add column if not exists description_en text;
+alter table ingredients add column if not exists description_tr text;
+alter table ingredients add column if not exists caution_en     text;
+alter table ingredients add column if not exists caution_tr     text;
+
+comment on column ingredients.description_en is
+  'Plain-language explanation of what the ingredient does (English).';
+comment on column ingredients.description_tr is
+  'Plain-language explanation of what the ingredient does (Turkish).';
+comment on column ingredients.caution_en is
+  'Usage caution, if any (English). NULL when the ingredient needs no warning.';
+comment on column ingredients.caution_tr is
+  'Usage caution, if any (Turkish). NULL when the ingredient needs no warning.';
+
 -- ---------------------------------------------------------------------------
 -- interaction_rules — public reference data
 -- ---------------------------------------------------------------------------
@@ -272,7 +294,7 @@ create policy "users manage own routine steps"
 -- grants widen *which operations* a role may attempt, never *which rows* it
 -- can reach.
 
-grant usage on schema public to anon, authenticated;
+grant usage on schema public to anon, authenticated, service_role;
 
 -- Reference data — readable by everyone, including signed-out guests.
 -- Writes stay service-role only; the Phase 3 seed script bypasses RLS.
@@ -292,6 +314,24 @@ grant insert, update         on products to authenticated;
 grant select, insert, update, delete on user_shelf    to authenticated;
 grant select, insert, update, delete on routines      to authenticated;
 grant select, insert, update, delete on routine_steps to authenticated;
+
+-- Server-side automation: scripts/seed-ingredients.ts and any future
+-- migration or backfill script.
+--
+-- service_role holds BYPASSRLS, but that only skips row-level POLICIES — it
+-- does NOT skip table-level privileges, which are a separate gate. Without
+-- these grants a fresh schema run leaves the seed script failing with exactly
+-- the same `42501 permission denied` that anon hit.
+--
+-- Full CRUD is intentional: this role exists to seed reference data and repair
+-- rows, and it is never reachable from the client. Its key must stay
+-- server-side only — never EXPO_PUBLIC_, never in the app bundle.
+grant select, insert, update, delete on ingredients       to service_role;
+grant select, insert, update, delete on interaction_rules to service_role;
+grant select, insert, update, delete on products          to service_role;
+grant select, insert, update, delete on user_shelf        to service_role;
+grant select, insert, update, delete on routines          to service_role;
+grant select, insert, update, delete on routine_steps     to service_role;
 
 -- No sequence grants required: every primary key defaults to
 -- gen_random_uuid() rather than a serial/identity sequence.
