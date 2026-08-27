@@ -22,7 +22,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 1 — Design System` · **Next task:** _Install expo-router and set up the base tab/stack navigation_
+> **Active phase:** `Phase 4 — Onboarding` · **Next task:** _Build the skin-type / concerns / goals screens_
 
 ## 📊 Progress Dashboard
 
@@ -30,10 +30,10 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 | Phase | Topic | Status |
 |----|------|:----:|
-| 0 | Setup & Infrastructure | 🟡 |
-| 1 | Design System | 🟡 |
-| 2 | Data Model & Supabase Schema | ⬜ |
-| 3 | Ingredient (INCI) Database | ⬜ |
+| 0 | Setup & Infrastructure | ✅ |
+| 1 | Design System | ✅ |
+| 2 | Data Model & Supabase Schema | ✅ |
+| 3 | Ingredient (INCI) Database | ✅ |
 | 4 | Onboarding (Skin Profile) | ⬜ |
 | 5 | Ingredient Analysis *(core)* | ⬜ |
 | 6 | Routine Builder | ⬜ |
@@ -73,7 +73,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 - [x] `npx create-expo-app@latest dewly -t expo-template-blank-typescript`
 - [x] Run it and open on a device/emulator (`npx expo start`)
 - [ ] Install & configure ESLint + Prettier
-- [ ] Set up the folder structure: `app/`, `components/`, `lib/`, `data/`, `hooks/`, `theme/`, `types/` — `components/`, `lib/`, `theme/`, `db/` exist; `app/`, `data/`, `hooks/`, `types/` still missing
+- [ ] Set up the folder structure: `app/`, `components/`, `lib/`, `data/`, `hooks/`, `theme/`, `types/` — `components/`, `data/`, `db/`, `lib/`, `scripts/`, `theme/`, `types/` exist; `app/` and `hooks/` still missing
 - [x] Decide a commit convention (e.g. `feat:`, `fix:`, `chore:`, `docs:`)
 
 **Supabase**
@@ -81,7 +81,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 - [x] Note the project URL and `anon key`
 - [x] Add them to `.env` (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`)
 - [x] Install `@supabase/supabase-js`
-- [ ] Create the client in `lib/supabase.ts` and test the connection — client created; connection not yet tested against the live project
+- [x] Create the client in `lib/supabase.ts` and test the connection — typed with `Database`; verified against the live project
 
 **Definition of Done:** Blank Expo app opens on a device, Supabase connects, repo is ready with README + .gitignore.
 
@@ -105,16 +105,17 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 2 — Data Model & Supabase Schema
 
-- [ ] `ingredients` table (id, inci_name, common_name, category, functions[], targets_concerns[], cautions, comedogenic_rating, is_active)
-- [ ] `interaction_rules` table (id, category_a, category_b, severity, type, explanation, recommendation)
-- [ ] `products` table (id, name, brand, barcode, step_type, inci_raw, ingredient_ids[], source)
-- [ ] `user_shelf` table (user_id, product_id, added_at)
-- [ ] `routines` table (id, user_id, name, time_of_day)
-- [ ] `routine_steps` table (routine_id, product_id, step_order, step_type)
-- [ ] Row Level Security (RLS): users can only access their own shelf/routine rows
-- [ ] Make `ingredients` and `interaction_rules` public-read
-- [ ] Save the schema as `db/schema.sql` in the repo (so it's reproducible)
-- [ ] `types/db.ts` — mirror the table types in TypeScript
+- [x] `ingredients` table (id, inci_name, common_name, category, functions[], targets_concerns[], cautions, comedogenic_rating, is_active)
+- [x] `interaction_rules` table (id, category_a, category_b, severity, type, explanation, recommendation)
+- [x] `products` table (id, name, brand, barcode, step_type, inci_raw, ingredient_ids[], source)
+- [x] `user_shelf` table (user_id, product_id, added_at)
+- [x] `routines` table (id, user_id, name, time_of_day)
+- [x] `routine_steps` table (routine_id, product_id, step_order, step_type)
+- [x] Row Level Security (RLS): users can only access their own shelf/routine rows
+- [x] Table privileges: `GRANT`s for `anon` / `authenticated` / `service_role` — RLS policies alone don't grant access
+- [x] Make `ingredients` and `interaction_rules` public-read
+- [x] Save the schema as `db/schema.sql` in the repo (so it's reproducible)
+- [x] `types/db.ts` — mirror the table types in TypeScript
 
 **Definition of Done:** All tables exist in Supabase, RLS is on, schema SQL is in the repo.
 
@@ -122,12 +123,13 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 3 — Ingredient (INCI) Database
 
-- [ ] Define ingredient categories (humectant, occlusive, emollient, active [retinoid/AHA/BHA/vitamin C/niacinamide...], antioxidant, SPF filter, preservative, essence/fragrance)
-- [ ] `data/ingredients.json` — curate the first 100–150 common ingredients
-- [ ] For each: INCI name, common name, category, function(s), targeted concern, caution, comedogenic rating (0–5), is-active
+- [x] Define ingredient categories (humectant, occlusive, emollient, active [retinoid/AHA/BHA/vitamin C/niacinamide...], antioxidant, SPF filter, preservative, essence/fragrance)
+- [x] `data/ingredients.json` — curate the first 100–150 common ingredients — 116 records
+- [x] For each: INCI name, common name, category, function(s), targeted concern, caution, comedogenic rating (0–5), is-active
+- [x] Bilingual copy: `description_en` / `description_tr` / `caution_en` / `caution_tr` columns + data
 - [ ] Note your sources (reliable references) and verify accuracy
-- [ ] Write an import script (`scripts/seed-ingredients.ts`) → upload to Supabase
-- [ ] Verify with a sample query from the app
+- [x] Write an import script (`scripts/seed-ingredients.ts`) → upload to Supabase — 116 rows live, re-runnable via upsert on `inci_name`
+- [x] Verify with a sample query from the app — 116 rows (24 active) readable with the anon key over the same REST path the app client uses
 
 **Definition of Done:** 100+ ingredients live in Supabase, queryable from the app.
 
