@@ -22,7 +22,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 0 — Setup` · **Next task:** _Create the GitHub repo_
+> **Active phase:** `Phase 1 — Design System` · **Next task:** _Install expo-router and set up the base tab/stack navigation_
 
 ## 📊 Progress Dashboard
 
@@ -30,8 +30,8 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 | Phase | Topic | Status |
 |----|------|:----:|
-| 0 | Setup & Infrastructure | ⬜ |
-| 1 | Design System | ⬜ |
+| 0 | Setup & Infrastructure | 🟡 |
+| 1 | Design System | 🟡 |
 | 2 | Data Model & Supabase Schema | ⬜ |
 | 3 | Ingredient (INCI) Database | ⬜ |
 | 4 | Onboarding (Skin Profile) | ⬜ |
@@ -61,27 +61,27 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 ## Phase 0 — Setup & Infrastructure
 
 **GitHub & repo**
-- [ ] Create the `dewly` repo on GitHub (public)
-- [ ] Add this `README.md` to the repo
-- [ ] Add `.gitignore` (Node + Expo template: `node_modules`, `.env`, `.expo`, `dist`)
-- [ ] Add a `LICENSE` (MIT recommended)
+- [x] Create the `dewly` repo on GitHub (public)
+- [x] Add this `README.md` to the repo
+- [x] Add `.gitignore` (Node + Expo template: `node_modules`, `.env`, `.expo`, `dist`)
+- [x] Add a `LICENSE` (MIT recommended)
 - [ ] Protect the `main` branch (optional: block direct pushes)
-- [ ] Create an `assets/` folder; drop in the logo/icon/splash files
+- [x] Create an `assets/` folder; drop in the logo/icon/splash files
 
 **Environment & tooling**
-- [ ] Check Node.js LTS is installed (`node -v`)
-- [ ] `npx create-expo-app@latest dewly -t expo-template-blank-typescript`
-- [ ] Run it and open on a device/emulator (`npx expo start`)
+- [x] Check Node.js LTS is installed (`node -v`)
+- [x] `npx create-expo-app@latest dewly -t expo-template-blank-typescript`
+- [x] Run it and open on a device/emulator (`npx expo start`)
 - [ ] Install & configure ESLint + Prettier
-- [ ] Set up the folder structure: `app/`, `components/`, `lib/`, `data/`, `hooks/`, `theme/`, `types/`
-- [ ] Decide a commit convention (e.g. `feat:`, `fix:`, `chore:`, `docs:`)
+- [ ] Set up the folder structure: `app/`, `components/`, `lib/`, `data/`, `hooks/`, `theme/`, `types/` — `components/`, `lib/`, `theme/`, `db/` exist; `app/`, `data/`, `hooks/`, `types/` still missing
+- [x] Decide a commit convention (e.g. `feat:`, `fix:`, `chore:`, `docs:`)
 
 **Supabase**
-- [ ] Create a new project at supabase.com
-- [ ] Note the project URL and `anon key`
-- [ ] Add them to `.env` (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`)
-- [ ] Install `@supabase/supabase-js`
-- [ ] Create the client in `lib/supabase.ts` and test the connection
+- [x] Create a new project at supabase.com
+- [x] Note the project URL and `anon key`
+- [x] Add them to `.env` (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`)
+- [x] Install `@supabase/supabase-js`
+- [ ] Create the client in `lib/supabase.ts` and test the connection — client created; connection not yet tested against the live project
 
 **Definition of Done:** Blank Expo app opens on a device, Supabase connects, repo is ready with README + .gitignore.
 
@@ -89,15 +89,15 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 1 — Design System
 
-- [ ] `theme/colors.ts` — color tokens (green `#0F4A43`, green-2 `#2E7A6E`, butter `#FBF2CC`, cream `#FDF8E3`, neutral grays)
-- [ ] `theme/typography.ts` — type scale for Fraunces (headings) + a body font (e.g. Inter)
-- [ ] Load fonts (`expo-font` / `@expo-google-fonts/fraunces`, `@expo-google-fonts/inter`)
-- [ ] Set up NativeWind (or your chosen styling approach) + config
+- [x] `theme/colors.ts` — color tokens (green `#0F4A43`, green-2 `#2E7A6E`, butter `#FBF2CC`, cream `#FDF8E3`, neutral grays)
+- [x] `theme/typography.ts` — type scale for Fraunces (headings) + a body font (e.g. Inter)
+- [x] Load fonts (`expo-font` / `@expo-google-fonts/fraunces`, `@expo-google-fonts/inter`)
+- [x] Set up NativeWind (or your chosen styling approach) + config — chose typed theme tokens + `StyleSheet` over NativeWind
 - [ ] Navigation: install `expo-router`, set up the base tab/stack structure
-- [ ] Base components: `Screen` (safe-area container), `Text`, `Button`, `Card`, `Chip`, `Badge`
-- [ ] `app.json` → bind the app icon PNG to the `icon` field
-- [ ] `app.json` → bind the splash image + butter background color to the `splash` field
-- [ ] Build a "Kitchen Sink" screen (visual test of all components)
+- [x] Base components: `Screen` (safe-area container), `Text`, `Button`, `Card`, `Chip`, `Badge`
+- [x] `app.json` → bind the app icon PNG to the `icon` field
+- [x] `app.json` → bind the splash image + butter background color to the `splash` field
+- [x] Build a "Kitchen Sink" screen (visual test of all components)
 
 **Definition of Done:** Brand colors/fonts are live in the app, icon and splash show on device, base components are ready.
 
