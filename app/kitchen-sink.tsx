@@ -1,42 +1,17 @@
-import { useCallback, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import * as SplashScreen from 'expo-splash-screen';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { Badge, Button, Card, Chip, Screen, Text } from './components';
-import { colors, spacing, typography, useAppFonts } from './theme';
+import { Badge, Button, Card, Chip, Screen, Text } from '../components';
+import { colors, spacing, typography } from '../theme';
 
-// Hold the native splash until the fonts are in, so the first paint is
-// already branded — no flash of system serif behind Fraunces.
-SplashScreen.preventAutoHideAsync();
-
-export default function App() {
-  const [fontsLoaded, fontError] = useAppFonts();
-
-  const onLayoutRootView = useCallback(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  // Treat a font error as "ready": better to fall back to system fonts than
-  // to leave the user staring at the splash screen indefinitely.
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
-
-  return (
-    <SafeAreaProvider>
-      <View style={styles.root} onLayout={onLayoutRootView}>
-        <StatusBar style="dark" />
-        <KitchenSink />
-      </View>
-    </SafeAreaProvider>
-  );
-}
-
-function KitchenSink() {
+/**
+ * Design-system reference screen. Not part of the user flow — reach it at
+ * `/kitchen-sink` to eyeball every component and type-scale step at once.
+ *
+ * Fonts, splash and safe-area now live in `app/_layout.tsx`, so this is a
+ * plain route.
+ */
+export default function KitchenSink() {
   const [concerns, setConcerns] = useState<string[]>(['Acne']);
   const [loading, setLoading] = useState(false);
 
@@ -181,7 +156,6 @@ function Swatch({ label, color }: { label: string; color: string }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
   section: { marginTop: spacing.xl },
   sectionTitle: { letterSpacing: 1.2 },
   sectionBody: { marginTop: spacing.md, gap: spacing.md },

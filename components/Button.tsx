@@ -3,6 +3,8 @@ import {
   Pressable,
   StyleSheet,
   type PressableProps,
+  type StyleProp,
+  type ViewStyle,
 } from 'react-native';
 import { colors, fonts, radius, spacing } from '../theme';
 import { Text } from './Text';
@@ -16,6 +18,8 @@ export type ButtonProps = Omit<PressableProps, 'style' | 'children'> & {
   size?: Size;
   loading?: boolean;
   fullWidth?: boolean;
+  /** Layout overrides only (width, flex, margins) — visual style stays in the variant. */
+  style?: StyleProp<ViewStyle>;
 };
 
 export function Button({
@@ -25,6 +29,7 @@ export function Button({
   loading = false,
   fullWidth = false,
   disabled,
+  style,
   ...rest
 }: ButtonProps) {
   const isPrimary = variant === 'primary';
@@ -44,6 +49,7 @@ export function Button({
         // Darken rather than fade, so the press reads on a butter background.
         pressed && (isPrimary ? styles.primaryPressed : styles.secondaryPressed),
         isDisabled && styles.disabled,
+        style,
       ]}
       {...rest}
     >

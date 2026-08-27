@@ -4,6 +4,7 @@
     "slug": "dewly",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "dewly",
     "icon": "./assets/dewly_appicon_1024.png",
     "userInterfaceStyle": "light",
     "backgroundColor": "#FBF2CC",
@@ -29,7 +30,8 @@
           "imageWidth": 220,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-router"
     ]
   }
 }
