@@ -254,3 +254,44 @@ create policy "users manage own routine steps"
         and r.user_id = auth.uid()
     )
   );
+
+-- ---------------------------------------------------------------------------
+-- Table privileges
+-- ---------------------------------------------------------------------------
+--
+-- RLS policies and table privileges are two SEPARATE gates, and a request must
+-- pass BOTH. A policy can only filter rows a role already has permission to
+-- read; without a GRANT, PostgREST rejects the request outright with
+-- `42501 permission denied for table ...` and the policy above never runs.
+--
+-- This block is what makes the policies effective. It is additive and safe to
+-- re-run: re-granting an existing privilege is a no-op in PostgreSQL.
+--
+-- Privileges are deliberately narrower than "all": each grant mirrors exactly
+-- one policy declared above. RLS remains enabled on every table, so these
+-- grants widen *which operations* a role may attempt, never *which rows* it
+-- can reach.
+
+grant usage on schema public to anon, authenticated;
+
+-- Reference data — readable by everyone, including signed-out guests.
+-- Writes stay service-role only; the Phase 3 seed script bypasses RLS.
+grant select on ingredients       to anon, authenticated;
+grant select on interaction_rules to anon, authenticated;
+
+-- Shared catalogue — anyone reads; signed-in users may add a product and edit
+-- only the ones they created. No DELETE: there is no delete policy on
+-- products, so granting it would fail closed at the RLS layer anyway.
+grant select                 on products to anon, authenticated;
+grant insert, update         on products to authenticated;
+
+-- Private, per-user tables. Each has a `for all` policy scoped to auth.uid(),
+-- so the full CRUD set is correct here — RLS restricts every statement to the
+-- caller's own rows. `anon` is intentionally omitted: no policy grants a
+-- signed-out user access to these.
+grant select, insert, update, delete on user_shelf    to authenticated;
+grant select, insert, update, delete on routines      to authenticated;
+grant select, insert, update, delete on routine_steps to authenticated;
+
+-- No sequence grants required: every primary key defaults to
+-- gen_random_uuid() rather than a serial/identity sequence.

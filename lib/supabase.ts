@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../types/db';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
@@ -9,4 +10,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+/**
+ * Typed Supabase client. The `Database` generic flows through every query, so
+ * `.from('ingredients').select()` returns `Ingredient[]` and unknown table or
+ * column names are compile errors.
+ */
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
