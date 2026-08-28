@@ -6,7 +6,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AnalysisProvider } from '../hooks/useAnalysis';
+import { LanguageProvider } from '../hooks/useLanguage';
 import { ProfileProvider } from '../hooks/useProfile';
+import { ShelfProvider } from '../hooks/useShelf';
 import { colors, useAppFonts } from '../theme';
 
 // Hold the native splash until the fonts are in, so the first paint is
@@ -30,22 +32,27 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <ProfileProvider>
-        {/* Inside ProfileProvider: analysis is personalised with the profile. */}
-        <AnalysisProvider>
-          <View style={styles.root} onLayout={onLayoutRootView}>
-            <StatusBar style="dark" />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: colors.background },
-                // The flow is linear; sliding forward matches the progress bar.
-                animation: 'slide_from_right',
-              }}
-            />
-          </View>
-        </AnalysisProvider>
-      </ProfileProvider>
+      {/* Outermost: shelf, analysis and timing screens all read the language. */}
+      <LanguageProvider>
+        <ProfileProvider>
+          {/* Inside ProfileProvider: analysis is personalised with the profile. */}
+          <AnalysisProvider>
+            <ShelfProvider>
+              <View style={styles.root} onLayout={onLayoutRootView}>
+                <StatusBar style="dark" />
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: colors.background },
+                    // The flow is linear; sliding forward matches the progress bar.
+                    animation: 'slide_from_right',
+                  }}
+                />
+              </View>
+            </ShelfProvider>
+          </AnalysisProvider>
+        </ProfileProvider>
+      </LanguageProvider>
     </SafeAreaProvider>
   );
 }

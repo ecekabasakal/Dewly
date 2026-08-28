@@ -7,7 +7,6 @@ import {
   type ReactNode,
 } from 'react';
 import { analyzeInciList, type AnalysisResult } from '../lib/analysis';
-import { deviceLanguage, type Language } from '../lib/language';
 import { useProfile } from './useProfile';
 
 type Status = 'idle' | 'loading' | 'ready' | 'error';
@@ -25,8 +24,6 @@ type AnalysisContextValue = {
   input: string;
   result: AnalysisResult | null;
   error: string | null;
-  language: Language;
-  setLanguage: (language: Language) => void;
   /** Runs the analysis; resolves true on success so the caller can navigate. */
   analyze: (text: string) => Promise<boolean>;
   reset: () => void;
@@ -40,7 +37,6 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
   const [input, setInput] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [language, setLanguage] = useState<Language>(() => deviceLanguage());
 
   const analyze = useCallback(
     async (text: string) => {
@@ -72,8 +68,8 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<AnalysisContextValue>(
-    () => ({ status, input, result, error, language, setLanguage, analyze, reset }),
-    [status, input, result, error, language, analyze, reset]
+    () => ({ status, input, result, error, analyze, reset }),
+    [status, input, result, error, analyze, reset]
   );
 
   return <AnalysisContext.Provider value={value}>{children}</AnalysisContext.Provider>;

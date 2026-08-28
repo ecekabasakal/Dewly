@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
+import { goBackOr } from '../../lib/navigation';
 
 import { Chip, OnboardingStep } from '../../components';
 import { useProfile } from '../../hooks/useProfile';
@@ -30,7 +31,7 @@ export default function GoalsStep() {
       }
       canAdvance
       nextLabel={draft.goals.length === 0 ? 'Skip' : 'Continue'}
-      onBack={() => router.back()}
+      onBack={() => goBackOr('/onboarding')}
       onNext={() => router.push('/onboarding/age')}
     >
       <View style={styles.grid}>

@@ -25,7 +25,7 @@ export default function PasteScreen() {
 
   const run = async () => {
     const ok = await analyze(text);
-    if (ok) router.push('/analyze/results');
+    if (ok) router.push('/results');
   };
 
   return (

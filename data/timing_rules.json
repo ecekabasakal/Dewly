@@ -1,0 +1,198 @@
+{
+  "_note": "Ingredient/keyword -> recommended time-of-day with evidence strength and sources. Match canonical names against resolved ingredients; keywords against the product name (normalized). SPF is AM-only.",
+  "evidence_badges": {
+    "rule": {
+      "en": "Rule",
+      "tr": "Kural"
+    },
+    "strong": {
+      "en": "Strong suggestion",
+      "tr": "Güçlü öneri"
+    },
+    "preference": {
+      "en": "General preference",
+      "tr": "Genel tercih"
+    }
+  },
+  "disclaimer": {
+    "en": "Educational information, not medical advice. Timing suggestions are general guidance; follow product directions and consult a professional for your skin.",
+    "tr": "Eğitici bilgidir, tıbbi tavsiye değildir. Zamanlama önerileri genel yönlendirmedir; ürün talimatlarını izleyin ve cildiniz için bir uzmana danışın."
+  },
+  "rules": [
+    {
+      "id": "retinoid-pm",
+      "trigger": {
+        "canonical": [
+          "Retinol",
+          "Retinal",
+          "Adapalene",
+          "Retinyl Palmitate"
+        ],
+        "keywords_en": [
+          "retinol",
+          "retinoid",
+          "retinal",
+          "retinaldehyde",
+          "adapalene"
+        ],
+        "keywords_tr": [
+          "retinol",
+          "retinoid",
+          "retinal"
+        ]
+      },
+      "recommended_time": "pm",
+      "evidence_strength": "strong",
+      "reason_en": "Retinoids break down in sunlight (photodegradation) and can make skin more sun-sensitive, so nighttime use is the standard recommendation.",
+      "reason_tr": "Retinoidler gün ışığında bozulur (fotodegradasyon) ve cildi güneşe daha duyarlı hale getirebilir; bu yüzden gece kullanımı standart öneridir.",
+      "sources": [
+        {
+          "label_en": "Clinical review citing the American Academy of Dermatology (ACOFP Journal, 2024)",
+          "label_tr": "American Academy of Dermatology'ye atıf yapan klinik derleme (ACOFP Dergisi, 2024)",
+          "url": "https://acofp.org/news-and-publications/journal/article-detail/vol-16-no-3-fall-2024/vitamin-c-topical-retinoids-sunscreen-in-clinical-practice-essentials-for-family-physicians"
+        },
+        {
+          "label_en": "Peer-reviewed photostability study of a topical retinoid (NCBI/PMC)",
+          "label_tr": "Topikal bir retinoidin fotostabilitesi üzerine hakemli çalışma (NCBI/PMC)",
+          "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7560049/"
+        }
+      ]
+    },
+    {
+      "id": "aha-pm",
+      "trigger": {
+        "canonical": [
+          "Glycolic Acid",
+          "Lactic Acid",
+          "Mandelic Acid"
+        ],
+        "keywords_en": [
+          "glycolic",
+          "lactic acid",
+          "mandelic",
+          "aha",
+          "alpha hydroxy"
+        ],
+        "keywords_tr": [
+          "glikolik",
+          "laktik",
+          "mandelik",
+          "aha",
+          "alfa hidroksi"
+        ]
+      },
+      "recommended_time": "pm",
+      "evidence_strength": "strong",
+      "reason_en": "The U.S. FDA warns that AHAs can increase the skin's sensitivity to the sun and the chance of sunburn, during use and for about a week after. Evening use plus daytime SPF is the safer pattern.",
+      "reason_tr": "ABD FDA, AHA'ların cildin güneşe duyarlılığını ve güneş yanığı olasılığını (kullanım sırasında ve yaklaşık bir hafta sonrasında) artırabileceği konusunda uyarır. Akşam kullanımı + gündüz SPF daha güvenli bir düzendir.",
+      "sources": [
+        {
+          "label_en": "U.S. FDA — Alpha Hydroxy Acids (official 'Sunburn Alert' guidance)",
+          "label_tr": "ABD FDA — Alfa Hidroksi Asitler (resmi 'Sunburn Alert' kılavuzu)",
+          "url": "https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids"
+        },
+        {
+          "label_en": "U.S. FDA guidance, Federal Register (AHA labeling, 2005)",
+          "label_tr": "ABD FDA kılavuzu, Federal Register (AHA etiketleme, 2005)",
+          "url": "https://www.federalregister.gov/documents/2005/01/10/05-381/guidance-for-industry-labeling-for-topically-applied-cosmetic-products-containing-alpha-hydroxy"
+        }
+      ]
+    },
+    {
+      "id": "bha-pm",
+      "trigger": {
+        "canonical": [
+          "Salicylic Acid"
+        ],
+        "keywords_en": [
+          "salicylic",
+          "bha",
+          "beta hydroxy"
+        ],
+        "keywords_tr": [
+          "salisilik",
+          "bha",
+          "beta hidroksi"
+        ]
+      },
+      "recommended_time": "pm",
+      "evidence_strength": "preference",
+      "reason_en": "The FDA's formal sun-sensitivity warning is written for AHAs; extending the same caution to BHA (salicylic acid) is common practice but not an official requirement. Evening use with daytime SPF is a sensible default.",
+      "reason_tr": "FDA'nın resmi güneş-hassasiyeti uyarısı AHA'lar için yazılmıştır; aynı ihtiyatı BHA'ya (salisilik asit) genişletmek yaygın bir uygulamadır ama resmi bir zorunluluk değildir. Akşam kullanımı + gündüz SPF makul bir varsayılandır.",
+      "sources": [
+        {
+          "label_en": "U.S. FDA — Alpha Hydroxy Acids (official 'Sunburn Alert' guidance)",
+          "label_tr": "ABD FDA — Alfa Hidroksi Asitler (resmi 'Sunburn Alert' kılavuzu)",
+          "url": "https://www.fda.gov/cosmetics/cosmetic-ingredients/alpha-hydroxy-acids"
+        }
+      ]
+    },
+    {
+      "id": "vitaminc-am",
+      "trigger": {
+        "canonical": [
+          "Ascorbic Acid",
+          "Sodium Ascorbyl Phosphate",
+          "Ascorbyl Glucoside"
+        ],
+        "keywords_en": [
+          "vitamin c",
+          "ascorbic",
+          "ascorbyl"
+        ],
+        "keywords_tr": [
+          "c vitamini",
+          "askorbik",
+          "askorbil"
+        ]
+      },
+      "recommended_time": "am",
+      "evidence_strength": "preference",
+      "reason_en": "Vitamin C can be used morning or night. Many apply it in the morning because its antioxidant action complements daytime sun protection — a preference, not a rule.",
+      "reason_tr": "C vitamini sabah veya akşam kullanılabilir. Birçok kişi sabah uygular çünkü antioksidan etkisi gündüz güneş korumasını tamamlar — bu bir tercihtir, kesin kural değil.",
+      "sources": [
+        {
+          "label_en": "Clinical review citing the American Academy of Dermatology (ACOFP Journal, 2024)",
+          "label_tr": "American Academy of Dermatology'ye atıf yapan klinik derleme (ACOFP Dergisi, 2024)",
+          "url": "https://acofp.org/news-and-publications/journal/article-detail/vol-16-no-3-fall-2024/vitamin-c-topical-retinoids-sunscreen-in-clinical-practice-essentials-for-family-physicians"
+        }
+      ]
+    },
+    {
+      "id": "spf-am",
+      "trigger": {
+        "canonical": [
+          "Zinc Oxide",
+          "Titanium Dioxide",
+          "Ethylhexyl Methoxycinnamate",
+          "Butyl Methoxydibenzoylmethane",
+          "Bis-Ethylhexyloxyphenol Methoxyphenyl Triazine",
+          "Diethylamino Hydroxybenzoyl Hexyl Benzoate"
+        ],
+        "keywords_en": [
+          "spf",
+          "sunscreen",
+          "uv filter",
+          "sun protection"
+        ],
+        "keywords_tr": [
+          "spf",
+          "güneş kremi",
+          "güneş koruyucu",
+          "uv filtre"
+        ]
+      },
+      "recommended_time": "am",
+      "evidence_strength": "rule",
+      "reason_en": "Sun protection is needed during daylight, so sunscreen belongs in the morning routine and is not used at night.",
+      "reason_tr": "Güneş koruması gündüz gereklidir; bu yüzden güneş koruyucu sabah rutinine aittir ve gece kullanılmaz.",
+      "sources": [
+        {
+          "label_en": "Clinical review citing the American Academy of Dermatology (ACOFP Journal, 2024)",
+          "label_tr": "American Academy of Dermatology'ye atıf yapan klinik derleme (ACOFP Dergisi, 2024)",
+          "url": "https://acofp.org/news-and-publications/journal/article-detail/vol-16-no-3-fall-2024/vitamin-c-topical-retinoids-sunscreen-in-clinical-practice-essentials-for-family-physicians"
+        }
+      ]
+    }
+  ]
+}

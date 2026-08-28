@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
+import { goBackOr } from '../../lib/navigation';
 
 import { Chip, OnboardingStep } from '../../components';
 import { useProfile } from '../../hooks/useProfile';
@@ -27,7 +28,7 @@ export default function ConcernsStep() {
           : `${draft.concerns.length} selected`
       }
       canAdvance={draft.concerns.length > 0}
-      onBack={() => router.back()}
+      onBack={() => goBackOr('/onboarding')}
       onNext={() => router.push('/onboarding/goals')}
     >
       <View style={styles.grid}>

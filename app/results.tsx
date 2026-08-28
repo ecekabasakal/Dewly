@@ -1,18 +1,20 @@
 import { StyleSheet, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
+import { goBackOr } from '../lib/navigation';
 
-import { Badge, Button, Card, Chip, Screen, Text } from '../../components';
-import { useAnalysis } from '../../hooks/useAnalysis';
+import { Badge, Button, Card, Chip, Screen, Text } from '../components';
+import { useAnalysis } from '../hooks/useAnalysis';
+import { useLanguage } from '../hooks/useLanguage';
 import {
   describe,
   headsUpCopy,
   type AnalyzedIngredient,
   type HeadsUpKind,
-} from '../../lib/analysis';
-import type { Language } from '../../lib/language';
-import { colors, radius, spacing } from '../../theme';
-import { CONCERN_LABELS, type Concern } from '../../types/profile';
-import type { StatusTone } from '../../theme';
+} from '../lib/analysis';
+import type { Language } from '../lib/language';
+import { colors, radius, spacing } from '../theme';
+import { CONCERN_LABELS, type Concern } from '../types/profile';
+import type { StatusTone } from '../theme';
 
 const HEADS_UP_TONE: Record<HeadsUpKind, StatusTone> = {
   caution: 'warning',
@@ -43,6 +45,7 @@ const UI = {
     targetsYour: 'Targets your',
     matchedLoosely: (raw: string) => `Matched loosely from “${raw}”.`,
     analyzeAnother: 'Analyze another',
+    addToShelf: 'Add to my shelf',
     poreBadge: (n: number) => `PORE ${n}/5`,
     activeBadge: 'ACTIVE',
     forYouBadge: 'FOR YOU',
@@ -68,6 +71,7 @@ const UI = {
     targetsYour: 'Şunu hedefliyor',
     matchedLoosely: (raw: string) => `“${raw}” ifadesinden yaklaşık eşleşme.`,
     analyzeAnother: 'Başka bir ürün analiz et',
+    addToShelf: 'Rafıma ekle',
     poreBadge: (n: number) => `GÖZENEK ${n}/5`,
     activeBadge: 'AKTİF',
     forYouBadge: 'SİZE UYGUN',
@@ -107,7 +111,8 @@ const CATEGORY_LABELS: Record<Language, Record<string, string>> = {
 };
 
 export default function ResultsScreen() {
-  const { result, status, error, language, setLanguage } = useAnalysis();
+  const { result, status, error } = useAnalysis();
+  const { language, setLanguage } = useLanguage();
 
   if (status === 'idle' || (!result && status !== 'error')) {
     return <Redirect href="/analyze" />;
@@ -124,7 +129,7 @@ export default function ResultsScreen() {
           <Button
             label={UI[language].back}
             variant="secondary"
-            onPress={() => router.back()}
+            onPress={() => goBackOr('/analyze')}
           />
         </View>
       </Screen>
@@ -217,6 +222,14 @@ export default function ResultsScreen() {
       </View>
 
       <View style={styles.actions}>
+        {/* Carries the matched ingredients into the shelf, so the step guess can
+            fall back to them when the product name is uninformative. */}
+        <Button
+          label={t.addToShelf}
+          fullWidth
+          size="lg"
+          onPress={() => router.push('/product?source=analysis')}
+        />
         <Button
           label={t.analyzeAnother}
           variant="secondary"
@@ -393,5 +406,5 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  actions: { marginTop: spacing.lg, alignItems: 'flex-start' },
+  actions: { marginTop: spacing.lg, gap: spacing.sm, alignItems: 'stretch' },
 });

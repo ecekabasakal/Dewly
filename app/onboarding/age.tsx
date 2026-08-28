@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { goBackOr } from '../../lib/navigation';
 
 import { OnboardingStep, OptionRow } from '../../components';
 import { useProfile } from '../../hooks/useProfile';
@@ -13,7 +14,7 @@ export default function AgeStep() {
       title="How old are you?"
       subtitle="Some actives — retinoids especially — come with age-related guidance."
       canAdvance={draft.ageRange !== undefined}
-      onBack={() => router.back()}
+      onBack={() => goBackOr('/onboarding')}
       onNext={() => router.push('/onboarding/sensitivity')}
     >
       {AGE_RANGES.map((range) => (

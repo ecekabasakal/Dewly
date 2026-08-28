@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 import { router } from 'expo-router';
+import { goBackOr } from '../../lib/navigation';
 
 import { OnboardingStep, OptionRow } from '../../components';
 import { useProfile } from '../../hooks/useProfile';
@@ -43,7 +44,7 @@ export default function SensitivityStep() {
       subtitle="This sets how cautiously Dewly warns you about strong actives."
       canAdvance={draft.sensitivity !== undefined && !saving}
       nextLabel={saving ? 'Saving…' : 'Finish'}
-      onBack={() => router.back()}
+      onBack={() => goBackOr('/onboarding')}
       onNext={finish}
     >
       {SENSITIVITY_LEVELS.map((level) => (

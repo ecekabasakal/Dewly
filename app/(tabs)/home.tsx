@@ -1,16 +1,16 @@
 import { Alert, StyleSheet, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
 
-import { Badge, Button, Card, Chip, Screen, Text } from '../components';
-import { useProfile } from '../hooks/useProfile';
-import { spacing } from '../theme';
+import { Badge, Button, Card, Chip, Screen, Text } from '../../components';
+import { useProfile } from '../../hooks/useProfile';
+import { spacing } from '../../theme';
 import {
   AGE_RANGE_LABELS,
   CONCERN_LABELS,
   GOAL_LABELS,
   SENSITIVITY_LABELS,
   SKIN_TYPE_LABELS,
-} from '../types/profile';
+} from '../../types/profile';
 
 export default function Home() {
   const { profile, isLoaded, resetProfile } = useProfile();
@@ -50,9 +50,23 @@ export default function Home() {
           label="Analyze ingredients"
           size="lg"
           fullWidth
-          onPress={() => router.push('/analyze')}
+          onPress={() => router.navigate('/analyze')}
           style={styles.cta}
         />
+        <View style={styles.ctaRow}>
+          <Button
+            label="My shelf"
+            variant="secondary"
+            onPress={() => router.navigate('/shelf')}
+            style={styles.ctaHalf}
+          />
+          <Button
+            label="My routine"
+            variant="secondary"
+            onPress={() => router.navigate('/routine')}
+            style={styles.ctaHalf}
+          />
+        </View>
       </View>
 
       <Card style={styles.card}>
@@ -109,6 +123,8 @@ export default function Home() {
 const styles = StyleSheet.create({
   header: { marginTop: spacing.lg, gap: spacing.sm },
   cta: { marginTop: spacing.md },
+  ctaRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
+  ctaHalf: { flex: 1 },
   card: { marginTop: spacing.lg, gap: spacing.sm },
   cardHeader: {
     flexDirection: 'row',
