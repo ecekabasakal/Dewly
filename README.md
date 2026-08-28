@@ -22,7 +22,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 6 — Routine Builder` · **Next task:** _Build the shelf + AM/PM ordering_
+> **Active phase:** `Phase 7 — Conflict/Interaction Engine` · **Next task:** _Build active-ingredient clash detection_
 
 ## 📊 Progress Dashboard
 
@@ -36,7 +36,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 3 | Ingredient (INCI) Database | ✅ |
 | 4 | Onboarding (Skin Profile) | ✅ |
 | 5 | Ingredient Analysis *(core)* | ✅ |
-| 6 | Routine Builder | ⬜ |
+| 6 | Routine Builder | ✅ |
 | 7 | Conflict/Interaction Engine ★ | ⬜ |
 | 8 | Auth & Saving | ⬜ |
 | 9 | Barcode & Open Beauty Facts | ⬜ |
@@ -173,12 +173,17 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 6 — Routine Builder
 
-- [ ] `step_type` definitions and canonical order (oil cleanser → water cleanser → exfoliant → toner → essence → serum → eye cream → moisturizer → face oil → SPF)
-- [ ] Ordering function: sort products into the correct order by `step_type`
-- [ ] AM / PM split (SPF is AM-only)
-- [ ] "Shelf": user can add/remove products
-- [ ] Routine screen UI: ordered steps, a product card per step
-- [ ] Empty state (no products yet) design
+- [x] `step_type` definitions and canonical order (oil cleanser → water cleanser → exfoliant → toner → essence → serum → eye cream → moisturizer → face oil → SPF) — `STEP_ORDER` in `types/db.ts` mirrors the enum's declaration order, `satisfies`-guarded
+- [x] Ordering function: sort products into the correct order by `step_type` — routine is derived from the shelf, not stored, so the two can't drift
+- [x] AM / PM split (SPF is AM-only) — warned in the add form and flagged in the PM routine; products can be AM, PM or both
+- [x] "Shelf": user can add/remove products — plus edit, grouped by step
+- [x] Add a product two ways: manually, or carried over from a Phase 5 analysis (ingredients come with it)
+- [x] `step_type` auto-guess from the product name (EN + TR keywords), falling back to the ingredients — always pre-selected and overridable
+- [x] Source-backed AM/PM timing suggestions (`data/timing_rules.json`) with evidence badges, reasons and citations
+- [x] "Why these timings?" sources screen listing every rule grouped by AM/PM, with links and disclaimer
+- [x] Bottom tab navigation (Home · Analyze · Routine · Shelf), bilingual labels; onboarding runs before the tabs
+- [x] Routine screen UI: ordered steps, a product card per step
+- [x] Empty state (no products yet) design
 
 **Definition of Done:** User can add products to their shelf and see an auto-ordered AM/PM routine.
 
