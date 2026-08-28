@@ -44,8 +44,15 @@ export default function Home() {
       <View style={styles.header}>
         <Text variant="display">Dewly</Text>
         <Text variant="body" tone="muted">
-          Your skin profile is saved. Phase 5 will use it to read ingredient lists.
+          Paste a product's ingredient list and Dewly will tell you what's in it.
         </Text>
+        <Button
+          label="Analyze ingredients"
+          size="lg"
+          fullWidth
+          onPress={() => router.push('/analyze')}
+          style={styles.cta}
+        />
       </View>
 
       <Card style={styles.card}>
@@ -101,6 +108,7 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   header: { marginTop: spacing.lg, gap: spacing.sm },
+  cta: { marginTop: spacing.md },
   card: { marginTop: spacing.lg, gap: spacing.sm },
   cardHeader: {
     flexDirection: 'row',

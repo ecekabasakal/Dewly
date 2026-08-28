@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AnalysisProvider } from '../hooks/useAnalysis';
 import { ProfileProvider } from '../hooks/useProfile';
 import { colors, useAppFonts } from '../theme';
 
@@ -30,17 +31,20 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ProfileProvider>
-        <View style={styles.root} onLayout={onLayoutRootView}>
-          <StatusBar style="dark" />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.background },
-              // The flow is linear; sliding forward matches the progress bar.
-              animation: 'slide_from_right',
-            }}
-          />
-        </View>
+        {/* Inside ProfileProvider: analysis is personalised with the profile. */}
+        <AnalysisProvider>
+          <View style={styles.root} onLayout={onLayoutRootView}>
+            <StatusBar style="dark" />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.background },
+                // The flow is linear; sliding forward matches the progress bar.
+                animation: 'slide_from_right',
+              }}
+            />
+          </View>
+        </AnalysisProvider>
       </ProfileProvider>
     </SafeAreaProvider>
   );

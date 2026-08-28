@@ -31,7 +31,8 @@
           "resizeMode": "contain"
         }
       ],
-      "expo-router"
+      "expo-router",
+      "expo-localization"
     ]
   }
 }
