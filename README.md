@@ -22,7 +22,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 5 — Ingredient Analysis` · **Next task:** _Build the INCI paste + parse + analysis screen_
+> **Active phase:** `Phase 6 — Routine Builder` · **Next task:** _Build the shelf + AM/PM ordering_
 
 ## 📊 Progress Dashboard
 
@@ -35,7 +35,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 2 | Data Model & Supabase Schema | ✅ |
 | 3 | Ingredient (INCI) Database | ✅ |
 | 4 | Onboarding (Skin Profile) | ✅ |
-| 5 | Ingredient Analysis *(core)* | ⬜ |
+| 5 | Ingredient Analysis *(core)* | ✅ |
 | 6 | Routine Builder | ⬜ |
 | 7 | Conflict/Interaction Engine ★ | ⬜ |
 | 8 | Auth & Saving | ⬜ |
@@ -155,13 +155,16 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 5 — Ingredient Analysis *(core)*
 
-- [ ] INCI paste screen (user enters an ingredient list)
-- [ ] Parse function: split raw text into an ingredient array (split on commas/newlines, trim whitespace)
-- [ ] Normalization: map common spelling variants to the canonical INCI name
-- [ ] Ingredient matching: match parsed names against the `ingredients` table
-- [ ] Flag unmatched ones as "unknown" (can be added to the DB later)
-- [ ] Analysis screen UI: a card per ingredient (name, category, function, caution, comedogenic badge)
-- [ ] Highlight "good for you / caution" based on the skin profile
+- [x] INCI paste screen (user enters an ingredient list)
+- [x] Parse function: split raw text into an ingredient array (split on commas/newlines, trim whitespace) — slash is *not* a separator, so `Caprylic/Capric Triglyceride` stays one ingredient
+- [x] Normalization: map common spelling variants to the canonical INCI name — mirrors how `data/ingredient_aliases.json` was built; validated as a fixed point on 290 of its 291 keys
+- [x] `data/ingredient_aliases.json` — 291 EN/TR aliases → canonical INCI name
+- [x] Ingredient matching: match parsed names against the `ingredients` table — alias/direct exact, then a loose fallback (flattens `-` `/` `+`); verified collision-free
+- [x] Flag unmatched ones as "unknown" (can be added to the DB later) — shown in a dashed "not recognized" section, never hidden
+- [x] Analysis screen UI: a card per ingredient (name, category, function, caution, comedogenic badge)
+- [x] Highlight "good for you / caution" based on the skin profile — concerns intersection, plus heads-up for cautions, fragrance, high comedogenic and strong actives on reactive skin
+- [x] Bilingual output: EN/TR descriptions and cautions, with an in-screen language toggle
+- [x] "Not medical advice" disclaimer on the results screen
 - [ ] Ingredient search screen (search the database)
 
 **Definition of Done:** User can paste an ingredient list and see what each ingredient is. **First real "wow" moment.**
