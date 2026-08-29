@@ -36,9 +36,13 @@ export type Routine = {
   warnings: RoutineWarning[];
 };
 
-export type RoutineWarning =
-  | { kind: 'spf-in-pm'; productNames: string[] }
-  | { kind: 'no-spf-in-am' };
+/**
+ * Only placement problems live here. "No SPF in the morning" used to be a
+ * warning on this type too, but Phase 7's conflict engine owns that now — it
+ * carries severity, evidence strength, a recommendation and citations, and
+ * emitting it from both places would show the user the same advice twice.
+ */
+export type RoutineWarning = { kind: 'spf-in-pm'; productNames: string[] };
 
 function appliesTo(timeOfDay: ProductTimeOfDay, slot: RoutineSlot): boolean {
   return timeOfDay === 'both' || timeOfDay === slot;
@@ -78,11 +82,6 @@ export function buildRoutine(products: ShelfProduct[], slot: RoutineSlot): Routi
       kind: 'spf-in-pm',
       productNames: misplaced.map((entry) => entry.product.name),
     });
-  }
-
-  // Only worth saying once the user has actually built a morning routine.
-  if (slot === 'am' && ordered.length > 0 && !present.has('spf')) {
-    warnings.push({ kind: 'no-spf-in-am' });
   }
 
   return { slot, entries, missingSteps, warnings };

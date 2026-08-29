@@ -3,6 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
 import { Badge, Button, Card, Chip, Screen, Text } from '../../components';
+import { ConflictCheck } from '../../components/ConflictCheck';
+import { useLanguage } from '../../hooks/useLanguage';
+import { findConflicts } from '../../lib/conflicts';
 import { useShelf } from '../../hooks/useShelf';
 import { buildRoutine, type Routine, type RoutineSlot } from '../../lib/routine';
 import { colors, fonts, radius, spacing } from '../../theme';
@@ -15,9 +18,14 @@ export default function RoutineScreen() {
   const params = useLocalSearchParams<{ slot?: string }>();
   const [slot, setSlot] = useState<RoutineSlot>(params.slot === 'pm' ? 'pm' : 'am');
 
+  const { language } = useLanguage();
+
   if (!isLoaded) return null;
 
   const routine = buildRoutine(products, slot);
+  // Conflicts are checked across the WHOLE shelf, not just the visible slot —
+  // an evening clash still matters while you are looking at the morning.
+  const findings = findConflicts(products);
 
   return (
     <Screen scroll>
@@ -46,7 +54,10 @@ export default function RoutineScreen() {
           />
         </Card>
       ) : (
-        <RoutineList routine={routine} />
+        <>
+          <RoutineList routine={routine} />
+          <ConflictCheck findings={findings} language={language} />
+        </>
       )}
     </Screen>
   );
@@ -60,23 +71,15 @@ function RoutineList({ routine }: { routine: Routine }) {
       {warnings.map((warning) => (
         <View
           key={warning.kind}
-          style={[
-            styles.warning,
-            warning.kind === 'spf-in-pm' ? styles.warningDanger : styles.warningWarn,
-          ]}
+          style={[styles.warning, styles.warningDanger]}
         >
-          <Badge
-            label={warning.kind === 'spf-in-pm' ? 'WRONG SLOT' : 'MISSING'}
-            tone={warning.kind === 'spf-in-pm' ? 'danger' : 'warning'}
-          />
+          <Badge label="WRONG SLOT" tone="danger" />
           <Text variant="caption" style={styles.warningText}>
-            {warning.kind === 'spf-in-pm'
-              ? `${warning.productNames.join(', ')} ${
-                  warning.productNames.length === 1 ? 'is' : 'are'
-                } SPF, which only works in daylight. Move ${
-                  warning.productNames.length === 1 ? 'it' : 'them'
-                } to AM.`
-              : 'No SPF in your morning routine. Daily sunscreen is the single highest-impact step for most concerns.'}
+            {`${warning.productNames.join(', ')} ${
+              warning.productNames.length === 1 ? 'is' : 'are'
+            } SPF, which only works in daylight. Move ${
+              warning.productNames.length === 1 ? 'it' : 'them'
+            } to AM.`}
           </Text>
         </View>
       ))}

@@ -1,0 +1,258 @@
+{
+  "_note": "Pairwise + derived conflict rules. same_slot_only means the pair only conflicts when both are in the SAME time slot (am or pm). Match canonical against resolved ingredients; keywords against product name (normalized).",
+  "severity_badges": {
+    "high": {
+      "en": "High",
+      "tr": "Yüksek"
+    },
+    "medium": {
+      "en": "Medium",
+      "tr": "Orta"
+    },
+    "low": {
+      "en": "Low",
+      "tr": "Düşük"
+    }
+  },
+  "evidence_badges": {
+    "strong": {
+      "en": "Strong evidence",
+      "tr": "Güçlü kanıt"
+    },
+    "preference": {
+      "en": "General preference",
+      "tr": "Genel tercih"
+    },
+    "rule": {
+      "en": "Rule",
+      "tr": "Kural"
+    }
+  },
+  "clear_message": {
+    "en": "No notable conflicts found in this routine.",
+    "tr": "Bu rutinde belirgin bir çakışma bulunamadı."
+  },
+  "disclaimer": {
+    "en": "Educational information, not medical advice. Conflict checks are general guidance; follow product directions and consult a professional for your skin.",
+    "tr": "Eğitici bilgidir, tıbbi tavsiye değildir. Çakışma kontrolleri genel yönlendirmedir; ürün talimatlarını izleyin ve cildiniz için bir uzmana danışın."
+  },
+  "pair_rules": [
+    {
+      "id": "retinoid-x-benzoyl-peroxide",
+      "trigger": {
+        "a": {
+          "canonical": [
+            "Retinol",
+            "Retinal",
+            "Adapalene",
+            "Retinyl Palmitate"
+          ],
+          "keywords": [
+            "retinoid",
+            "retinol",
+            "retinal",
+            "adapalene"
+          ]
+        },
+        "b": {
+          "canonical": [
+            "Benzoyl Peroxide"
+          ],
+          "keywords": [
+            "benzoyl peroxide",
+            "benzoil peroksit",
+            "bpo"
+          ]
+        }
+      },
+      "same_slot_only": true,
+      "severity": "high",
+      "evidence_strength": "strong",
+      "title_en": "Retinoid + Benzoyl Peroxide",
+      "title_tr": "Retinoid + Benzoil Peroksit",
+      "explanation_en": "Benzoyl peroxide is a strong oxidizer that can degrade many retinoids and reduce their effectiveness; together they can also be drying.",
+      "explanation_tr": "Benzoil peroksit güçlü bir oksitleyicidir; birçok retinoidi bozarak etkinliğini azaltabilir; ikisi birlikte cildi kurutabilir de.",
+      "recommendation_en": "Use them at different times — e.g. benzoyl peroxide in the AM and the retinoid in the PM — or on alternating nights.",
+      "recommendation_tr": "Farklı zamanlarda kullan — ör. benzoil peroksit sabah, retinoid akşam — ya da dönüşümlü gecelerde.",
+      "sources": [
+        {
+          "label_en": "Peer-reviewed retinoid photostability/oxidation research (NCBI/PMC)",
+          "label_tr": "Hakemli retinoid fotostabilite/oksidasyon araştırması (NCBI/PMC)",
+          "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7560049/"
+        },
+        {
+          "label_en": "Dermatologist guidance (SLMD Skincare, Sandra Lee M.D.) on separating benzoyl peroxide and retinol",
+          "label_tr": "Benzoil peroksit ve retinolü ayırma üzerine dermatolog rehberi (SLMD Skincare, Sandra Lee M.D.)",
+          "url": "https://slmdskincare.com/blogs/learn/can-you-combine-benzoyl-peroxide-and-retinol"
+        }
+      ]
+    },
+    {
+      "id": "retinoid-x-exfoliating-acid",
+      "trigger": {
+        "a": {
+          "canonical": [
+            "Retinol",
+            "Retinal",
+            "Adapalene",
+            "Retinyl Palmitate"
+          ],
+          "keywords": [
+            "retinoid",
+            "retinol",
+            "retinal",
+            "adapalene"
+          ]
+        },
+        "b": {
+          "canonical": [
+            "Glycolic Acid",
+            "Lactic Acid",
+            "Mandelic Acid",
+            "Salicylic Acid"
+          ],
+          "keywords": [
+            "aha",
+            "bha",
+            "glikolik",
+            "laktik",
+            "mandelik",
+            "salisilik",
+            "glycolic",
+            "lactic",
+            "mandelic",
+            "salicylic"
+          ]
+        }
+      },
+      "same_slot_only": true,
+      "severity": "high",
+      "evidence_strength": "strong",
+      "title_en": "Retinoid + Exfoliating Acid (AHA/BHA)",
+      "title_tr": "Retinoid + Eksfoliyant Asit (AHA/BHA)",
+      "explanation_en": "Retinoids and exfoliating acids both speed cell turnover. Using them the same night can over-exfoliate and disrupt the skin barrier — redness, flaking, stinging.",
+      "explanation_tr": "Retinoidler ve eksfoliyant asitler hücre yenilenmesini hızlandırır. Aynı gece kullanmak aşırı eksfoliasyona ve bariyer hasarına yol açabilir — kızarıklık, pullanma, yanma.",
+      "recommendation_en": "Separate them onto alternating nights, or use one in the AM and the other in the PM. Introduce one active at a time.",
+      "recommendation_tr": "Dönüşümlü gecelere ayır, ya da birini sabah birini akşam kullan. Aktifleri teker teker ekle.",
+      "sources": [
+        {
+          "label_en": "Dermatica SkinLab — combining AHAs/BHAs/PHAs with retinoids",
+          "label_tr": "Dermatica SkinLab — AHA/BHA/PHA'ları retinoidlerle birleştirme",
+          "url": "https://www.dermatica.co.uk/skinlab/using-exfoliants-how-to-combine-ahas-bhas-phas-with-retinoids/"
+        },
+        {
+          "label_en": "Westlake Dermatology — Over-Exfoliation: warning signs, causes, prevention",
+          "label_tr": "Westlake Dermatology — Aşırı Eksfoliasyon: belirtiler, nedenler, önleme",
+          "url": "https://www.westlakedermatology.com/blog/over-exfoliation/"
+        }
+      ]
+    },
+    {
+      "id": "retinol-x-vitaminc",
+      "trigger": {
+        "a": {
+          "canonical": [
+            "Retinol",
+            "Retinal"
+          ],
+          "keywords": [
+            "retinol",
+            "retinal"
+          ]
+        },
+        "b": {
+          "canonical": [
+            "Ascorbic Acid"
+          ],
+          "keywords": [
+            "l-ascorbic",
+            "ascorbic acid",
+            "askorbik"
+          ]
+        }
+      },
+      "same_slot_only": true,
+      "severity": "medium",
+      "evidence_strength": "preference",
+      "title_en": "Retinol + Vitamin C (L-ascorbic)",
+      "title_tr": "Retinol + C Vitamini (L-askorbik)",
+      "explanation_en": "Layered at the same time, pure L-ascorbic acid and retinol can be less stable and more irritating due to differing ideal pH. Used at separate times this is usually a non-issue.",
+      "explanation_tr": "Aynı anda katmanlandığında, saf L-askorbik asit ve retinol farklı ideal pH nedeniyle daha az stabil ve daha tahriş edici olabilir. Ayrı zamanlarda kullanıldığında genelde sorun olmaz.",
+      "recommendation_en": "Prefer vitamin C in the AM and retinol in the PM. Gentler C derivatives are more flexible.",
+      "recommendation_tr": "C vitaminini sabah, retinolü akşam tercih et. Daha nazik C türevleri daha esnektir.",
+      "sources": [
+        {
+          "label_en": "The INKEY List — ingredients you should not layer together",
+          "label_tr": "The INKEY List — birlikte katmanlanmaması gereken bileşenler",
+          "url": "https://uk.theinkeylist.com/blogs/news/what-products-should-i-not-layer-together"
+        }
+      ]
+    }
+  ],
+  "derived_rules": [
+    {
+      "id": "over-exfoliation-load",
+      "type": "count_in_slot",
+      "counts": {
+        "categories_or_flags": [
+          "exfoliant_or_strong_acid"
+        ],
+        "canonical": [
+          "Glycolic Acid",
+          "Lactic Acid",
+          "Mandelic Acid",
+          "Salicylic Acid"
+        ],
+        "keywords": [
+          "aha",
+          "bha",
+          "glycolic",
+          "lactic",
+          "mandelic",
+          "salicylic",
+          "exfoliant"
+        ]
+      },
+      "threshold": 2,
+      "severity": "high",
+      "evidence_strength": "strong",
+      "title_en": "Multiple strong exfoliants",
+      "title_tr": "Birden fazla güçlü eksfoliyant",
+      "explanation_en": "Two or more exfoliating acids in the same routine can strip the barrier faster than it rebuilds, causing persistent irritation.",
+      "explanation_tr": "Aynı rutinde iki veya daha fazla eksfoliyant asit, bariyeri onarımdan hızlı yıpratıp kalıcı tahrişe yol açabilir.",
+      "recommendation_en": "Keep to one exfoliant per session and limit exfoliation to a few times per week.",
+      "recommendation_tr": "Seans başına tek eksfoliyant kullan ve eksfoliasyonu haftada birkaç kezle sınırla.",
+      "sources": [
+        {
+          "label_en": "Westlake Dermatology — Over-Exfoliation: warning signs, causes, prevention",
+          "label_tr": "Westlake Dermatology — Aşırı Eksfoliasyon: belirtiler, nedenler, önleme",
+          "url": "https://www.westlakedermatology.com/blog/over-exfoliation/"
+        },
+        {
+          "label_en": "The INKEY List — ingredients you should not layer together",
+          "label_tr": "The INKEY List — birlikte katmanlanmaması gereken bileşenler",
+          "url": "https://uk.theinkeylist.com/blogs/news/what-products-should-i-not-layer-together"
+        }
+      ]
+    },
+    {
+      "id": "am-missing-spf",
+      "type": "am_without_spf",
+      "severity": "medium",
+      "evidence_strength": "rule",
+      "title_en": "No SPF in your morning routine",
+      "title_tr": "Sabah rutininde SPF yok",
+      "explanation_en": "Daytime sun exposure without sunscreen undermines the rest of your routine and increases sun damage — especially when using actives like acids or retinoids.",
+      "explanation_tr": "Gündüz güneş korumasız kalmak rutininin geri kalanını boşa çıkarır ve güneş hasarını artırır — özellikle asit veya retinoid gibi aktifler kullanırken.",
+      "recommendation_en": "Add a broad-spectrum SPF as the last step of your morning routine.",
+      "recommendation_tr": "Sabah rutininin son adımı olarak geniş spektrumlu bir SPF ekle.",
+      "sources": [
+        {
+          "label_en": "Dermatica SkinLab — combining AHAs/BHAs/PHAs with retinoids",
+          "label_tr": "Dermatica SkinLab — AHA/BHA/PHA'ları retinoidlerle birleştirme",
+          "url": "https://www.dermatica.co.uk/skinlab/using-exfoliants-how-to-combine-ahas-bhas-phas-with-retinoids/"
+        }
+      ]
+    }
+  ]
+}
