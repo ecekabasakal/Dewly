@@ -22,7 +22,14 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 7 — Conflict/Interaction Engine` · **Next task:** _Build active-ingredient clash detection_
+> **Active phase:** `MVP complete (Phases 0–7)` · **Next task:** _Phase 8 (Auth) or polish_
+
+## 📌 Backlog / later
+
+Small things deliberately deferred — not blockers for the MVP:
+
+- **Language toggle (EN/TR) in a Settings screen.** Language is currently picked from the device locale, with an ad-hoc EN/TR toggle only on the analysis results and sources screens. It belongs in one place.
+- **Localize `common_name` for TR** (e.g. Water → Su). `description_*` and `caution_*` are bilingual, but `common_name` is English-only, so a Turkish ingredient card still shows an English subtitle.
 
 ## 📊 Progress Dashboard
 
@@ -37,7 +44,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 4 | Onboarding (Skin Profile) | ✅ |
 | 5 | Ingredient Analysis *(core)* | ✅ |
 | 6 | Routine Builder | ✅ |
-| 7 | Conflict/Interaction Engine ★ | ⬜ |
+| 7 | Conflict/Interaction Engine ★ | ✅ |
 | 8 | Auth & Saving | ⬜ |
 | 9 | Barcode & Open Beauty Facts | ⬜ |
 | 10 | Polish & Testing | ⬜ |
@@ -191,13 +198,18 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 7 — Conflict/Interaction Engine ★
 
-- [ ] Populate `interaction_rules` with real rules (retinoid+AHA/BHA, retinoid+benzoyl peroxide, AHA/BHA+vitamin C, niacinamide+vitamin C nuance, etc.)
-- [ ] Engine: collect all actives in a routine (AM/PM separately)
-- [ ] Compare active pairs against `interaction_rules`
-- [ ] Sort warnings by `severity`
-- [ ] Derived rules: warn if no SPF in AM; multiple strong exfoliants → over-exfoliation warning
-- [ ] Warning UI: severity color coding (high/medium/low), explanation + recommendation
-- [ ] Frame warnings as "caution", not "forbidden" (accuracy + professionalism)
+- [x] Populate the rules with real, sourced entries (`data/conflict_rules.json`) — retinoid+BPO, retinoid+AHA/BHA, retinol+vitamin C
+- [x] Engine (`lib/conflicts.ts`): collect products per slot (AM/PM separately) — a `both` product counts in each
+- [x] Compare active pairs against the rules — `same_slot_only` fires only when both sides sit in the same slot, satisfied by two *different* products
+- [x] Matching reuses the Phase 5 normalizer: canonical ingredients first, product-name keywords as fallback
+- [x] Sort warnings by `severity` (high → medium → low, then AM before PM)
+- [x] Derived rules: warn if no SPF in AM; multiple strong exfoliants → over-exfoliation warning
+- [x] Warning UI: severity color coding (high/medium/low), explanation + recommendation
+- [x] Evidence-strength badge and tappable sources on every finding
+- [x] Clear state ("no notable conflicts") and the "not medical advice" disclaimer
+- [x] Each offending product listed with its own time of day, so a `both` product reads as intentional
+- [x] Frame warnings as "caution", not "forbidden" (accuracy + professionalism) — advice sits under "What you can do"
+- [x] Unit tests (`lib/conflicts.test.ts`, `bun test`) — 15 covering slot separation, derived rules and the clean case
 
 **Definition of Done:** Clashing actives in a routine are auto-detected and shown as explained warnings. **MVP done → demo-ready.** 🎉
 
