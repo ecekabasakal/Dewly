@@ -22,13 +22,13 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `MVP complete (Phases 0–7)` · **Next task:** _Phase 8 (Auth) or polish_
+> **Active phase:** `Phase 8 — Auth (email done; Google login next)` · **Next task:** _add Google sign-in, then polish_
 
 ## 📌 Backlog / later
 
 Small things deliberately deferred — not blockers for the MVP:
 
-- **Language toggle (EN/TR) in a Settings screen.** Language is currently picked from the device locale, with an ad-hoc EN/TR toggle only on the analysis results and sources screens. It belongs in one place.
+- ~~**Language toggle (EN/TR) in a Settings screen.**~~ **DONE** — the toggle lives in the Profile/Settings tab and drives the whole app: a persisted `LanguageProvider` is the single source of truth, every screen resolves copy at render time, and the choice survives a restart.
 - **Localize `common_name` for TR** (e.g. Water → Su). `description_*` and `caution_*` are bilingual, but `common_name` is English-only, so a Turkish ingredient card still shows an English subtitle.
 
 ## 📊 Progress Dashboard
@@ -45,7 +45,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 5 | Ingredient Analysis *(core)* | ✅ |
 | 6 | Routine Builder | ✅ |
 | 7 | Conflict/Interaction Engine ★ | ✅ |
-| 8 | Auth & Saving | ⬜ |
+| 8 | Auth & Saving | 🟡 |
 | 9 | Barcode & Open Beauty Facts | ⬜ |
 | 10 | Polish & Testing | ⬜ |
 | 11 | Deploy & Launch | ⬜ |
@@ -188,7 +188,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 - [x] `step_type` auto-guess from the product name (EN + TR keywords), falling back to the ingredients — always pre-selected and overridable
 - [x] Source-backed AM/PM timing suggestions (`data/timing_rules.json`) with evidence badges, reasons and citations
 - [x] "Why these timings?" sources screen listing every rule grouped by AM/PM, with links and disclaimer
-- [x] Bottom tab navigation (Home · Analyze · Routine · Shelf), bilingual labels; onboarding runs before the tabs
+- [x] Bottom tab navigation (Home · Analyze · Routine · Shelf, plus Profile since Phase 8), bilingual labels; auth and onboarding both run before the tabs
 - [x] Routine screen UI: ordered steps, a product card per step
 - [x] Empty state (no products yet) design
 
@@ -217,12 +217,18 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 8 — Auth & Saving
 
-- [ ] Set up Supabase Auth (email/password or social login)
-- [ ] Sign up / sign in / sign out screens
-- [ ] Keep session state global
-- [ ] Save/load routines to Supabase (per user)
-- [ ] Tie the "Shelf" data to the user account
-- [ ] Let core analysis work without login too (guest mode, optional)
+- [x] Set up Supabase Auth — email/password live; **Google login still to do**
+- [x] Sign up / sign in / sign out screens — `app/auth/`, sharing one `AuthForm`, with translated error copy (`lib/auth-errors.ts`)
+- [x] Keep session state global — `hooks/useAuth`, session restored from storage on launch
+- [x] Auth gating: `(tabs)` and `onboarding` both redirect out until auth resolves, so no screen paints for a signed-out visitor
+- [x] Supabase-backed profile and shelf stores behind the Phase 4/6 `ProfileStore` / `ShelfStore` interfaces — the seam those interfaces existed for, so no call site changed
+- [x] First-sign-in migration: local AsyncStorage profile + shelf move up to Supabase (`lib/migrate.ts`), gated on in `app/index.tsx`
+- [x] `skin_profiles` table + RLS, and table privileges, in `db/schema.sql`
+- [x] Profile/Settings tab — signed-in email, sign out, reset onboarding, and the global EN/TR language toggle
+- [x] Tie the "Shelf" data to the user account — rows keyed by `user_id`; product ids are now real UUIDs so they can be `products.id`
+- [x] Save/load routines to Supabase (per user) — covered by the shelf: the routine is derived from it, never stored separately
+- [ ] Google sign-in
+- [ ] ~~Let core analysis work without login too (guest mode)~~ — decided against: auth is required, so every screen has a user to key data by
 
 **Definition of Done:** User can create an account, save routines, and see them again on next login.
 
