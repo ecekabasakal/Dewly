@@ -8,6 +8,8 @@ import {
   type ReactNode,
 } from 'react';
 import { asyncStorageShelfStore, type ShelfStore } from '../lib/shelf-store';
+import { createSupabaseShelfStore } from '../lib/supabase-shelf-store';
+import { useAuth } from './useAuth';
 import { newProductId, type ShelfProduct } from '../types/shelf';
 
 export type NewShelfProduct = Omit<ShelfProduct, 'id' | 'addedAt'>;
@@ -27,19 +29,27 @@ const ShelfContext = createContext<ShelfContextValue | null>(null);
 
 export function ShelfProvider({
   children,
-  store = asyncStorageShelfStore,
+  store,
 }: {
   children: ReactNode;
-  /** Injectable so Phase 8 can pass a Supabase-backed store, and tests a fake. */
+  /** Overrides the auth-derived store. Used by tests. */
   store?: ShelfStore;
 }) {
+  const { userId } = useAuth();
+
+  // Signed in reads and writes Supabase; signed out falls back to local so
+  // nothing crashes before the auth gate has resolved.
+  const activeStore = useMemo<ShelfStore>(
+    () => store ?? (userId ? createSupabaseShelfStore(userId) : asyncStorageShelfStore),
+    [store, userId]
+  );
   const [products, setProducts] = useState<ShelfProduct[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
-    store
+    activeStore
       .load()
       .then((loaded) => {
         if (!cancelled) setProducts(loaded);
@@ -55,7 +65,7 @@ export function ShelfProvider({
     return () => {
       cancelled = true;
     };
-  }, [store]);
+  }, [activeStore]);
 
   /**
    * Single write path: compute the next list, persist, then commit to state.
@@ -64,10 +74,10 @@ export function ShelfProvider({
    */
   const commit = useCallback(
     async (next: ShelfProduct[]) => {
-      await store.save(next);
+      await activeStore.save(next);
       setProducts(next);
     },
-    [store]
+    [activeStore]
   );
 
   const addProduct = useCallback(
@@ -100,9 +110,9 @@ export function ShelfProvider({
   );
 
   const clearShelf = useCallback(async () => {
-    await store.clear();
+    await activeStore.clear();
     setProducts([]);
-  }, [store]);
+  }, [activeStore]);
 
   const getProduct = useCallback(
     (id: string) => products.find((product) => product.id === id),

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useLanguage } from '../hooks/useLanguage';
 import { spacing } from '../theme';
 import { Button } from './Button';
 import { ProgressBar } from './ProgressBar';
@@ -7,6 +8,11 @@ import { Screen } from './Screen';
 import { Text } from './Text';
 
 export const ONBOARDING_STEP_COUNT = 5;
+
+const COPY = {
+  en: { back: 'Back', next: 'Continue' },
+  tr: { back: 'Geri', next: 'Devam' },
+} as const;
 
 export type OnboardingStepProps = {
   step: number;
@@ -19,6 +25,7 @@ export type OnboardingStepProps = {
   onNext: () => void;
   /** Disables Next until the step's requirement is met. */
   canAdvance: boolean;
+  /** Overrides the default "Continue" — pass an already-translated string. */
   nextLabel?: string;
 };
 
@@ -37,8 +44,11 @@ export function OnboardingStep({
   onBack,
   onNext,
   canAdvance,
-  nextLabel = 'Continue',
+  nextLabel,
 }: OnboardingStepProps) {
+  const { language } = useLanguage();
+  const t = COPY[language];
+
   return (
     <Screen scroll>
       <View style={styles.header}>
@@ -63,13 +73,13 @@ export function OnboardingStep({
 
       <View style={styles.footer}>
         {onBack ? (
-          <Button label="Back" variant="secondary" onPress={onBack} />
+          <Button label={t.back} variant="secondary" onPress={onBack} />
         ) : (
           // Keeps Next right-aligned on step 1, where there is nothing to go back to.
           <View />
         )}
         <Button
-          label={nextLabel}
+          label={nextLabel ?? t.next}
           onPress={onNext}
           disabled={!canAdvance}
           style={styles.next}

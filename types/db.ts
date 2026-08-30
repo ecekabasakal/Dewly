@@ -166,16 +166,19 @@ export type Database = {
           user_id: string;
           product_id: string;
           added_at: string;
+          time_of_day: Database['public']['Enums']['shelf_time_of_day'];
         };
         Insert: {
           user_id: string;
           product_id: string;
           added_at?: string;
+          time_of_day?: Database['public']['Enums']['shelf_time_of_day'];
         };
         Update: {
           user_id?: string;
           product_id?: string;
           added_at?: string;
+          time_of_day?: Database['public']['Enums']['shelf_time_of_day'];
         };
         Relationships: [
           {
@@ -189,6 +192,52 @@ export type Database = {
             foreignKeyName: 'user_shelf_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
+            referencedRelation: 'users';
+            referencedSchema: 'auth';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+
+      skin_profiles: {
+        Row: {
+          user_id: string;
+          skin_type: Database['public']['Enums']['skin_type'];
+          concerns: string[];
+          goals: string[];
+          age_range: Database['public']['Enums']['age_range'];
+          sensitivity: Database['public']['Enums']['sensitivity_level'];
+          version: number;
+          completed_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          skin_type: Database['public']['Enums']['skin_type'];
+          concerns?: string[];
+          goals?: string[];
+          age_range: Database['public']['Enums']['age_range'];
+          sensitivity: Database['public']['Enums']['sensitivity_level'];
+          version?: number;
+          completed_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          skin_type?: Database['public']['Enums']['skin_type'];
+          concerns?: string[];
+          goals?: string[];
+          age_range?: Database['public']['Enums']['age_range'];
+          sensitivity?: Database['public']['Enums']['sensitivity_level'];
+          version?: number;
+          completed_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'skin_profiles_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
             referencedRelation: 'users';
             referencedSchema: 'auth';
             referencedColumns: ['id'];
@@ -292,6 +341,12 @@ export type Database = {
         | 'spf';
       time_of_day: 'am' | 'pm';
       severity_level: 'low' | 'medium' | 'high';
+      /** Phase 8 — onboarding answers stored per user. */
+      skin_type: 'dry' | 'oily' | 'combination' | 'sensitive' | 'normal';
+      age_range: 'under-18' | '18-24' | '25-34' | '35-44' | '45-plus';
+      sensitivity_level: 'not-sensitive' | 'slightly' | 'very';
+      /** A shelf entry can be morning, evening, or both. */
+      shelf_time_of_day: 'am' | 'pm' | 'both';
       ingredient_category:
         | 'humectant'
         | 'occlusive'

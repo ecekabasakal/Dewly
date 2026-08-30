@@ -8,6 +8,8 @@ import {
   type ReactNode,
 } from 'react';
 import { asyncStorageProfileStore, type ProfileStore } from '../lib/profile-store';
+import { createSupabaseProfileStore } from '../lib/supabase-profile-store';
+import { useAuth } from './useAuth';
 import {
   EMPTY_DRAFT,
   PROFILE_VERSION,
@@ -43,12 +45,20 @@ const ProfileContext = createContext<ProfileContextValue | null>(null);
 
 export function ProfileProvider({
   children,
-  store = asyncStorageProfileStore,
+  store,
 }: {
   children: ReactNode;
-  /** Injectable so Phase 8 can pass a Supabase-backed store, and tests a fake. */
+  /** Overrides the auth-derived store. Used by tests. */
   store?: ProfileStore;
 }) {
+  const { userId } = useAuth();
+
+  // The seam this interface existed for: signed in reads and writes Supabase,
+  // signed out falls back to local so nothing crashes before the auth gate.
+  const activeStore = useMemo<ProfileStore>(
+    () => store ?? (userId ? createSupabaseProfileStore(userId) : asyncStorageProfileStore),
+    [store, userId]
+  );
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [draft, setDraft] = useState<ProfileDraft>(EMPTY_DRAFT);
@@ -56,7 +66,7 @@ export function ProfileProvider({
   useEffect(() => {
     let cancelled = false;
 
-    store
+    activeStore
       .load()
       .then((loaded) => {
         if (!cancelled) setProfile(loaded);
@@ -73,7 +83,7 @@ export function ProfileProvider({
     return () => {
       cancelled = true;
     };
-  }, [store]);
+  }, [activeStore]);
 
   const updateDraft = useCallback((patch: Partial<ProfileDraft>) => {
     setDraft((previous) => ({ ...previous, ...patch }));
@@ -100,17 +110,17 @@ export function ProfileProvider({
       version: PROFILE_VERSION,
     };
 
-    await store.save(completed);
+    await activeStore.save(completed);
     setProfile(completed);
     setDraft(EMPTY_DRAFT);
     return completed;
-  }, [draft, store]);
+  }, [draft, activeStore]);
 
   const resetProfile = useCallback(async () => {
-    await store.clear();
+    await activeStore.clear();
     setProfile(null);
     setDraft(EMPTY_DRAFT);
-  }, [store]);
+  }, [activeStore]);
 
   const value = useMemo<ProfileContextValue>(
     () => ({

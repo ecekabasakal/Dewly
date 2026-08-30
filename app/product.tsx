@@ -15,7 +15,7 @@ import { TimingEvidence } from '../components/TimingEvidence';
 import { useAnalysis } from '../hooks/useAnalysis';
 import { useLanguage } from '../hooks/useLanguage';
 import { useShelf } from '../hooks/useShelf';
-import { guessStep, isAmOnlyStep } from '../lib/step-guess';
+import { guessReasonText, guessStep, isAmOnlyStep } from '../lib/step-guess';
 import {
   resolveRule,
   suggestTiming,
@@ -33,6 +33,57 @@ import {
   type ShelfProduct,
   type StepType,
 } from '../types/shelf';
+
+const COPY = {
+  en: {
+    editTitle: 'Edit product',
+    addTitle: 'Add a product',
+    fromAnalysis: 'Carried over from your analysis — check the step and save.',
+    subtitle: 'Name it, confirm the step, and Dewly slots it into your routine.',
+    nameLabel: 'Product name',
+    namePlaceholder: 'e.g. Cleansing Oil',
+    brandLabel: 'Brand (optional)',
+    brandPlaceholder: 'e.g. Beauty of Joseon',
+    guessedBadge: 'GUESSED',
+    guessedFromName: 'from the product name',
+    guessedFromIngredients: 'from the ingredients',
+    looksLike: 'Looks like a',
+    changeIfWrong: "Change it below if that's wrong.",
+    stepLabel: 'Step',
+    whenLabel: 'When do you use it?',
+    headsUpBadge: 'HEADS UP',
+    spfAtNight: (time: string) =>
+      `SPF only works during the day. Saving this as ${time} will flag it in your evening routine.`,
+    ingredientNote: (n: number) => `${n} ingredients will be saved with this product.`,
+    cancel: 'Cancel',
+    saveChanges: 'Save changes',
+    addToShelf: 'Add to shelf',
+  },
+  tr: {
+    editTitle: 'Ürünü düzenle',
+    addTitle: 'Ürün ekle',
+    fromAnalysis: 'Analizinden aktarıldı — adımı kontrol edip kaydet.',
+    subtitle: 'Adını yaz, adımı onayla; Dewly onu rutinine yerleştirsin.',
+    nameLabel: 'Ürün adı',
+    namePlaceholder: 'örn. Temizleme Yağı',
+    brandLabel: 'Marka (isteğe bağlı)',
+    brandPlaceholder: 'örn. Beauty of Joseon',
+    guessedBadge: 'TAHMİN',
+    guessedFromName: 'ürün adından',
+    guessedFromIngredients: 'içeriklerden',
+    looksLike: 'Bu bir',
+    changeIfWrong: 'Yanlışsa aşağıdan değiştirebilirsin.',
+    stepLabel: 'Adım',
+    whenLabel: 'Ne zaman kullanıyorsun?',
+    headsUpBadge: 'DİKKAT',
+    spfAtNight: (time: string) =>
+      `Güneş koruyucu yalnızca gündüz işe yarar. ${time} olarak kaydedersen akşam rutininde işaretlenir.`,
+    ingredientNote: (n: number) => `Bu ürünle birlikte ${n} içerik kaydedilecek.`,
+    cancel: 'İptal',
+    saveChanges: 'Değişiklikleri kaydet',
+    addToShelf: 'Rafa ekle',
+  },
+} as const;
 
 /**
  * Gate on the shelf being loaded before mounting the form.
@@ -90,6 +141,7 @@ function ProductForm({
   const [timeTouched, setTimeTouched] = useState(editing !== undefined);
 
   const { language } = useLanguage();
+  const t = COPY[language];
   const ingredientNames = editing?.ingredientNames ?? analysisIngredients;
   const guess = useMemo(
     () => guessStep(name, ingredientNames),
@@ -150,62 +202,61 @@ function ProductForm({
     >
       <Screen scroll>
         <View style={styles.header}>
-          <Text variant="h1">{editing ? 'Edit product' : 'Add a product'}</Text>
+          <Text variant="h1">{editing ? t.editTitle : t.addTitle}</Text>
           <Text variant="body" tone="muted">
-            {fromAnalysis && !editing
-              ? 'Carried over from your analysis — check the step and save.'
-              : 'Name it, confirm the step, and Dewly slots it into your routine.'}
+            {fromAnalysis && !editing ? t.fromAnalysis : t.subtitle}
           </Text>
         </View>
 
-        <Field label="Product name">
+        <Field label={t.nameLabel}>
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="e.g. Cleansing Oil"
+            placeholder={t.namePlaceholder}
             placeholderTextColor={colors.muted}
             style={styles.input}
             autoCapitalize="words"
-            accessibilityLabel="Product name"
+            accessibilityLabel={t.nameLabel}
           />
         </Field>
 
-        <Field label="Brand (optional)">
+        <Field label={t.brandLabel}>
           <TextInput
             value={brand}
             onChangeText={setBrand}
-            placeholder="e.g. Beauty of Joseon"
+            placeholder={t.brandPlaceholder}
             placeholderTextColor={colors.muted}
             style={styles.input}
             autoCapitalize="words"
-            accessibilityLabel="Brand"
+            accessibilityLabel={t.brandLabel}
           />
         </Field>
 
         {guess.stepType && !stepTouched ? (
           <Card style={styles.guessCard}>
             <View style={styles.guessHeader}>
-              <Badge label="GUESSED" tone="info" />
+              <Badge label={t.guessedBadge} tone="info" />
               <Text variant="caption" tone="muted">
-                from the {guess.source === 'name' ? 'product name' : 'ingredients'}
+                {guess.source === 'name' ? t.guessedFromName : t.guessedFromIngredients}
               </Text>
             </View>
             <Text variant="body">
-              Looks like a <Text style={styles.bold}>{STEP_LABELS[guess.stepType]}</Text>
-              {guess.reason ? ` — ${guess.reason}.` : '.'}
+              {t.looksLike}{' '}
+              <Text style={styles.bold}>{STEP_LABELS[language][guess.stepType]}</Text>
+              {guess.reason ? ` — ${guessReasonText(guess.reason, language)}.` : '.'}
             </Text>
             <Text variant="caption" tone="muted">
-              Change it below if that's wrong.
+              {t.changeIfWrong}
             </Text>
           </Card>
         ) : null}
 
-        <Field label="Step">
+        <Field label={t.stepLabel}>
           <View style={styles.grid}>
             {STEP_ORDER.map((step) => (
               <Chip
                 key={step}
-                label={STEP_LABELS[step]}
+                label={STEP_LABELS[language][step]}
                 selected={stepType === step}
                 onPress={() => {
                   setStepTouched(true);
@@ -216,12 +267,12 @@ function ProductForm({
           </View>
         </Field>
 
-        <Field label="When do you use it?">
+        <Field label={t.whenLabel}>
           <View style={styles.grid}>
             {TIME_OF_DAY_OPTIONS.map((option) => (
               <Chip
                 key={option}
-                label={TIME_OF_DAY_LABELS[option]}
+                label={TIME_OF_DAY_LABELS[language][option]}
                 selected={timeOfDay === option}
                 onPress={() => {
                   setTimeTouched(true);
@@ -240,24 +291,23 @@ function ProductForm({
 
         {spfAtNight ? (
           <View style={styles.warning}>
-            <Badge label="HEADS UP" tone="warning" />
+            <Badge label={t.headsUpBadge} tone="warning" />
             <Text variant="caption" style={styles.warningText}>
-              SPF only works during the day. Saving this as {TIME_OF_DAY_LABELS[timeOfDay]}{' '}
-              will flag it in your evening routine.
+              {t.spfAtNight(TIME_OF_DAY_LABELS[language][timeOfDay])}
             </Text>
           </View>
         ) : null}
 
         {ingredientNames.length > 0 ? (
           <Text variant="caption" tone="muted" style={styles.ingredientNote}>
-            {ingredientNames.length} ingredients will be saved with this product.
+            {t.ingredientNote(ingredientNames.length)}
           </Text>
         ) : null}
 
         <View style={styles.footer}>
-          <Button label="Cancel" variant="secondary" onPress={() => goBackOr('/shelf')} />
+          <Button label={t.cancel} variant="secondary" onPress={() => goBackOr('/shelf')} />
           <Button
-            label={editing ? 'Save changes' : 'Add to shelf'}
+            label={editing ? t.saveChanges : t.addToShelf}
             onPress={save}
             disabled={!canSave}
             loading={saving}
@@ -309,7 +359,7 @@ function TimingSuggestion({
     <Card style={styles.timingCard}>
       <View style={styles.timingHeader}>
         <Text variant="h2">
-          {t.suggested(TIME_OF_DAY_LABELS[timing.time])}
+          {t.suggested(TIME_OF_DAY_LABELS[language][timing.time])}
         </Text>
       </View>
 

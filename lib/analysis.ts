@@ -7,6 +7,7 @@
 
 import { supabase } from './supabase';
 import { parseInciList, resolveTokens, type ParsedToken, type MatchVia } from './inci';
+import { pick, type Language } from './language';
 import type { Ingredient } from '../types/db';
 import type { Concern, Profile } from '../types/profile';
 
@@ -129,21 +130,18 @@ function buildHeadsUp(ingredient: Ingredient, profile: Profile | null): HeadsUp[
 export function headsUpCopy(
   flag: HeadsUp,
   ingredient: Ingredient,
-  language: 'en' | 'tr'
+  language: Language
 ): { label: string; detail: string } {
   const t = COPY[language];
 
   switch (flag.kind) {
-    case 'caution': {
-      // Fall back across languages rather than dropping a genuine warning
-      // because one column happens to be empty.
-      const detail =
-        (language === 'tr' ? ingredient.caution_tr : ingredient.caution_en) ??
-        ingredient.caution_en ??
-        ingredient.caution_tr ??
-        '';
-      return { label: t.caution, detail };
-    }
+    case 'caution':
+      // `pick` falls back across languages rather than dropping a genuine
+      // warning because one column happens to be empty.
+      return {
+        label: t.caution,
+        detail: pick(language, ingredient.caution_en, ingredient.caution_tr),
+      };
     case 'fragrance':
       return {
         label: t.fragrance,
@@ -159,11 +157,8 @@ export function headsUpCopy(
   }
 }
 
-export function describe(ingredient: Ingredient, language: 'en' | 'tr'): string | null {
-  const preferred =
-    language === 'tr' ? ingredient.description_tr : ingredient.description_en;
-  // Fall back across languages rather than showing an empty card.
-  return preferred ?? ingredient.description_en ?? ingredient.description_tr;
+export function describe(ingredient: Ingredient, language: Language): string | null {
+  return pick(language, ingredient.description_en, ingredient.description_tr) || null;
 }
 
 /**

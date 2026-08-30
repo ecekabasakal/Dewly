@@ -10,14 +10,48 @@ import { router } from 'expo-router';
 
 import { Button, Screen, Text } from '../../components';
 import { useAnalysis } from '../../hooks/useAnalysis';
+import { useLanguage } from '../../hooks/useLanguage';
 import { parseInciList } from '../../lib/inci';
 import { colors, fonts, radius, spacing, typography } from '../../theme';
+
+const COPY = {
+  en: {
+    title: 'Analyze a product',
+    subtitle:
+      'Paste the ingredient list from the back of the bottle. Commas or new lines both work.',
+    placeholder: 'Aqua, Glycerin, Niacinamide…',
+    inputLabel: 'Ingredient list',
+    empty: 'Nothing to analyze yet',
+    detected: (n: number) => `${n} ingredient${n === 1 ? '' : 's'} detected`,
+    clear: 'Clear',
+    analyzing: 'Analyzing…',
+    analyze: 'Analyze',
+    noBottle: 'Not near a bottle?',
+    useSample: 'Use a sample list',
+  },
+  tr: {
+    title: 'Bir ürünü analiz et',
+    subtitle:
+      'Şişenin arkasındaki içerik listesini yapıştır. Virgül de satır sonu da olur.',
+    placeholder: 'Aqua, Glycerin, Niacinamide…',
+    inputLabel: 'İçerik listesi',
+    empty: 'Henüz analiz edilecek bir şey yok',
+    detected: (n: number) => `${n} içerik bulundu`,
+    clear: 'Temizle',
+    analyzing: 'Analiz ediliyor…',
+    analyze: 'Analiz et',
+    noBottle: 'Yanında ürün yok mu?',
+    useSample: 'Örnek liste kullan',
+  },
+} as const;
 
 const SAMPLE = `Aqua, Glycerin, Niacinamide, Butylene Glycol, Centella Asiatica Extract, Sodium Hyaluronate, Panthenol, Squalane, Cocos Nucifera (Coconut) Oil, Tocopherol, Parfum, Limonene, Phenoxyethanol`;
 
 export default function PasteScreen() {
   const [text, setText] = useState('');
   const { analyze, status } = useAnalysis();
+  const { language } = useLanguage();
+  const t = COPY[language];
 
   const tokenCount = parseInciList(text).length;
   const isLoading = status === 'loading';
@@ -35,10 +69,9 @@ export default function PasteScreen() {
     >
       <Screen scroll>
         <View style={styles.header}>
-          <Text variant="h1">Analyze a product</Text>
+          <Text variant="h1">{t.title}</Text>
           <Text variant="body" tone="muted">
-            Paste the ingredient list from the back of the bottle. Commas or new
-            lines both work.
+            {t.subtitle}
           </Text>
         </View>
 
@@ -47,29 +80,27 @@ export default function PasteScreen() {
           onChangeText={setText}
           multiline
           textAlignVertical="top"
-          placeholder="Aqua, Glycerin, Niacinamide…"
+          placeholder={t.placeholder}
           placeholderTextColor={colors.muted}
           style={styles.input}
           autoCapitalize="none"
           autoCorrect={false}
-          accessibilityLabel="Ingredient list"
+          accessibilityLabel={t.inputLabel}
         />
 
         <View style={styles.meta}>
           <Text variant="caption" tone="muted">
-            {tokenCount === 0
-              ? 'Nothing to analyze yet'
-              : `${tokenCount} ingredient${tokenCount === 1 ? '' : 's'} detected`}
+            {tokenCount === 0 ? t.empty : t.detected(tokenCount)}
           </Text>
           {text.length > 0 ? (
             <Text variant="caption" tone="primary" onPress={() => setText('')}>
-              Clear
+              {t.clear}
             </Text>
           ) : null}
         </View>
 
         <Button
-          label={isLoading ? 'Analyzing…' : 'Analyze'}
+          label={isLoading ? t.analyzing : t.analyze}
           onPress={run}
           disabled={!canSubmit}
           loading={isLoading}
@@ -80,10 +111,10 @@ export default function PasteScreen() {
 
         <View style={styles.sampleBlock}>
           <Text variant="caption" tone="muted">
-            Not near a bottle?
+            {t.noBottle}
           </Text>
           <Button
-            label="Use a sample list"
+            label={t.useSample}
             variant="secondary"
             onPress={() => setText(SAMPLE)}
           />

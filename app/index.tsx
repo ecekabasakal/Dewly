@@ -1,28 +1,58 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { Redirect } from 'expo-router';
 
+import { authLog, useAuth } from '../hooks/useAuth';
 import { useProfile } from '../hooks/useProfile';
 import { colors } from '../theme';
 
 /**
- * Entry gate: decides between onboarding and home.
+ * Entry gate. Order matters, and each step waits for real data:
  *
- * Renders a spinner rather than redirecting while `isLoaded` is false —
- * redirecting on an unresolved profile would send a returning user through
- * onboarding again for the split second before storage answers.
+ *   auth loading        -> spinner
+ *   not signed in       -> /auth/sign-in
+ *   migrating           -> spinner (first sign-in moves local data up)
+ *   profile loading     -> spinner
+ *   no profile          -> /onboarding   (outside the tabs, so no tab bar)
+ *   signed in + profile -> /home         (the tab app)
+ *
+ * Every "loading" branch renders a spinner rather than redirecting. Redirecting
+ * on unresolved state would bounce a signed-in user through the sign-in screen,
+ * or a returning user back through onboarding, for the frame before the answer
+ * arrives.
  */
 export default function Index() {
-  const { isLoaded, hasCompletedOnboarding } = useProfile();
+  const { isLoaded: authLoaded, sessionUserId, userId, isMigrating } = useAuth();
+  const { isLoaded: profileLoaded, hasCompletedOnboarding } = useProfile();
 
-  if (!isLoaded) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    );
+  if (!authLoaded) {
+    authLog('gate: waiting for auth…');
+    return <Loading />;
+  }
+  if (!sessionUserId) {
+    authLog('gate: no session -> /auth/sign-in');
+    return <Redirect href="/auth/sign-in" />;
   }
 
-  return <Redirect href={hasCompletedOnboarding ? '/home' : '/onboarding'} />;
+  // `userId` only appears once migration has settled; until then the profile
+  // store is still the local one and its answer would be misleading.
+  if (isMigrating || !userId || !profileLoaded) {
+    authLog(
+      `gate: waiting (migrating=${isMigrating} userReady=${Boolean(userId)} profileLoaded=${profileLoaded})`
+    );
+    return <Loading />;
+  }
+
+  const target = hasCompletedOnboarding ? '/home' : '/onboarding';
+  authLog(`gate: signed in, profile=${hasCompletedOnboarding ? 'yes' : 'no'} -> ${target}`);
+  return <Redirect href={target} />;
+}
+
+function Loading() {
+  return (
+    <View style={styles.loading}>
+      <ActivityIndicator color={colors.primary} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

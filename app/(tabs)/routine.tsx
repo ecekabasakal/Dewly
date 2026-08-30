@@ -8,8 +8,58 @@ import { useLanguage } from '../../hooks/useLanguage';
 import { findConflicts } from '../../lib/conflicts';
 import { useShelf } from '../../hooks/useShelf';
 import { buildRoutine, type Routine, type RoutineSlot } from '../../lib/routine';
+import type { Language } from '../../lib/language';
 import { colors, fonts, radius, spacing } from '../../theme';
 import { STEP_LABELS, TIME_OF_DAY_LABELS } from '../../types/shelf';
+
+const COPY = {
+  en: {
+    title: 'Your routine',
+    subtitle: 'Ordered the way skincare layers — thinnest to richest, SPF last.',
+    morning: 'Morning',
+    evening: 'Evening',
+    emptyTitle: 'No products yet',
+    emptyBody: 'Add what you own and Dewly will put it in order for you.',
+    goToShelf: 'Go to my shelf',
+    wrongSlotBadge: 'WRONG SLOT',
+    spfInPm: (names: string[]) =>
+      `${names.join(', ')} ${names.length === 1 ? 'is' : 'are'} SPF, which only works in ` +
+      `daylight. Move ${names.length === 1 ? 'it' : 'them'} to AM.`,
+    amOnlyBadge: 'AM ONLY',
+    nothingScheduled: (slot: RoutineSlot) =>
+      `Nothing scheduled for the ${slot === 'am' ? 'morning' : 'evening'}`,
+    nothingScheduledBody: (slot: RoutineSlot) =>
+      `Your shelf has products, but none are marked ${slot === 'am' ? 'AM' : 'PM'}. ` +
+      `Edit a product to change when you use it.`,
+    missingTitle: "STEPS YOU DON'T HAVE",
+    missingHint: "A routine doesn't need every step — this is just what's absent.",
+    editShelf: 'Edit shelf',
+    whyTimings: 'Why these timings?',
+  },
+  tr: {
+    title: 'Rutinin',
+    subtitle: 'Cilt bakımının katman sırasına göre — en hafiften en zengine, SPF en sonda.',
+    morning: 'Sabah',
+    evening: 'Akşam',
+    emptyTitle: 'Henüz ürün yok',
+    emptyBody: 'Sahip olduklarını ekle, Dewly senin için sıraya koysun.',
+    goToShelf: 'Rafıma git',
+    wrongSlotBadge: 'YANLIŞ ZAMAN',
+    spfInPm: (names: string[]) =>
+      `${names.join(', ')} güneş koruyucu ve yalnızca gün ışığında işe yarar. ` +
+      `AM'ye taşı.`,
+    amOnlyBadge: 'SADECE AM',
+    nothingScheduled: (slot: RoutineSlot) =>
+      `${slot === 'am' ? 'Sabah' : 'Akşam'} için planlanmış bir şey yok`,
+    nothingScheduledBody: (slot: RoutineSlot) =>
+      `Rafında ürün var ama hiçbiri ${slot === 'am' ? 'AM' : 'PM'} olarak işaretlenmemiş. ` +
+      `Ne zaman kullandığını değiştirmek için ürünü düzenle.`,
+    missingTitle: 'SENDE OLMAYAN ADIMLAR',
+    missingHint: 'Bir rutinde her adım olmak zorunda değil — bu sadece eksik olanlar.',
+    editShelf: 'Rafı düzenle',
+    whyTimings: 'Bu zamanlamalar neden?',
+  },
+} as const;
 
 export default function RoutineScreen() {
   const { products, isLoaded } = useShelf();
@@ -19,6 +69,7 @@ export default function RoutineScreen() {
   const [slot, setSlot] = useState<RoutineSlot>(params.slot === 'pm' ? 'pm' : 'am');
 
   const { language } = useLanguage();
+  const t = COPY[language];
 
   if (!isLoaded) return null;
 
@@ -30,32 +81,32 @@ export default function RoutineScreen() {
   return (
     <Screen scroll>
       <View style={styles.header}>
-        <Text variant="h1">Your routine</Text>
+        <Text variant="h1">{t.title}</Text>
         <Text variant="body" tone="muted">
-          Ordered the way skincare layers — thinnest to richest, SPF last.
+          {t.subtitle}
         </Text>
       </View>
 
       <View style={styles.tabs}>
-        <Chip label="Morning" selected={slot === 'am'} onPress={() => setSlot('am')} />
-        <Chip label="Evening" selected={slot === 'pm'} onPress={() => setSlot('pm')} />
+        <Chip label={t.morning} selected={slot === 'am'} onPress={() => setSlot('am')} />
+        <Chip label={t.evening} selected={slot === 'pm'} onPress={() => setSlot('pm')} />
       </View>
 
       {products.length === 0 ? (
         <Card style={styles.empty}>
-          <Text variant="h2">No products yet</Text>
+          <Text variant="h2">{t.emptyTitle}</Text>
           <Text variant="body" tone="muted">
-            Add what you own and Dewly will put it in order for you.
+            {t.emptyBody}
           </Text>
           <Button
-            label="Go to my shelf"
+            label={t.goToShelf}
             variant="secondary"
             onPress={() => router.navigate('/shelf')}
           />
         </Card>
       ) : (
         <>
-          <RoutineList routine={routine} />
+          <RoutineList routine={routine} language={language} />
           <ConflictCheck findings={findings} language={language} />
         </>
       )}
@@ -63,8 +114,9 @@ export default function RoutineScreen() {
   );
 }
 
-function RoutineList({ routine }: { routine: Routine }) {
+function RoutineList({ routine, language }: { routine: Routine; language: Language }) {
   const { entries, warnings, missingSteps, slot } = routine;
+  const t = COPY[language];
 
   return (
     <>
@@ -73,25 +125,18 @@ function RoutineList({ routine }: { routine: Routine }) {
           key={warning.kind}
           style={[styles.warning, styles.warningDanger]}
         >
-          <Badge label="WRONG SLOT" tone="danger" />
+          <Badge label={t.wrongSlotBadge} tone="danger" />
           <Text variant="caption" style={styles.warningText}>
-            {`${warning.productNames.join(', ')} ${
-              warning.productNames.length === 1 ? 'is' : 'are'
-            } SPF, which only works in daylight. Move ${
-              warning.productNames.length === 1 ? 'it' : 'them'
-            } to AM.`}
+            {t.spfInPm(warning.productNames)}
           </Text>
         </View>
       ))}
 
       {entries.length === 0 ? (
         <Card style={styles.empty}>
-          <Text variant="h2">
-            Nothing scheduled for the {slot === 'am' ? 'morning' : 'evening'}
-          </Text>
+          <Text variant="h2">{t.nothingScheduled(slot)}</Text>
           <Text variant="body" tone="muted">
-            Your shelf has products, but none are marked{' '}
-            {slot === 'am' ? 'AM' : 'PM'}. Edit a product to change when you use it.
+            {t.nothingScheduledBody(slot)}
           </Text>
         </Card>
       ) : (
@@ -112,18 +157,19 @@ function RoutineList({ routine }: { routine: Routine }) {
               >
                 <View style={styles.stepHeader}>
                   <Text variant="caption" tone="muted" style={styles.stepLabel}>
-                    {STEP_LABELS[entry.product.stepType].toUpperCase()}
+                    {STEP_LABELS[language][entry.product.stepType].toUpperCase()}
                   </Text>
-                  {entry.misplaced ? <Badge label="AM ONLY" tone="danger" /> : null}
+                  {entry.misplaced ? <Badge label={t.amOnlyBadge} tone="danger" /> : null}
                 </View>
                 <Text variant="h2">{entry.product.name}</Text>
                 {entry.product.brand ? (
                   <Text variant="caption" tone="muted">
-                    {entry.product.brand} · {TIME_OF_DAY_LABELS[entry.product.timeOfDay]}
+                    {entry.product.brand} ·{' '}
+                    {TIME_OF_DAY_LABELS[language][entry.product.timeOfDay]}
                   </Text>
                 ) : (
                   <Text variant="caption" tone="muted">
-                    {TIME_OF_DAY_LABELS[entry.product.timeOfDay]}
+                    {TIME_OF_DAY_LABELS[language][entry.product.timeOfDay]}
                   </Text>
                 )}
               </Card>
@@ -135,31 +181,31 @@ function RoutineList({ routine }: { routine: Routine }) {
       {missingSteps.length > 0 && entries.length > 0 ? (
         <View style={styles.gaps}>
           <Text variant="caption" tone="muted" style={styles.gapsTitle}>
-            STEPS YOU DON'T HAVE
+            {t.missingTitle}
           </Text>
           <View style={styles.gapsRow}>
             {missingSteps.map((step) => (
               <View key={step} style={styles.gapChip}>
                 <Text variant="caption" tone="muted">
-                  {STEP_LABELS[step]}
+                  {STEP_LABELS[language][step]}
                 </Text>
               </View>
             ))}
           </View>
           <Text variant="caption" tone="muted">
-            A routine doesn't need every step — this is just what's absent.
+            {t.missingHint}
           </Text>
         </View>
       ) : null}
 
       <View style={styles.actions}>
         <Button
-          label="Edit shelf"
+          label={t.editShelf}
           variant="secondary"
           onPress={() => router.navigate('/shelf')}
         />
         <Button
-          label="Why these timings?"
+          label={t.whyTimings}
           variant="secondary"
           onPress={() => router.push('/timings')}
         />

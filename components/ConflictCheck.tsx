@@ -140,7 +140,7 @@ function FindingCard({
               looking like the two slots were pooled together. */}
           {t.triggeredBy}:{' '}
           {r.products
-            .map((p) => `${p.name} (${TIME_OF_DAY_LABELS[p.timeOfDay]})`)
+            .map((p) => `${p.name} (${TIME_OF_DAY_LABELS[language][p.timeOfDay]})`)
             .join(' · ')}
         </Text>
       ) : null}

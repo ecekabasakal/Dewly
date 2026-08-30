@@ -24,9 +24,7 @@ const HEADS_UP_TONE: Record<HeadsUpKind, StatusTone> = {
 };
 
 /**
- * Results-screen copy. Not a full i18n layer — the rest of the app is still
- * English-only (that's a v2 goal). These strings are translated because this
- * screen is where meaning matters most, the disclaimer especially.
+ * Results-screen copy, resolved at render from the global language.
  */
 const UI = {
   en: {
@@ -286,7 +284,9 @@ function IngredientCard({
         <View style={styles.concernRow}>
           <Text variant="caption" tone="muted">
             {UI[language].targetsYour}:{' '}
-            {matchedConcerns.map((c) => CONCERN_LABELS[c as Concern] ?? c).join(', ')}
+            {matchedConcerns
+              .map((c) => CONCERN_LABELS[language][c as Concern] ?? c)
+              .join(', ')}
           </Text>
         </View>
       ) : null}

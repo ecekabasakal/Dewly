@@ -3,12 +3,34 @@ import { router } from 'expo-router';
 import { goBackOr } from '../../lib/navigation';
 
 import { Chip, OnboardingStep } from '../../components';
+import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
 import { spacing } from '../../theme';
 import { GOALS, GOAL_LABELS, type Goal } from '../../types/profile';
 
+const COPY = {
+  en: {
+    title: 'What are you hoping for?',
+    subtitle: 'Your goals shape how routines get suggested later.',
+    optional: 'Optional — you can skip this one.',
+    selected: (n: number) => `${n} selected`,
+    skip: 'Skip',
+    next: 'Continue',
+  },
+  tr: {
+    title: 'Ne elde etmek istiyorsun?',
+    subtitle: 'Hedeflerin, ilerideki rutin önerilerini şekillendirir.',
+    optional: 'İsteğe bağlı — bu adımı atlayabilirsin.',
+    selected: (n: number) => `${n} seçildi`,
+    skip: 'Atla',
+    next: 'Devam',
+  },
+} as const;
+
 export default function GoalsStep() {
   const { draft, updateDraft } = useProfile();
+  const { language } = useLanguage();
+  const t = COPY[language];
 
   const toggle = (goal: Goal) => {
     const next = draft.goals.includes(goal)
@@ -20,17 +42,13 @@ export default function GoalsStep() {
   return (
     <OnboardingStep
       step={3}
-      title="What are you hoping for?"
-      subtitle="Your goals shape how routines get suggested later."
+      title={t.title}
+      subtitle={t.subtitle}
       // Goals are optional: unlike concerns they do not gate any Phase 5
       // matching, so requiring one would be a dead end for an unsure user.
-      hint={
-        draft.goals.length === 0
-          ? 'Optional — you can skip this one.'
-          : `${draft.goals.length} selected`
-      }
+      hint={draft.goals.length === 0 ? t.optional : t.selected(draft.goals.length)}
       canAdvance
-      nextLabel={draft.goals.length === 0 ? 'Skip' : 'Continue'}
+      nextLabel={draft.goals.length === 0 ? t.skip : t.next}
       onBack={() => goBackOr('/onboarding')}
       onNext={() => router.push('/onboarding/age')}
     >
@@ -38,7 +56,7 @@ export default function GoalsStep() {
         {GOALS.map((goal) => (
           <Chip
             key={goal}
-            label={GOAL_LABELS[goal]}
+            label={GOAL_LABELS[language][goal]}
             selected={draft.goals.includes(goal)}
             onPress={() => toggle(goal)}
           />

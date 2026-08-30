@@ -1,6 +1,8 @@
 import { Feather } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { ActivityIndicator, View } from 'react-native';
+import { Redirect, Tabs } from 'expo-router';
 
+import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 import { colors, fonts, spacing } from '../../theme';
 
@@ -9,13 +11,27 @@ import { colors, fonts, spacing } from '../../theme';
  * four words are the app's permanent furniture — worth translating.
  */
 const LABELS = {
-  en: { home: 'Home', analyze: 'Analyze', routine: 'Routine', shelf: 'Shelf' },
-  tr: { home: 'Ana sayfa', analyze: 'Analiz', routine: 'Rutin', shelf: 'Rafım' },
+  en: { home: 'Home', analyze: 'Analyze', routine: 'Routine', shelf: 'Shelf', profile: 'Profile' },
+  tr: { home: 'Ana sayfa', analyze: 'Analiz', routine: 'Rutin', shelf: 'Rafım', profile: 'Profil' },
 } as const;
 
 export default function TabsLayout() {
   const { language } = useLanguage();
+  const { isLoaded, sessionUserId } = useAuth();
   const t = LABELS[language];
+
+  // Auth is required. Render NOTHING until auth resolves — returning <Tabs/>
+  // while `isLoaded` is false paints the tab bar for a frame before the
+  // redirect lands, which looks like the gate failed. Deep-linking straight to
+  // /home with no session made that window visible.
+  if (!isLoaded) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    );
+  }
+  if (!sessionUserId) return <Redirect href="/auth/sign-in" />;
 
   return (
     <Tabs
@@ -73,6 +89,15 @@ export default function TabsLayout() {
           title: t.shelf,
           tabBarIcon: ({ color, size }) => (
             <Feather name="layers" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: t.profile,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="user" size={size} color={color} />
           ),
         }}
       />

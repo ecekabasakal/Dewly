@@ -335,3 +335,87 @@ grant select, insert, update, delete on routine_steps     to service_role;
 
 -- No sequence grants required: every primary key defaults to
 -- gen_random_uuid() rather than a serial/identity sequence.
+
+-- ---------------------------------------------------------------------------
+-- Phase 8 — Auth: per-user skin profile, and when a shelf product is used
+-- ---------------------------------------------------------------------------
+--
+-- Self-contained and idempotent: enums, table, indexes, RLS, policies and
+-- grants for everything Phase 8 introduces. Safe to re-run.
+
+-- Single-valued profile fields become enums, matching how the rest of this
+-- schema treats closed sets. `concerns` and `goals` stay text[] for the same
+-- reason `ingredients.targets_concerns` does — they are matched against it.
+do $$ begin
+  create type skin_type as enum ('dry', 'oily', 'combination', 'sensitive', 'normal');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type age_range as enum ('under-18', '18-24', '25-34', '35-44', '45-plus');
+exception when duplicate_object then null; end $$;
+
+do $$ begin
+  create type sensitivity_level as enum ('not-sensitive', 'slightly', 'very');
+exception when duplicate_object then null; end $$;
+
+-- A shelf product can be used morning, evening, or both. The existing
+-- `time_of_day` enum is am|pm because it describes a *routine* row; on a shelf
+-- entry "both" is the honest answer, so it needs its own type.
+do $$ begin
+  create type shelf_time_of_day as enum ('am', 'pm', 'both');
+exception when duplicate_object then null; end $$;
+
+-- ---------------------------------------------------------------------------
+-- skin_profiles — one row per user
+-- ---------------------------------------------------------------------------
+--
+-- user_id is the PRIMARY KEY, not a separate id: a user has exactly one skin
+-- profile, and making that a database constraint means the client can upsert
+-- on conflict without first checking whether a row exists.
+
+create table if not exists skin_profiles (
+  user_id      uuid primary key references auth.users (id) on delete cascade,
+  skin_type    skin_type not null,
+  concerns     text[] not null default '{}',
+  goals        text[] not null default '{}',
+  age_range    age_range not null,
+  sensitivity  sensitivity_level not null,
+  version      smallint not null default 1,
+  completed_at timestamptz not null default now(),
+  updated_at   timestamptz not null default now()
+);
+
+comment on table skin_profiles is
+  'Onboarding answers (Phase 4). One row per user; user_id is the primary key.';
+comment on column skin_profiles.concerns is
+  'Matched against ingredients.targets_concerns, so these must stay text[] with the same vocabulary.';
+
+-- ---------------------------------------------------------------------------
+-- user_shelf gains the per-user time of day
+-- ---------------------------------------------------------------------------
+--
+-- Products are a shared catalogue, but *when you use one* is personal, so this
+-- belongs on the join row rather than on `products`.
+
+alter table user_shelf
+  add column if not exists time_of_day shelf_time_of_day not null default 'both';
+
+-- ---------------------------------------------------------------------------
+-- RLS
+-- ---------------------------------------------------------------------------
+
+alter table skin_profiles enable row level security;
+
+drop policy if exists "users manage own skin profile" on skin_profiles;
+create policy "users manage own skin profile"
+  on skin_profiles for all
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+-- ---------------------------------------------------------------------------
+-- Privileges (RLS policies alone do not grant table access)
+-- ---------------------------------------------------------------------------
+
+grant select, insert, update, delete on skin_profiles to authenticated;
+grant select, insert, update, delete on skin_profiles to service_role;
