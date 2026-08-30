@@ -22,7 +22,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 8 — Auth (email done; Google login next)` · **Next task:** _add Google sign-in, then polish_
+> **Active phase:** `Phase 8 — Google login next` · **Next task:** _add Google OAuth sign-in_
 
 ## 📌 Backlog / later
 
@@ -47,7 +47,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 7 | Conflict/Interaction Engine ★ | ✅ |
 | 8 | Auth & Saving | 🟡 |
 | 9 | Barcode & Open Beauty Facts | ⬜ |
-| 10 | Polish & Testing | ⬜ |
+| 10 | Polish & Testing | ✅ |
 | 11 | Deploy & Launch | ⬜ |
 | 12 | Portfolio & CV | ⬜ |
 | — | v2 / Stretch Goals | ⬜ |
@@ -249,15 +249,45 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 10 — Polish & Testing
 
-- [ ] Empty-state designs on every screen
-- [ ] Loading and error states
-- [ ] Accessibility: contrast, touch targets, screen-reader labels
-- [ ] Add the "not medical advice" disclaimer to relevant screens
+Ran as an audit first (every screen, graded P1/P2/P3), then two fix passes.
+
+**Data integrity — the critical one**
+- [x] **Fixed a data-loss bug**: a transient read failure was being converted into an empty shelf/profile, and the next write then deleted the server rows the failed read never returned. A network blip could permanently destroy a user's shelf.
+- [x] `lib/guarded-store.ts` — wraps any store and refuses `save`/`clear` unless a load actually succeeded; fails closed. Applied in `useShelf`, `useProfile` and `lib/migrate.ts`, so the check sits next to the write rather than in the UI
+- [x] Explicit `status: 'loading' | 'ready' | 'failed'` on both hooks — a failed read no longer masquerades as "empty" or "never onboarded"
+- [x] Entry gate, Home and Profile no longer route a failed profile read into onboarding (which used to overwrite the real profile at the end of it)
+- [x] `lib/guarded-store.test.ts` — 7 tests, headline case proves a failed load followed by an add deletes nothing
+
+**States**
+- [x] Empty-state designs on every screen — including the "0 ingredients recognized" case on results, the most likely first-run failure
+- [x] Loading states: `ActivityIndicator` on home / shelf / routine / product, matching the entry gate; no more blank butter flashes
+- [x] Error states with retry (`components/ErrorState.tsx`) on every store-backed screen
+- [x] Analysis failure surfaces inline on the Analyze screen with a retry — it used to be a silent dead end
+- [x] No more silent failures: product save, shelf remove, sign out and reset onboarding all report errors instead of spinning forever or vanishing
+- [x] `lib/errors.ts` — typed `AppError` with a translated code and a separate `detail`, so raw English Supabase text is never rendered (it was appearing on Turkish screens)
+
+**Accessibility**
+- [x] WCAG AA contrast: `colors.muted` `#6B7F79` → `#5A6B66`; worst case 3.78:1 → **5.01:1** on butter, 5.29 on cream, 5.63 on white. One token, all 88 usages, incl. placeholders and the inactive tab tint
+- [x] Touch targets ≥44pt: `SourceLink` (the citation control, was ~26pt), the "Clear" action, and the "Why these timings?" link — plus `accessibilityRole` / `accessibilityLabel` on each
+- [x] Turkish overflow: `flex: 1` + `numberOfLines` on every title-beside-a-badge row; `Badge` now ellipsizes rather than pushing titles out
+
+**Housekeeping**
+- [x] Verified the "not medical advice" disclaimer on every screen that gives guidance — analysis results, routine/conflict check (incl. the no-conflicts state), timing suggestions and the timings source screen
+- [x] `app/kitchen-sink.tsx` gated on `__DEV__` — the dev reference screen was shipping in release builds and reachable by deep link
+- [x] Confirmed clean: no `any`, no `@ts-` suppressions, no stray TODOs; all logging is `__DEV__`-guarded
+- [x] Fix known bugs (keep an issue list) — the P1/P2/P3 audit *was* the issue list; everything P1 and P2 is fixed, the remainder is under "Known / deferred" below
 - [ ] Write manual test scenarios and run them end to end
-- [ ] Fix known bugs (keep an issue list)
 - [ ] Performance: reduce unnecessary re-renders
 
 **Definition of Done:** App is smooth, bug-free, and handles edge cases cleanly.
+
+### Known / deferred
+
+Consciously left for later — none block Google login:
+
+- **Offline detection (#11).** Every failure path now reports cleanly, but nothing detects connectivity up front, so an offline user finds out by trying. A `NetInfo` banner would turn a per-action error into one honest global state.
+- **First-run disclaimer (#19) — settle before store submission.** Per-screen disclaimers are all present and verified, but there is no one-time notice at first launch or during onboarding, and per-screen text is easy to scroll past. Worth a decision before App Store / Play review.
+- **ESLint + Prettier setup (Phase 0, still unticked).** Never configured, which means the one `eslint-disable-next-line` in `app/product.tsx` is currently inert.
 
 ---
 
