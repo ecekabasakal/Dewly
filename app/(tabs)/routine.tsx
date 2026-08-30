@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
-import { Badge, Button, Card, Chip, Screen, Text } from '../../components';
+import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../../components';
 import { ConflictCheck } from '../../components/ConflictCheck';
 import { useLanguage } from '../../hooks/useLanguage';
 import { findConflicts } from '../../lib/conflicts';
@@ -62,7 +62,7 @@ const COPY = {
 } as const;
 
 export default function RoutineScreen() {
-  const { products, isLoaded } = useShelf();
+  const { products, status, reload } = useShelf();
   // `?slot=pm` opens straight to the evening routine — handy for a link from a
   // future evening reminder, and for deep-linking during testing.
   const params = useLocalSearchParams<{ slot?: string }>();
@@ -71,7 +71,15 @@ export default function RoutineScreen() {
   const { language } = useLanguage();
   const t = COPY[language];
 
-  if (!isLoaded) return null;
+  if (status === 'loading') {
+    return (
+      <Screen>
+        <View style={styles.loading}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </Screen>
+    );
+  }
 
   const routine = buildRoutine(products, slot);
   // Conflicts are checked across the WHOLE shelf, not just the visible slot —
@@ -92,7 +100,11 @@ export default function RoutineScreen() {
         <Chip label={t.evening} selected={slot === 'pm'} onPress={() => setSlot('pm')} />
       </View>
 
-      {products.length === 0 ? (
+      {/* A failed shelf read renders as an error, not as "no products yet" —
+          the empty state would misreport the user's routine as empty. */}
+      {status === 'failed' ? (
+        <ErrorState onRetry={() => void reload()} />
+      ) : products.length === 0 ? (
         <Card style={styles.empty}>
           <Text variant="h2">{t.emptyTitle}</Text>
           <Text variant="body" tone="muted">
@@ -216,6 +228,7 @@ function RoutineList({ routine, language }: { routine: Routine; language: Langua
 
 const styles = StyleSheet.create({
   header: { marginTop: spacing.lg, gap: spacing.sm },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   tabs: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
   empty: { marginTop: spacing.xl, gap: spacing.md, alignItems: 'flex-start' },
   warning: {

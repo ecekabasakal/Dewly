@@ -14,7 +14,18 @@ import { migrateLocalDataToSupabase } from '../lib/migrate';
 import { authErrorMessage } from '../lib/auth-errors';
 import type { Language } from '../lib/language';
 
-export type AuthResult = { ok: true } | { ok: false; message: string };
+/**
+ * `kind` distinguishes a genuine failure from an outcome that did not sign the
+ * user in but is not an error either.
+ *
+ * The email-confirmation case is the reason: sign-up SUCCEEDS but returns no
+ * session, and reporting that identically to a wrong password meant "Account
+ * created — check your inbox" was rendered in the red danger box behind a `!`
+ * badge. Right words, wrong signal.
+ */
+export type AuthResult =
+  | { ok: true }
+  | { ok: false; kind: 'error' | 'notice'; message: string };
 
 type AuthContextValue = {
   session: Session | null;
@@ -182,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         authLog('signUp: FAILED', error.message);
-        return { ok: false, message: authErrorMessage(error, language) };
+        return { ok: false, kind: 'error', message: authErrorMessage(error, language) };
       }
       authLog(
         `signUp: ok — user=${data.user?.email ?? 'none'} session=${data.session ? 'yes' : 'NO'}`
@@ -193,7 +204,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // refuses to move on.
       if (!data.session) {
         authLog('signUp: no session returned -> email confirmation is ON');
-        return { ok: false, message: authErrorMessage('email-confirmation', language) };
+        return {
+          ok: false,
+          kind: 'notice',
+          message: authErrorMessage('email-confirmation', language),
+        };
       }
       authLog('signUp: session established -> auth layout will redirect to /');
       return { ok: true };
@@ -210,7 +225,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       if (error) {
         authLog('signIn: FAILED', error.message);
-        return { ok: false, message: authErrorMessage(error, language) };
+        return { ok: false, kind: 'error', message: authErrorMessage(error, language) };
       }
       authLog('signIn: ok -> auth layout will redirect to /');
       return { ok: true };

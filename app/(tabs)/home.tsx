@@ -1,10 +1,10 @@
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
 
-import { Badge, Button, Card, Chip, Screen, Text } from '../../components';
+import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../../components';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
-import { spacing } from '../../theme';
+import { colors, spacing } from '../../theme';
 import {
   AGE_RANGE_LABELS,
   CONCERN_LABELS,
@@ -43,11 +43,31 @@ const COPY = {
 } as const;
 
 export default function Home() {
-  const { profile, isLoaded } = useProfile();
+  const { profile, status, reload } = useProfile();
   const { language } = useLanguage();
   const t = COPY[language];
 
-  if (!isLoaded) return null;
+  if (status === 'loading') {
+    return (
+      <Screen>
+        <View style={styles.loading}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </Screen>
+    );
+  }
+
+  // A failed read is NOT "no profile". Redirecting to onboarding here would
+  // walk the user through the questions again and overwrite the profile they
+  // already have — the same failure mode the entry gate now avoids.
+  if (status === 'failed') {
+    return (
+      <Screen scroll>
+        <ErrorState onRetry={() => void reload()} />
+      </Screen>
+    );
+  }
+
   // Reachable if storage is cleared while this screen is mounted.
   if (!profile) return <Redirect href="/onboarding" />;
 
@@ -126,6 +146,7 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   header: { marginTop: spacing.lg, gap: spacing.sm },
   cta: { marginTop: spacing.md },
   ctaRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },

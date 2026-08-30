@@ -6,6 +6,7 @@ import { goBackOr } from '../../lib/navigation';
 import { OnboardingStep, OptionRow } from '../../components';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
+import { messageFor } from '../../lib/errors';
 import type { Language } from '../../lib/language';
 import {
   SENSITIVITY_LABELS,
@@ -20,7 +21,7 @@ const COPY = {
     saving: 'Saving…',
     finish: 'Finish',
     saveFailed: "Couldn't save your profile",
-    tryAgain: 'Please try again.',
+    ok: 'OK',
   },
   tr: {
     title: 'Cildin ne kadar hassas?',
@@ -28,7 +29,7 @@ const COPY = {
     saving: 'Kaydediliyor…',
     finish: 'Bitir',
     saveFailed: 'Profilin kaydedilemedi',
-    tryAgain: 'Lütfen tekrar dene.',
+    ok: 'Tamam',
   },
 } as const;
 
@@ -58,12 +59,11 @@ export default function SensitivityStep() {
       // `replace`, not `push`: the finished flow should not be reachable via
       // the back gesture from Home.
       router.replace('/home');
-    } catch (error) {
+    } catch (caught) {
       setSaving(false);
-      Alert.alert(
-        t.saveFailed,
-        error instanceof Error ? error.message : t.tryAgain
-      );
+      // Was `error.message` — the raw Supabase text, English even here. The
+      // code maps to a translated sentence instead.
+      Alert.alert(t.saveFailed, messageFor(caught, language), [{ text: t.ok }]);
     }
   };
 

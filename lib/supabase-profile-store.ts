@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { AppError } from './errors';
 import type { ProfileStore } from './profile-store';
 import {
   PROFILE_VERSION,
@@ -30,7 +31,7 @@ export function createSupabaseProfileStore(userId: string): ProfileStore {
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (error) throw new Error(`Couldn't load your profile: ${error.message}`);
+      if (error) throw new AppError('load-failed', `load profile: ${error.message}`);
       if (!data) return null;
 
       return {
@@ -62,7 +63,7 @@ export function createSupabaseProfileStore(userId: string): ProfileStore {
         { onConflict: 'user_id' }
       );
 
-      if (error) throw new Error(`Couldn't save your profile: ${error.message}`);
+      if (error) throw new AppError('save-failed', `save profile: ${error.message}`);
     },
 
     async clear() {
@@ -71,7 +72,7 @@ export function createSupabaseProfileStore(userId: string): ProfileStore {
         .delete()
         .eq('user_id', userId);
 
-      if (error) throw new Error(`Couldn't clear your profile: ${error.message}`);
+      if (error) throw new AppError('save-failed', `clear profile: ${error.message}`);
     },
   };
 }

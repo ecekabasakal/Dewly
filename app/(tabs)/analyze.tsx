@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 
-import { Button, Screen, Text } from '../../components';
+import { Badge, Button, Screen, Text } from '../../components';
 import { useAnalysis } from '../../hooks/useAnalysis';
 import { useLanguage } from '../../hooks/useLanguage';
+import { appErrorMessage } from '../../lib/errors';
 import { parseInciList } from '../../lib/inci';
 import { colors, fonts, radius, spacing, typography } from '../../theme';
 
@@ -28,6 +29,8 @@ const COPY = {
     analyze: 'Analyze',
     noBottle: 'Not near a bottle?',
     useSample: 'Use a sample list',
+    failedBadge: 'COULDN’T ANALYZE',
+    retry: 'Try again',
   },
   tr: {
     title: 'Bir ürünü analiz et',
@@ -42,6 +45,8 @@ const COPY = {
     analyze: 'Analiz et',
     noBottle: 'Yanında ürün yok mu?',
     useSample: 'Örnek liste kullan',
+    failedBadge: 'ANALİZ EDİLEMEDİ',
+    retry: 'Tekrar dene',
   },
 } as const;
 
@@ -49,7 +54,7 @@ const SAMPLE = `Aqua, Glycerin, Niacinamide, Butylene Glycol, Centella Asiatica 
 
 export default function PasteScreen() {
   const [text, setText] = useState('');
-  const { analyze, status } = useAnalysis();
+  const { analyze, status, error } = useAnalysis();
   const { language } = useLanguage();
   const t = COPY[language];
 
@@ -57,10 +62,16 @@ export default function PasteScreen() {
   const isLoading = status === 'loading';
   const canSubmit = tokenCount > 0 && !isLoading;
 
+  // On failure we deliberately stay put. `useAnalysis` records the error, and
+  // the block below renders it inline — previously the error was only readable
+  // on the results screen, which this never navigated to, so a failed analysis
+  // looked like a dead button.
   const run = async () => {
     const ok = await analyze(text);
     if (ok) router.push('/results');
   };
+
+  const failed = status === 'error';
 
   return (
     <KeyboardAvoidingView
@@ -109,6 +120,16 @@ export default function PasteScreen() {
           style={styles.submit}
         />
 
+        {failed ? (
+          <View style={styles.error}>
+            <Badge label={t.failedBadge} tone="danger" />
+            <Text variant="caption" style={styles.errorText}>
+              {appErrorMessage(error ?? 'unknown', language)}
+            </Text>
+            <Button label={t.retry} variant="secondary" onPress={run} />
+          </View>
+        ) : null}
+
         <View style={styles.sampleBlock}>
           <Text variant="caption" tone="muted">
             {t.noBottle}
@@ -146,5 +167,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   submit: { marginTop: spacing.lg },
+  error: {
+    marginTop: spacing.lg,
+    padding: spacing.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    backgroundColor: colors.status.danger.bg,
+    borderColor: colors.status.danger.border,
+    gap: spacing.sm,
+    alignItems: 'flex-start',
+  },
+  errorText: { color: colors.text },
   sampleBlock: { marginTop: spacing['2xl'], gap: spacing.sm, alignItems: 'flex-start' },
 });

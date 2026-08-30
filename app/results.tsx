@@ -5,6 +5,7 @@ import { goBackOr } from '../lib/navigation';
 import { Badge, Button, Card, Chip, Screen, Text } from '../components';
 import { useAnalysis } from '../hooks/useAnalysis';
 import { useLanguage } from '../hooks/useLanguage';
+import { appErrorMessage } from '../lib/errors';
 import {
   describe,
   headsUpCopy,
@@ -122,7 +123,9 @@ export default function ResultsScreen() {
         <View style={styles.header}>
           <Text variant="h1">{UI[language].errorTitle}</Text>
           <Text variant="body" tone="muted">
-            {error ?? UI[language].errorFallback}
+            {/* Was `error` — the raw Supabase message, English on every screen
+                including Turkish ones. `error` is now a code we translate. */}
+            {error ? appErrorMessage(error, language) : UI[language].errorFallback}
           </Text>
           <Button
             label={UI[language].back}

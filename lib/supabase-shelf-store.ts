@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { AppError } from './errors';
 import type { ShelfStore } from './shelf-store';
 import type { ProductTimeOfDay, ShelfProduct, StepType } from '../types/shelf';
 
@@ -27,7 +28,7 @@ async function idsForNames(names: string[]): Promise<Map<string, string>> {
     .select('id, inci_name')
     .in('inci_name', names);
 
-  if (error) throw new Error(`Couldn't resolve ingredients: ${error.message}`);
+  if (error) throw new AppError('load-failed', `resolve ingredients: ${error.message}`);
   return new Map((data ?? []).map((row) => [row.inci_name, row.id]));
 }
 
@@ -39,7 +40,7 @@ async function namesForIds(ids: string[]): Promise<Map<string, string>> {
     .select('id, inci_name')
     .in('id', ids);
 
-  if (error) throw new Error(`Couldn't resolve ingredients: ${error.message}`);
+  if (error) throw new AppError('load-failed', `resolve ingredients: ${error.message}`);
   return new Map((data ?? []).map((row) => [row.id, row.inci_name]));
 }
 
@@ -51,7 +52,7 @@ export function createSupabaseShelfStore(userId: string): ShelfStore {
         .select('product_id, added_at, time_of_day, products(*)')
         .eq('user_id', userId);
 
-      if (error) throw new Error(`Couldn't load your shelf: ${error.message}`);
+      if (error) throw new AppError('load-failed', `load shelf: ${error.message}`);
 
       const rows = (data ?? []) as unknown as {
         product_id: string;
@@ -120,7 +121,7 @@ export function createSupabaseShelfStore(userId: string): ShelfStore {
           { onConflict: 'id' }
         );
         if (productError) {
-          throw new Error(`Couldn't save your products: ${productError.message}`);
+          throw new AppError('save-failed', `save products: ${productError.message}`);
         }
 
         const { error: shelfError } = await supabase.from('user_shelf').upsert(
@@ -133,7 +134,7 @@ export function createSupabaseShelfStore(userId: string): ShelfStore {
           { onConflict: 'user_id,product_id' }
         );
         if (shelfError) {
-          throw new Error(`Couldn't save your shelf: ${shelfError.message}`);
+          throw new AppError('save-failed', `save shelf: ${shelfError.message}`);
         }
       }
 
@@ -144,13 +145,13 @@ export function createSupabaseShelfStore(userId: string): ShelfStore {
         : remove);
 
       if (deleteError) {
-        throw new Error(`Couldn't update your shelf: ${deleteError.message}`);
+        throw new AppError('save-failed', `prune shelf: ${deleteError.message}`);
       }
     },
 
     async clear() {
       const { error } = await supabase.from('user_shelf').delete().eq('user_id', userId);
-      if (error) throw new Error(`Couldn't clear your shelf: ${error.message}`);
+      if (error) throw new AppError('save-failed', `clear shelf: ${error.message}`);
     },
   };
 }

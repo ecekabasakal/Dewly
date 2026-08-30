@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { guardStore } from '../lib/guarded-store';
 import { asyncStorageShelfStore, type ShelfStore } from '../lib/shelf-store';
 import { createSupabaseShelfStore } from '../lib/supabase-shelf-store';
 import { useAuth } from './useAuth';
@@ -14,10 +15,23 @@ import { newProductId, type ShelfProduct } from '../types/shelf';
 
 export type NewShelfProduct = Omit<ShelfProduct, 'id' | 'addedAt'>;
 
+/**
+ * `failed` is a first-class state, not an empty shelf.
+ *
+ * Collapsing the two is what let a dropped connection wipe a user's shelf:
+ * screens rendered "Nothing here yet", the user added a product, and the
+ * replace-style save deleted everything the failed read never returned. Screens
+ * must branch on this before showing an empty state.
+ */
+export type ShelfStatus = 'loading' | 'ready' | 'failed';
+
 type ShelfContextValue = {
   products: ShelfProduct[];
-  /** False until the first storage read resolves — gate rendering on this. */
+  status: ShelfStatus;
+  /** True only when a read actually succeeded — never true after a failure. */
   isLoaded: boolean;
+  /** Re-runs the load. Drives the retry button on the failure state. */
+  reload: () => Promise<void>;
   addProduct: (input: NewShelfProduct) => Promise<ShelfProduct>;
   updateProduct: (id: string, patch: Partial<NewShelfProduct>) => Promise<void>;
   removeProduct: (id: string) => Promise<void>;
@@ -38,39 +52,54 @@ export function ShelfProvider({
   const { userId } = useAuth();
 
   // Signed in reads and writes Supabase; signed out falls back to local so
-  // nothing crashes before the auth gate has resolved.
+  // nothing crashes before the auth gate has resolved. Wrapped in `guardStore`
+  // so no write can run against a shelf we failed to read.
   const activeStore = useMemo<ShelfStore>(
-    () => store ?? (userId ? createSupabaseShelfStore(userId) : asyncStorageShelfStore),
+    () =>
+      guardStore(
+        store ?? (userId ? createSupabaseShelfStore(userId) : asyncStorageShelfStore)
+      ),
     [store, userId]
   );
   const [products, setProducts] = useState<ShelfProduct[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [status, setStatus] = useState<ShelfStatus>('loading');
+  // Bumped by `reload` to re-run the effect below.
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
+    setStatus('loading');
 
     activeStore
       .load()
       .then((loaded) => {
-        if (!cancelled) setProducts(loaded);
+        if (cancelled) return;
+        setProducts(loaded);
+        setStatus('ready');
       })
       .catch(() => {
-        // A failed read must not wedge the app; start from an empty shelf.
-        if (!cancelled) setProducts([]);
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoaded(true);
+        if (cancelled) return;
+        // Do NOT fall back to an empty shelf. `products` stays whatever we last
+        // knew (empty on a cold start), but `status` says the value is not
+        // trustworthy, and the guarded store refuses writes regardless.
+        setStatus('failed');
       });
 
     return () => {
       cancelled = true;
     };
-  }, [activeStore]);
+  }, [activeStore, attempt]);
+
+  const reload = useCallback(async () => {
+    setAttempt((n) => n + 1);
+  }, []);
 
   /**
    * Single write path: compute the next list, persist, then commit to state.
    * State only moves after the write resolves, so what is on screen always
-   * matches what is on disk.
+   * matches what is on disk — and a rejected write leaves the UI truthful.
+   *
+   * Failures are rethrown, never swallowed: callers show the error.
    */
   const commit = useCallback(
     async (next: ShelfProduct[]) => {
@@ -122,14 +151,16 @@ export function ShelfProvider({
   const value = useMemo<ShelfContextValue>(
     () => ({
       products,
-      isLoaded,
+      status,
+      isLoaded: status === 'ready',
+      reload,
       addProduct,
       updateProduct,
       removeProduct,
       clearShelf,
       getProduct,
     }),
-    [products, isLoaded, addProduct, updateProduct, removeProduct, clearShelf, getProduct]
+    [products, status, reload, addProduct, updateProduct, removeProduct, clearShelf, getProduct]
   );
 
   return <ShelfContext.Provider value={value}>{children}</ShelfContext.Provider>;

@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import { analyzeInciList, type AnalysisResult } from '../lib/analysis';
+import { errorCode, type AppErrorCode } from '../lib/errors';
 import { useProfile } from './useProfile';
 
 type Status = 'idle' | 'loading' | 'ready' | 'error';
@@ -23,7 +24,12 @@ type AnalysisContextValue = {
   status: Status;
   input: string;
   result: AnalysisResult | null;
-  error: string | null;
+  /**
+   * A code, not a sentence. The raw Supabase message was English and was being
+   * rendered verbatim — on Turkish screens too. Screens translate this at
+   * render via `appErrorMessage`.
+   */
+  error: AppErrorCode | null;
   /** Runs the analysis; resolves true on success so the caller can navigate. */
   analyze: (text: string) => Promise<boolean>;
   reset: () => void;
@@ -36,7 +42,7 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<Status>('idle');
   const [input, setInput] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppErrorCode | null>(null);
 
   const analyze = useCallback(
     async (text: string) => {
@@ -50,7 +56,7 @@ export function AnalysisProvider({ children }: { children: ReactNode }) {
         setStatus('ready');
         return true;
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(errorCode(caught));
         setStatus('error');
         return false;
       }

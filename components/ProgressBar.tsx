@@ -1,6 +1,17 @@
 import { StyleSheet, View } from 'react-native';
+import { useLanguage } from '../hooks/useLanguage';
 import { colors, radius, spacing } from '../theme';
 import { Text } from './Text';
+
+/**
+ * Turkish puts the ordinal before the total and uses a different connector, so
+ * this is a function of both numbers rather than a template with two holes
+ * punched in an English sentence.
+ */
+const COPY = {
+  en: { progress: (step: number, total: number) => `Step ${step} of ${total}` },
+  tr: { progress: (step: number, total: number) => `${total} adımdan ${step}.` },
+} as const;
 
 export type ProgressBarProps = {
   /** 1-based. */
@@ -10,6 +21,7 @@ export type ProgressBarProps = {
 
 export function ProgressBar({ step, total }: ProgressBarProps) {
   const clamped = Math.min(Math.max(step, 1), total);
+  const { language } = useLanguage();
 
   return (
     <View
@@ -26,7 +38,7 @@ export function ProgressBar({ step, total }: ProgressBarProps) {
         ))}
       </View>
       <Text variant="caption" tone="muted">
-        Step {clamped} of {total}
+        {COPY[language].progress(clamped, total)}
       </Text>
     </View>
   );

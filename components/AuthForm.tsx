@@ -15,6 +15,7 @@ const COPY = {
     passwordHintSignUp: 'Use at least 6 characters.',
     missingFields: 'Enter your email and password.',
     working: 'Just a moment…',
+    noticeBadge: '✓',
   },
   tr: {
     emailLabel: 'E-posta',
@@ -24,6 +25,7 @@ const COPY = {
     passwordHintSignUp: 'En az 6 karakter kullanın.',
     missingFields: 'E-posta ve şifrenizi girin.',
     working: 'Bir saniye…',
+    noticeBadge: '✓',
   },
 } as const;
 
@@ -43,17 +45,20 @@ export function AuthForm({ mode, title, subtitle, submitLabel, footer }: AuthFor
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  // Carries its own tone: a "check your inbox" notice must not be painted red.
+  const [feedback, setFeedback] = useState<
+    { kind: 'error' | 'notice'; message: string } | null
+  >(null);
   const [busy, setBusy] = useState(false);
 
   const submit = async () => {
     if (!email.trim() || !password) {
-      setError(t.missingFields);
+      setFeedback({ kind: 'error', message: t.missingFields });
       return;
     }
 
     setBusy(true);
-    setError(null);
+    setFeedback(null);
 
     const result =
       mode === 'sign-up'
@@ -61,8 +66,8 @@ export function AuthForm({ mode, title, subtitle, submitLabel, footer }: AuthFor
         : await signIn(email, password, language);
 
     if (!result.ok) {
-      authLog(`${mode}: showing error to user — "${result.message}"`);
-      setError(result.message);
+      authLog(`${mode}: showing ${result.kind} to user — "${result.message}"`);
+      setFeedback({ kind: result.kind, message: result.message });
       setBusy(false);
       return;
     }
@@ -134,11 +139,19 @@ export function AuthForm({ mode, title, subtitle, submitLabel, footer }: AuthFor
           ) : null}
         </View>
 
-        {error ? (
-          <View style={styles.error}>
-            <Badge label="!" tone="danger" />
-            <Text variant="caption" style={styles.errorText}>
-              {error}
+        {feedback ? (
+          <View
+            style={[
+              styles.feedback,
+              feedback.kind === 'notice' ? styles.notice : styles.error,
+            ]}
+          >
+            <Badge
+              label={feedback.kind === 'notice' ? t.noticeBadge : '!'}
+              tone={feedback.kind === 'notice' ? 'success' : 'danger'}
+            />
+            <Text variant="caption" style={styles.feedbackText}>
+              {feedback.message}
             </Text>
           </View>
         ) : null}
@@ -175,17 +188,23 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     fontFamily: fonts.body,
   },
-  error: {
+  feedback: {
     marginTop: spacing.lg,
     padding: spacing.md,
     borderRadius: radius.md,
     borderWidth: 1,
-    backgroundColor: colors.status.danger.bg,
-    borderColor: colors.status.danger.border,
     gap: spacing.xs,
     alignItems: 'flex-start',
   },
-  errorText: { color: colors.text },
+  error: {
+    backgroundColor: colors.status.danger.bg,
+    borderColor: colors.status.danger.border,
+  },
+  notice: {
+    backgroundColor: colors.status.success.bg,
+    borderColor: colors.status.success.border,
+  },
+  feedbackText: { color: colors.text },
   submit: { marginTop: spacing.xl },
   footer: { marginTop: spacing.xl, alignItems: 'center', gap: spacing.sm },
 });

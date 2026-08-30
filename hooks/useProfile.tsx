@@ -7,6 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { AppError } from '../lib/errors';
+import { guardStore } from '../lib/guarded-store';
 import { asyncStorageProfileStore, type ProfileStore } from '../lib/profile-store';
 import { createSupabaseProfileStore } from '../lib/supabase-profile-store';
 import { useAuth } from './useAuth';
@@ -24,11 +26,23 @@ import {
  * with its previous answer intact, and so the flow does not lose state on a
  * fast-refresh during development.
  */
+/**
+ * `failed` is distinct from "no profile", and the difference is load-bearing.
+ *
+ * A failed read used to surface as `profile === null`, which the entry gate
+ * reads as "never onboarded" — so a network blip sent a returning user through
+ * onboarding, and finishing it overwrote their real profile on the server.
+ */
+export type ProfileStatus = 'loading' | 'ready' | 'failed';
+
 type ProfileContextValue = {
   /** null until loaded, then the saved profile or null if never onboarded. */
   profile: Profile | null;
-  /** False until the first storage read resolves — gate navigation on this. */
+  status: ProfileStatus;
+  /** True only when a read actually succeeded — never true after a failure. */
   isLoaded: boolean;
+  /** Re-runs the load. Drives the retry button on the entry gate. */
+  reload: () => Promise<void>;
   hasCompletedOnboarding: boolean;
 
   draft: ProfileDraft;
@@ -55,35 +69,46 @@ export function ProfileProvider({
 
   // The seam this interface existed for: signed in reads and writes Supabase,
   // signed out falls back to local so nothing crashes before the auth gate.
+  // Guarded so a failed read can never be written back over a real profile.
   const activeStore = useMemo<ProfileStore>(
-    () => store ?? (userId ? createSupabaseProfileStore(userId) : asyncStorageProfileStore),
+    () =>
+      guardStore(
+        store ?? (userId ? createSupabaseProfileStore(userId) : asyncStorageProfileStore)
+      ),
     [store, userId]
   );
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [status, setStatus] = useState<ProfileStatus>('loading');
+  const [attempt, setAttempt] = useState(0);
   const [draft, setDraft] = useState<ProfileDraft>(EMPTY_DRAFT);
 
   useEffect(() => {
     let cancelled = false;
+    setStatus('loading');
 
     activeStore
       .load()
       .then((loaded) => {
-        if (!cancelled) setProfile(loaded);
+        if (cancelled) return;
+        setProfile(loaded);
+        setStatus('ready');
       })
       .catch(() => {
-        // A failed read must not wedge the app on a blank screen; treat it as
-        // "not onboarded" and let the user through the flow again.
-        if (!cancelled) setProfile(null);
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoaded(true);
+        if (cancelled) return;
+        // Deliberately NOT `setProfile(null)`. That is indistinguishable from
+        // "never onboarded" and is what used to push a returning user back
+        // through the flow, overwriting their profile at the end of it.
+        setStatus('failed');
       });
 
     return () => {
       cancelled = true;
     };
-  }, [activeStore]);
+  }, [activeStore, attempt]);
+
+  const reload = useCallback(async () => {
+    setAttempt((n) => n + 1);
+  }, []);
 
   const updateDraft = useCallback((patch: Partial<ProfileDraft>) => {
     setDraft((previous) => ({ ...previous, ...patch }));
@@ -92,6 +117,13 @@ export function ProfileProvider({
   const resetDraft = useCallback(() => setDraft(EMPTY_DRAFT), []);
 
   const completeOnboarding = useCallback(async () => {
+    // Refuse before touching the draft. The guarded store would reject this
+    // anyway, but failing here keeps the reason precise: we do not know whether
+    // this user already has a profile, so saving could overwrite one.
+    if (status !== 'ready') {
+      throw new AppError('not-loaded', `completeOnboarding blocked: status=${status}`);
+    }
+
     const { skinType, ageRange, sensitivity, concerns, goals } = draft;
 
     if (!skinType || !ageRange || !sensitivity) {
@@ -114,7 +146,7 @@ export function ProfileProvider({
     setProfile(completed);
     setDraft(EMPTY_DRAFT);
     return completed;
-  }, [draft, activeStore]);
+  }, [draft, activeStore, status]);
 
   const resetProfile = useCallback(async () => {
     await activeStore.clear();
@@ -125,7 +157,9 @@ export function ProfileProvider({
   const value = useMemo<ProfileContextValue>(
     () => ({
       profile,
-      isLoaded,
+      status,
+      isLoaded: status === 'ready',
+      reload,
       hasCompletedOnboarding: profile !== null,
       draft,
       updateDraft,
@@ -133,7 +167,7 @@ export function ProfileProvider({
       completeOnboarding,
       resetProfile,
     }),
-    [profile, isLoaded, draft, updateDraft, resetDraft, completeOnboarding, resetProfile]
+    [profile, status, reload, draft, updateDraft, resetDraft, completeOnboarding, resetProfile]
   );
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;

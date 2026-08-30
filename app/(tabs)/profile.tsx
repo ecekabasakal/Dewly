@@ -1,10 +1,11 @@
 import { Alert, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 
-import { Badge, Button, Card, Chip, Screen, Text } from '../../components';
+import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../../components';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
+import { messageFor } from '../../lib/errors';
 import { colors, spacing } from '../../theme';
 import {
   AGE_RANGE_LABELS,
@@ -23,6 +24,9 @@ const COPY = {
     signOutBody:
       'Your profile and shelf stay saved to your account — sign back in to pick up where you left off.',
     cancel: 'Cancel',
+    ok: 'OK',
+    signOutFailed: "Couldn't sign out",
+    resetFailed: "Couldn't reset your profile",
     skinSection: 'Skin profile',
     noProfile: 'No skin profile yet.',
     editProfile: 'Redo onboarding',
@@ -49,6 +53,9 @@ const COPY = {
     signOutBody:
       'Profilin ve rafın hesabında kayıtlı kalır — tekrar giriş yaptığında kaldığın yerden devam edersin.',
     cancel: 'İptal',
+    ok: 'Tamam',
+    signOutFailed: 'Çıkış yapılamadı',
+    resetFailed: 'Profil sıfırlanamadı',
     skinSection: 'Cilt profili',
     noProfile: 'Henüz bir cilt profili yok.',
     editProfile: 'Soruları tekrar yanıtla',
@@ -70,7 +77,7 @@ const COPY = {
 export default function ProfileScreen() {
   const { email, signOut } = useAuth();
   const { language, setLanguage } = useLanguage();
-  const { profile, isLoaded, resetProfile } = useProfile();
+  const { profile, status, reload, resetProfile } = useProfile();
   const t = COPY[language];
 
   const confirmSignOut = () => {
@@ -80,7 +87,11 @@ export default function ProfileScreen() {
         text: t.signOut,
         style: 'destructive',
         onPress: () => {
-          void signOut();
+          // Was `void signOut()` — a failure vanished and the user stayed
+          // signed in with no explanation.
+          signOut().catch((caught: unknown) => {
+            Alert.alert(t.signOutFailed, messageFor(caught, language), [{ text: t.ok }]);
+          });
         },
       },
     ]);
@@ -92,9 +103,15 @@ export default function ProfileScreen() {
       {
         text: t.reset,
         style: 'destructive',
-        onPress: async () => {
-          await resetProfile();
-          router.replace('/onboarding');
+        onPress: () => {
+          // Only navigate to onboarding if the clear actually succeeded —
+          // otherwise the user would answer every question again and the save
+          // at the end would be rejected by the guarded store.
+          resetProfile()
+            .then(() => router.replace('/onboarding'))
+            .catch((caught: unknown) => {
+              Alert.alert(t.resetFailed, messageFor(caught, language), [{ text: t.ok }]);
+            });
         },
       },
     ]);
@@ -123,8 +140,14 @@ export default function ProfileScreen() {
       </Section>
 
       <Section title={t.skinSection}>
+        {status === 'failed' ? (
+          // "No skin profile yet" would be a lie here — we simply couldn't read
+          // it, and offering "Redo onboarding" on top of that invites the user
+          // to overwrite a profile that probably exists.
+          <ErrorState onRetry={() => void reload()} />
+        ) : (
         <Card style={styles.card}>
-          {isLoaded && profile ? (
+          {status === 'ready' && profile ? (
             <>
               <View style={styles.row}>
                 <Text variant="h2">{SKIN_TYPE_LABELS[language][profile.skinType]}</Text>
@@ -146,9 +169,11 @@ export default function ProfileScreen() {
           <Button
             label={t.editProfile}
             variant="secondary"
+            disabled={status !== 'ready'}
             onPress={() => router.push('/onboarding')}
           />
         </Card>
+        )}
       </Section>
 
       {/* The app's one language control. Writes to the persisted LanguageProvider,
@@ -170,7 +195,12 @@ export default function ProfileScreen() {
           <Text variant="caption" tone="muted">
             {t.resetHint}
           </Text>
-          <Button label={t.reset} variant="secondary" onPress={confirmReset} />
+          <Button
+            label={t.reset}
+            variant="secondary"
+            disabled={status !== 'ready'}
+            onPress={confirmReset}
+          />
         </Card>
       </Section>
     </Screen>

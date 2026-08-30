@@ -1,10 +1,11 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 
-import { Badge, Button, Card, Screen, Text } from '../../components';
+import { Badge, Button, Card, ErrorState, Screen, Text } from '../../components';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useShelf } from '../../hooks/useShelf';
 import { groupByStep } from '../../lib/routine';
+import { messageFor } from '../../lib/errors';
 import type { Language } from '../../lib/language';
 import { colors, spacing } from '../../theme';
 import { STEP_LABELS, TIME_OF_DAY_LABELS, type ShelfProduct } from '../../types/shelf';
@@ -19,7 +20,9 @@ const COPY = {
     viewRoutine: 'View AM / PM routine',
     removeTitle: 'Remove product?',
     removeBody: (name: string) => `"${name}" will be taken off your shelf.`,
+    removeFailedTitle: "Couldn't remove that",
     cancel: 'Cancel',
+    ok: 'OK',
     remove: 'Remove',
     edit: 'Edit',
     savedIngredients: (n: number) => `${n} ingredients saved from an analysis`,
@@ -38,7 +41,9 @@ const COPY = {
     viewRoutine: 'AM / PM rutinini gör',
     removeTitle: 'Ürün kaldırılsın mı?',
     removeBody: (name: string) => `"${name}" rafından kaldırılacak.`,
+    removeFailedTitle: 'Kaldırılamadı',
     cancel: 'İptal',
+    ok: 'Tamam',
     remove: 'Kaldır',
     edit: 'Düzenle',
     savedIngredients: (n: number) => `Bir analizden kaydedilen ${n} içerik`,
@@ -52,11 +57,11 @@ const COPY = {
 } as const;
 
 export default function ShelfScreen() {
-  const { products, isLoaded, removeProduct } = useShelf();
+  const { products, status, removeProduct, reload } = useShelf();
   const { language } = useLanguage();
   const t = COPY[language];
 
-  if (!isLoaded) return null;
+  if (status === 'loading') return <Loading />;
 
   const groups = groupByStep(products);
 
@@ -67,7 +72,14 @@ export default function ShelfScreen() {
         text: t.remove,
         style: 'destructive',
         onPress: () => {
-          void removeProduct(product.id);
+          // Previously `void removeProduct(...)`: a failed delete became an
+          // unhandled rejection and the product stayed on screen as though the
+          // tap had missed. Say so instead.
+          removeProduct(product.id).catch((caught: unknown) => {
+            Alert.alert(t.removeFailedTitle, messageFor(caught, language), [
+              { text: t.ok },
+            ]);
+          });
         },
       },
     ]);
@@ -78,15 +90,25 @@ export default function ShelfScreen() {
       <View style={styles.header}>
         <Text variant="h1">{t.title}</Text>
         <Text variant="body" tone="muted">
-          {products.length === 0 ? t.emptySubtitle : t.subtitle(products.length)}
+          {status !== 'ready'
+            ? t.emptySubtitle
+            : products.length === 0
+              ? t.emptySubtitle
+              : t.subtitle(products.length)}
         </Text>
       </View>
+
+      {/* A failed read must never render the empty state: it looks like an
+          empty shelf, and adding a product from there used to delete the
+          server-side rows the failed load never returned. */}
+      {status === 'failed' ? <ErrorState onRetry={() => void reload()} /> : null}
 
       <View style={styles.actions}>
         <Button
           label={t.add}
           size="lg"
           fullWidth
+          disabled={status !== 'ready'}
           onPress={() => router.push('/product')}
         />
         {products.length > 0 ? (
@@ -99,7 +121,9 @@ export default function ShelfScreen() {
         ) : null}
       </View>
 
-      {products.length === 0 ? <EmptyState language={language} /> : null}
+      {status === 'ready' && products.length === 0 ? (
+        <EmptyState language={language} />
+      ) : null}
 
       {groups.map((group) => (
         <View key={group.step} style={styles.group}>
@@ -151,6 +175,16 @@ export default function ShelfScreen() {
   );
 }
 
+function Loading() {
+  return (
+    <Screen>
+      <View style={styles.loading}>
+        <ActivityIndicator color={colors.primary} />
+      </View>
+    </Screen>
+  );
+}
+
 function EmptyState({ language }: { language: Language }) {
   const t = COPY[language];
 
@@ -174,6 +208,7 @@ function EmptyState({ language }: { language: Language }) {
 
 const styles = StyleSheet.create({
   header: { marginTop: spacing.lg, gap: spacing.sm },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   actions: { marginTop: spacing.lg, gap: spacing.sm },
   empty: { marginTop: spacing.xl, gap: spacing.md, alignItems: 'flex-start' },
   group: { marginTop: spacing.xl },

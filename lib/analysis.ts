@@ -7,6 +7,7 @@
 
 import { supabase } from './supabase';
 import { parseInciList, resolveTokens, type ParsedToken, type MatchVia } from './inci';
+import { AppError } from './errors';
 import { pick, type Language } from './language';
 import type { Ingredient } from '../types/db';
 import type { Concern, Profile } from '../types/profile';
@@ -201,7 +202,7 @@ export async function analyzeInciList(
     .in('inci_name', names);
 
   if (error) {
-    throw new Error(`Couldn't load ingredient details: ${error.message}`);
+    throw new AppError('load-failed', `load ingredient details: ${error.message}`);
   }
 
   const byName = new Map((data ?? []).map((row) => [row.inci_name, row]));

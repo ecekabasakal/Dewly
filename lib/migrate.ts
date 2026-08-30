@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { guardStore } from './guarded-store';
 import { asyncStorageProfileStore } from './profile-store';
 import { asyncStorageShelfStore } from './shelf-store';
 import { createSupabaseProfileStore } from './supabase-profile-store';
@@ -62,8 +63,13 @@ export async function migrateLocalDataToSupabase(
       return { ran: false, profileMigrated: false, productsMigrated: 0 };
     }
 
-    const remoteProfileStore = createSupabaseProfileStore(userId);
-    const remoteShelfStore = createSupabaseShelfStore(userId);
+    // Guarded: this is the code path where a half-read remote state is most
+    // likely — a first sign-in on a flaky connection — and it is the one place
+    // that writes to BOTH stores. The "remote wins" rule below is only sound if
+    // the remote reads actually succeeded; the guard enforces that rather than
+    // trusting it.
+    const remoteProfileStore = guardStore(createSupabaseProfileStore(userId));
+    const remoteShelfStore = guardStore(createSupabaseShelfStore(userId));
 
     log('reading local + remote state…');
     const [localProfile, localShelf, remoteProfile, remoteShelf] = await Promise.all([

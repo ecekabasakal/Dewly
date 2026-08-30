@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -10,11 +12,12 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { goBackOr } from '../lib/navigation';
 
-import { Badge, Button, Card, Chip, Screen, Text } from '../components';
+import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../components';
 import { TimingEvidence } from '../components/TimingEvidence';
 import { useAnalysis } from '../hooks/useAnalysis';
 import { useLanguage } from '../hooks/useLanguage';
 import { useShelf } from '../hooks/useShelf';
+import { messageFor } from '../lib/errors';
 import { guessReasonText, guessStep, isAmOnlyStep } from '../lib/step-guess';
 import {
   resolveRule,
@@ -58,6 +61,8 @@ const COPY = {
     cancel: 'Cancel',
     saveChanges: 'Save changes',
     addToShelf: 'Add to shelf',
+    saveFailedTitle: "Couldn't save",
+    ok: 'OK',
   },
   tr: {
     editTitle: 'Ürünü düzenle',
@@ -82,6 +87,8 @@ const COPY = {
     cancel: 'İptal',
     saveChanges: 'Değişiklikleri kaydet',
     addToShelf: 'Rafa ekle',
+    saveFailedTitle: 'Kaydedilemedi',
+    ok: 'Tamam',
   },
 } as const;
 
@@ -96,9 +103,27 @@ const COPY = {
  */
 export default function AddProductScreen() {
   const { id, source } = useLocalSearchParams<{ id?: string; source?: string }>();
-  const { getProduct, isLoaded } = useShelf();
+  const { getProduct, status, reload } = useShelf();
 
-  if (!isLoaded) return null;
+  if (status === 'loading') {
+    return (
+      <Screen>
+        <View style={styles.gate}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </Screen>
+    );
+  }
+
+  // Editing against a shelf we failed to read would save a product built from
+  // blank initialisers, and the guarded store would reject the write anyway.
+  if (status === 'failed') {
+    return (
+      <Screen scroll>
+        <ErrorState onRetry={() => void reload()} />
+      </Screen>
+    );
+  }
 
   const editing = id ? getProduct(id) : undefined;
 
@@ -187,12 +212,20 @@ function ProductForm({
       ingredientNames,
     };
 
-    if (editing) {
-      await updateProduct(editing.id, payload);
-    } else {
-      await addProduct(payload);
+    // Wrapped because `setSaving(false)` used to exist only on the success
+    // path: a rejected write left the button spinning forever with no message,
+    // and the rejection surfaced as an unhandled promise.
+    try {
+      if (editing) {
+        await updateProduct(editing.id, payload);
+      } else {
+        await addProduct(payload);
+      }
+      router.replace('/shelf');
+    } catch (caught) {
+      setSaving(false);
+      Alert.alert(t.saveFailedTitle, messageFor(caught, language), [{ text: t.ok }]);
     }
-    router.replace('/shelf');
   };
 
   return (
@@ -412,6 +445,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  gate: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   header: { marginTop: spacing.lg, gap: spacing.sm },
   field: { marginTop: spacing.xl, gap: spacing.sm },
   fieldLabel: { letterSpacing: 1.2 },
