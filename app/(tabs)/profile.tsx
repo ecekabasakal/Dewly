@@ -150,7 +150,9 @@ export default function ProfileScreen() {
           {status === 'ready' && profile ? (
             <>
               <View style={styles.row}>
-                <Text variant="h2">{SKIN_TYPE_LABELS[language][profile.skinType]}</Text>
+                <Text variant="h2" numberOfLines={2} style={styles.rowTitle}>
+                  {SKIN_TYPE_LABELS[language][profile.skinType]}
+                </Text>
                 <Badge
                   label={SENSITIVITY_LABELS[language][profile.sensitivity].toUpperCase()}
                   tone="info"
@@ -231,6 +233,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     gap: spacing.sm,
   },
+  // Without flex the title cannot shrink, so a long Turkish skin type next to
+  // a long sensitivity badge overflows the card on a narrow screen.
+  rowTitle: { flex: 1 },
   langRow: { flexDirection: 'row', gap: spacing.sm },
   danger: { borderColor: colors.status.danger.border },
 });

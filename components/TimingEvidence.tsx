@@ -43,6 +43,7 @@ export function SourceLink({
   return (
     <Pressable
       accessibilityRole="link"
+      accessibilityLabel={source.label}
       onPress={open}
       style={({ pressed }) => [styles.sourceRow, pressed && styles.pressed]}
     >
@@ -101,10 +102,16 @@ const styles = StyleSheet.create({
   sourcesLabel: { letterSpacing: 1.1 },
   sourceRow: {
     flexDirection: 'row',
-    gap: spacing.xs,
-    alignItems: 'flex-start',
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
+    gap: spacing.sm,
+    alignItems: 'center',
+    // 44pt minimum. This is the citation control — the thing that makes a
+    // timing or conflict claim checkable — and it was ~26pt tall, the smallest
+    // tap target in the app. Vertical padding plus minHeight rather than
+    // hitSlop, because these stack in a list and overlapping slop would make
+    // the wrong source open.
+    minHeight: 44,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.sm,
     borderWidth: 1,
     borderColor: colors.border,

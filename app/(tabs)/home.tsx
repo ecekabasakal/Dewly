@@ -103,7 +103,9 @@ export default function Home() {
 
       <Card style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text variant="h2">{t.skinType}</Text>
+          <Text variant="h2" numberOfLines={2} style={styles.cardHeaderTitle}>
+            {t.skinType}
+          </Text>
           <Badge
             label={SKIN_TYPE_LABELS[language][profile.skinType].toUpperCase()}
             tone="success"
@@ -158,6 +160,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: spacing.sm,
   },
+  cardHeaderTitle: { flex: 1 },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',

@@ -419,7 +419,13 @@ function TimingSuggestion({
         </Text>
       ) : null}
 
-      <Pressable onPress={() => router.push('/timings')} style={styles.whyLink}>
+      <Pressable
+        accessibilityRole="link"
+        accessibilityLabel={t.whyLink}
+        onPress={() => router.push('/timings')}
+        hitSlop={8}
+        style={styles.whyLink}
+      >
         <Text variant="caption" tone="primary" style={styles.whyLinkText}>
           {t.whyLink} →
         </Text>
@@ -478,7 +484,14 @@ const styles = StyleSheet.create({
   timingCard: { marginTop: spacing.lg, gap: spacing.sm },
   timingHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   overridden: { marginTop: spacing.xs },
-  whyLink: { marginTop: spacing.xs },
+  // Had marginTop only, so the target was the height of one caption line.
+  whyLink: {
+    marginTop: spacing.xs,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    paddingRight: spacing.sm,
+  },
   whyLinkText: { fontFamily: fonts.bodySemi },
   disclaimer: {
     marginTop: spacing.sm,

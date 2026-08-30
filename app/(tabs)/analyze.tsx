@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   TextInput,
   View,
@@ -104,9 +105,19 @@ export default function PasteScreen() {
             {tokenCount === 0 ? t.empty : t.detected(tokenCount)}
           </Text>
           {text.length > 0 ? (
-            <Text variant="caption" tone="primary" onPress={() => setText('')}>
-              {t.clear}
-            </Text>
+            // Was a bare <Text onPress>: the tappable area was the glyphs
+            // themselves, about 30x18pt. Now a Pressable with real padding.
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t.clear}
+              onPress={() => setText('')}
+              hitSlop={8}
+              style={styles.clearButton}
+            >
+              <Text variant="caption" tone="primary">
+                {t.clear}
+              </Text>
+            </Pressable>
           ) : null}
         </View>
 
@@ -165,6 +176,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    // Room for the 44pt Clear button without shifting the counter.
+    minHeight: 44,
+  },
+  clearButton: {
+    minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
+    // Cancels the padding so the label stays flush with the input's right edge.
+    marginRight: -spacing.sm,
   },
   submit: { marginTop: spacing.lg },
   error: {

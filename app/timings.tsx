@@ -113,7 +113,9 @@ function RuleGroup({
         {rules.map((rule) => (
           <Card key={rule.id} style={styles.card}>
             <View style={styles.cardHeader}>
-              <Text variant="h2">{ruleTitle(rule.id, language)}</Text>
+              <Text variant="h2" numberOfLines={3} style={styles.cardHeaderTitle}>
+                {ruleTitle(rule.id, language)}
+              </Text>
               <Badge
                 label={rule.recommendedTime.toUpperCase()}
                 tone={rule.recommendedTime === 'am' ? 'success' : 'info'}
@@ -155,6 +157,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: spacing.sm,
   },
+  // "AHA'lar (glikolik, laktik, mandelik)" is the longest title in the set.
+  cardHeaderTitle: { flex: 1 },
   legend: { marginTop: spacing['2xl'], gap: spacing.sm },
   legendRow: { gap: 2 },
   legendLabel: { color: colors.text },

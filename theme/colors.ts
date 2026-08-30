@@ -18,6 +18,11 @@ export const palette = {
   /**
    * Warm-tinted neutrals. Deliberately not pure gray: a cool #888 next to
    * butter reads as dirty, so every step carries a slight yellow-green cast.
+   *
+   * Currently unreferenced — every surface and ink role below resolves to a
+   * brand value or a bespoke hex. Kept as the reference ramp, but note that
+   * `gray400` measures 2.25:1 on butter and `gray500` 3.68:1, so neither is
+   * safe as text if this ramp is ever wired up.
    */
   gray50: '#FAF8F4',
   gray100: '#F1EEE7',
@@ -50,8 +55,20 @@ export const colors = {
   // Content
   /** Body/heading ink. Green-tinted rather than black, to stay on-brand. */
   text: '#14302C',
-  /** Secondary copy, captions, helper text. */
-  muted: '#6B7F79',
+  /**
+   * Secondary copy, captions, helper text, input placeholders and the inactive
+   * tab tint.
+   *
+   * Was `#6B7F79`, which measured 3.78:1 on butter — below the 4.5:1 WCAG AA
+   * needs for normal text, and this is the default for every `caption` in the
+   * app at 13px. Darkened until it clears AA on all three surfaces it actually
+   * lands on, keeping the same desaturated blue-green hue:
+   *
+   *   butter #FBF2CC -> 5.01:1
+   *   cream  #FDF8E3 -> 5.29:1
+   *   white  #FFFFFF -> 5.63:1
+   */
+  muted: '#5A6B66',
   /** Text placed on top of a primary-colored surface. */
   onPrimary: palette.cream,
 

@@ -168,7 +168,12 @@ function RoutineList({ routine, language }: { routine: Routine; language: Langua
                 ])}
               >
                 <View style={styles.stepHeader}>
-                  <Text variant="caption" tone="muted" style={styles.stepLabel}>
+                  <Text
+                    variant="caption"
+                    tone="muted"
+                    numberOfLines={2}
+                    style={styles.stepLabel}
+                  >
                     {STEP_LABELS[language][entry.product.stepType].toUpperCase()}
                   </Text>
                   {entry.misplaced ? <Badge label={t.amOnlyBadge} tone="danger" /> : null}
@@ -271,7 +276,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: spacing.sm,
   },
-  stepLabel: { letterSpacing: 1.1 },
+  stepLabel: { letterSpacing: 1.1, flex: 1 },
   gaps: { marginTop: spacing['2xl'], gap: spacing.sm },
   gapsTitle: { letterSpacing: 1.2 },
   gapsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },

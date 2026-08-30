@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { Redirect } from 'expo-router';
 
 import { Badge, Button, Card, Chip, Screen, Text } from '../components';
 import { colors, spacing, typography } from '../theme';
@@ -10,8 +11,19 @@ import { colors, spacing, typography } from '../theme';
  *
  * Fonts, splash and safe-area now live in `app/_layout.tsx`, so this is a
  * plain route.
+ *
+ * DEV ONLY. expo-router turns every file in `app/` into a real route, so this
+ * shipped in release builds and was reachable by deep link (`dewly://kitchen-sink`)
+ * — a developer scratch screen sitting inside a production app. The guard below
+ * sends anyone who reaches it in a release build back to the entry gate.
  */
 export default function KitchenSink() {
+  if (!__DEV__) return <Redirect href="/" />;
+
+  return <KitchenSinkContent />;
+}
+
+function KitchenSinkContent() {
   const [concerns, setConcerns] = useState<string[]>(['Acne']);
   const [loading, setLoading] = useState(false);
 
