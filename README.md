@@ -11,6 +11,10 @@
 
   🌱 Colors: deep dew green `#0F4A43` · butter `#FBF2CC` · Typeface: Fraunces
 
+  ### 🔗 [**Try it live → dewly-skincare.expo.app**](https://dewly-skincare.expo.app)
+
+  <sub>Runs in the browser — no install. Sign up with any email to save a profile, shelf and routine.</sub>
+
 </div>
 
 ---
@@ -22,7 +26,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Phase 8 — Google login next` · **Next task:** _add Google OAuth sign-in_
+> **Active phase:** `Visual polish pass (premium UI, web + mobile)` · **Next task:** _redesign screens toward the reference look_
 
 ## 📌 Backlog / later
 
@@ -48,7 +52,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 8 | Auth & Saving | 🟡 |
 | 9 | Barcode & Open Beauty Facts | ⬜ |
 | 10 | Polish & Testing | ✅ |
-| 11 | Deploy & Launch | ⬜ |
+| 11 | Deploy & Launch | ✅ |
 | 12 | Portfolio & CV | ⬜ |
 | — | v2 / Stretch Goals | ⬜ |
 
@@ -293,14 +297,41 @@ Consciously left for later — none block Google login:
 
 ## Phase 11 — Deploy & Launch
 
-- [ ] Build for Expo Web (`npx expo export -p web`)
-- [ ] Deploy the web build to Vercel or Netlify → **live link**
-- [ ] (Optional) Produce store packages with EAS build for App Store / Play Store
+Web first, deliberately: a browser link anyone can open is worth more right now
+than a native dev build only reachable on a device.
+
+**Web support**
+- [x] Added the missing web dependencies — `react-native-web`, `react-dom`, `@expo/metro-runtime`. Without them `expo start --web` refused to start at all
+- [x] Pinned `web.bundler: "metro"` and `web.output: "single"` in `app.json`. `single` also guarantees Expo never switches to static rendering, which would execute the tree in Node at build time where `window.localStorage` does not exist
+- [x] `public/index.html` — the root layout renders `null` until the webfonts resolve, so the first paint was browser-white before the butter app
+
+**Web-specific fixes**
+- [x] **`lib/alert.ts`** — react-native-web ships `Alert` as a literal no-op (`class Alert { static alert() {} }`): no throw, no warning, `onPress` never runs. Sign out, reset onboarding and remove-product were dead buttons in a browser, and five error messages were silently swallowed. `showAlert` delegates to `Alert.alert` on native and maps to `window.alert` / `window.confirm` on web
+- [x] `detectSessionInUrl: Platform.OS === 'web'` — Supabase confirmation and recovery links carry their tokens in the URL fragment, and with this off the browser landed on the app and nothing read them
+- [x] AppState-driven token refresh restricted to native — supabase-js already installs its own `visibilitychange` handling on web, so both were racing one refresh ticker
+- [x] **Fixed a cold-start race the browser exposed**: `ProfileProvider` / `ShelfProvider` fall back to the *local* store until the sign-in migration publishes `userId`, and that local read *succeeds* with nothing in it. On a phone the window is invisible because every cold start goes through the `/` gate, which waits — but in a browser you land straight on `/home` by reloading, so **a refresh threw a fully onboarded user back to question 1**. New `isUserPending` flag on the auth context; both providers report `loading` until the real store is known
+- [x] Tab bar 88 → 64 on web (88 leaves room for the iOS home indicator; a browser has none)
+- [x] Verified AsyncStorage needs no adapter on web — metro resolves the package's non-`.native` build, a promise wrapper over `window.localStorage`, so sessions persist across a reload
+- [x] Confirmed iOS and Android bundles still export — none of the above changed native behaviour
+
+**Deploy**
+- [x] Deployed to **EAS Hosting** → **[dewly-skincare.expo.app](https://dewly-skincare.expo.app)**
+- [x] Supabase redirect URLs configured for the deployed origin, so email confirmation links resolve
+- [x] Live link added to the top of this README
+- [ ] Native dev build (iOS/Android) — see deferred below
+- [ ] (Optional) Store packages via EAS Build for App Store / Play Store
 - [ ] Take 5–6 in-app screenshots
 - [ ] Record a short demo video (30–60 sec)
-- [ ] Add the live link and demo to the top of the README
 
 **Definition of Done:** There's a live link anyone can open and try + a demo video.
+_Live link: done. Screenshots and demo video: outstanding._
+
+### Known / deferred
+
+- **Google login + native dev build.** Both were sequenced behind the web deploy on purpose — Google OAuth is easiest to wire once there is a stable redirect origin, which now exists. Email/password is live in the meantime (Phase 8).
+- **Visual polish.** The app is correct but not yet premium; this is the active phase (see the top of the README).
+- **Offline detection (#11).** Still open — carried over from Phase 10.
+- **Only Chromium was verified** end to end in a browser. No Safari or Firefox pass yet, and there is no max-width container, so the layout stretches edge to edge on a desktop-width window.
 
 ---
 
