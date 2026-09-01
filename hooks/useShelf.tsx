@@ -49,7 +49,7 @@ export function ShelfProvider({
   /** Overrides the auth-derived store. Used by tests. */
   store?: ShelfStore;
 }) {
-  const { userId } = useAuth();
+  const { userId, isUserPending } = useAuth();
 
   // Signed in reads and writes Supabase; signed out falls back to local so
   // nothing crashes before the auth gate has resolved. Wrapped in `guardStore`
@@ -89,6 +89,14 @@ export function ShelfProvider({
       cancelled = true;
     };
   }, [activeStore, attempt]);
+
+  /**
+   * Same reasoning as `ProfileProvider`: while `isUserPending`, `activeStore`
+   * is still the LOCAL store even though someone is signed in, and its empty
+   * result would render "Nothing here yet" over a shelf that exists on the
+   * server. Report `loading` until the real store is known.
+   */
+  const effectiveStatus: ShelfStatus = isUserPending ? 'loading' : status;
 
   const reload = useCallback(async () => {
     setAttempt((n) => n + 1);
@@ -151,8 +159,8 @@ export function ShelfProvider({
   const value = useMemo<ShelfContextValue>(
     () => ({
       products,
-      status,
-      isLoaded: status === 'ready',
+      status: effectiveStatus,
+      isLoaded: effectiveStatus === 'ready',
       reload,
       addProduct,
       updateProduct,
@@ -160,7 +168,16 @@ export function ShelfProvider({
       clearShelf,
       getProduct,
     }),
-    [products, status, reload, addProduct, updateProduct, removeProduct, clearShelf, getProduct]
+    [
+      products,
+      effectiveStatus,
+      reload,
+      addProduct,
+      updateProduct,
+      removeProduct,
+      clearShelf,
+      getProduct,
+    ]
   );
 
   return <ShelfContext.Provider value={value}>{children}</ShelfContext.Provider>;

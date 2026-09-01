@@ -1,7 +1,8 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 
 import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../../components';
+import { showAlert } from '../../lib/alert';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
@@ -81,7 +82,7 @@ export default function ProfileScreen() {
   const t = COPY[language];
 
   const confirmSignOut = () => {
-    Alert.alert(t.signOutTitle, t.signOutBody, [
+    showAlert(t.signOutTitle, t.signOutBody, [
       { text: t.cancel, style: 'cancel' },
       {
         text: t.signOut,
@@ -90,7 +91,7 @@ export default function ProfileScreen() {
           // Was `void signOut()` — a failure vanished and the user stayed
           // signed in with no explanation.
           signOut().catch((caught: unknown) => {
-            Alert.alert(t.signOutFailed, messageFor(caught, language), [{ text: t.ok }]);
+            showAlert(t.signOutFailed, messageFor(caught, language), [{ text: t.ok }]);
           });
         },
       },
@@ -98,7 +99,7 @@ export default function ProfileScreen() {
   };
 
   const confirmReset = () => {
-    Alert.alert(t.resetTitle, t.resetBody, [
+    showAlert(t.resetTitle, t.resetBody, [
       { text: t.cancel, style: 'cancel' },
       {
         text: t.reset,
@@ -110,7 +111,7 @@ export default function ProfileScreen() {
           resetProfile()
             .then(() => router.replace('/onboarding'))
             .catch((caught: unknown) => {
-              Alert.alert(t.resetFailed, messageFor(caught, language), [{ text: t.ok }]);
+              showAlert(t.resetFailed, messageFor(caught, language), [{ text: t.ok }]);
             });
         },
       },

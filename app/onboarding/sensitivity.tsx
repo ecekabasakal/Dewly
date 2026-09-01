@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Alert } from 'react-native';
 import { router } from 'expo-router';
 import { goBackOr } from '../../lib/navigation';
 
 import { OnboardingStep, OptionRow } from '../../components';
+import { showAlert } from '../../lib/alert';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
 import { messageFor } from '../../lib/errors';
@@ -63,7 +63,7 @@ export default function SensitivityStep() {
       setSaving(false);
       // Was `error.message` — the raw Supabase text, English even here. The
       // code maps to a translated sentence instead.
-      Alert.alert(t.saveFailed, messageFor(caught, language), [{ text: t.ok }]);
+      showAlert(t.saveFailed, messageFor(caught, language), [{ text: t.ok }]);
     }
   };
 

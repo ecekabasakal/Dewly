@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 import { Redirect, Tabs } from 'expo-router';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -46,7 +46,10 @@ export default function TabsLayout() {
           borderTopColor: colors.border,
           borderTopWidth: 1,
           paddingTop: spacing.xs,
-          height: 88,
+          // 88 leaves room for the iOS home indicator / Android gesture bar.
+          // A browser has neither, so the same number reads as a band of dead
+          // cream along the bottom of the window.
+          height: Platform.OS === 'web' ? 64 : 88,
         },
         tabBarLabelStyle: {
           fontFamily: fonts.bodyMedium,

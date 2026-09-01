@@ -65,7 +65,7 @@ export function ProfileProvider({
   /** Overrides the auth-derived store. Used by tests. */
   store?: ProfileStore;
 }) {
-  const { userId } = useAuth();
+  const { userId, isUserPending } = useAuth();
 
   // The seam this interface existed for: signed in reads and writes Supabase,
   // signed out falls back to local so nothing crashes before the auth gate.
@@ -106,6 +106,15 @@ export function ProfileProvider({
     };
   }, [activeStore, attempt]);
 
+  /**
+   * While `isUserPending`, `activeStore` above is still the LOCAL store even
+   * though someone is signed in — see the flag's own docs. Its answer is a
+   * successful read of the wrong store, and publishing it as `ready` tells
+   * every screen "this user has never onboarded". Report `loading` until the
+   * real store is known.
+   */
+  const effectiveStatus: ProfileStatus = isUserPending ? 'loading' : status;
+
   const reload = useCallback(async () => {
     setAttempt((n) => n + 1);
   }, []);
@@ -120,8 +129,8 @@ export function ProfileProvider({
     // Refuse before touching the draft. The guarded store would reject this
     // anyway, but failing here keeps the reason precise: we do not know whether
     // this user already has a profile, so saving could overwrite one.
-    if (status !== 'ready') {
-      throw new AppError('not-loaded', `completeOnboarding blocked: status=${status}`);
+    if (effectiveStatus !== 'ready') {
+      throw new AppError('not-loaded', `completeOnboarding blocked: status=${effectiveStatus}`);
     }
 
     const { skinType, ageRange, sensitivity, concerns, goals } = draft;
@@ -146,7 +155,7 @@ export function ProfileProvider({
     setProfile(completed);
     setDraft(EMPTY_DRAFT);
     return completed;
-  }, [draft, activeStore, status]);
+  }, [draft, activeStore, effectiveStatus]);
 
   const resetProfile = useCallback(async () => {
     await activeStore.clear();
@@ -157,17 +166,26 @@ export function ProfileProvider({
   const value = useMemo<ProfileContextValue>(
     () => ({
       profile,
-      status,
-      isLoaded: status === 'ready',
+      status: effectiveStatus,
+      isLoaded: effectiveStatus === 'ready',
       reload,
-      hasCompletedOnboarding: profile !== null,
+      hasCompletedOnboarding: effectiveStatus === 'ready' && profile !== null,
       draft,
       updateDraft,
       resetDraft,
       completeOnboarding,
       resetProfile,
     }),
-    [profile, status, reload, draft, updateDraft, resetDraft, completeOnboarding, resetProfile]
+    [
+      profile,
+      effectiveStatus,
+      reload,
+      draft,
+      updateDraft,
+      resetDraft,
+      completeOnboarding,
+      resetProfile,
+    ]
   );
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>;

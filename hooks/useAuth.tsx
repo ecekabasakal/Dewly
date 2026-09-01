@@ -42,6 +42,22 @@ type AuthContextValue = {
   userId: string | null;
   /** The session's user id regardless of migration state. */
   sessionUserId: string | null;
+  /**
+   * True while it is not yet known which store a signed-in user owns — the
+   * persisted session has not been read, or it has and the migration that
+   * publishes `userId` is still running.
+   *
+   * `ProfileProvider` and `ShelfProvider` fall back to the LOCAL store while
+   * `userId` is null, which is right for a signed-out visitor and wrong for a
+   * signed-in one: their local copy is empty, and reporting it as a successful
+   * read means "no profile" and "empty shelf". On a phone that window is
+   * invisible because every cold start goes through the `/` gate, which waits.
+   * In a browser you can land straight on `/home` by reloading or following a
+   * link, and that screen redirects a profile-less user into onboarding — so a
+   * refresh threw a fully onboarded user back to question 1. Both providers
+   * report `loading` while this is true.
+   */
+  isUserPending: boolean;
   email: string | null;
   /** False until the persisted session has been read — gate navigation on this. */
   isLoaded: boolean;
@@ -244,6 +260,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       userId: migratedUserId,
       sessionUserId,
+      isUserPending: !isLoaded || (sessionUserId !== null && migratedUserId === null),
       email: session?.user.email ?? null,
       isLoaded,
       isMigrating,

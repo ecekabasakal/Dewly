@@ -1,7 +1,8 @@
-import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 
 import { Badge, Button, Card, ErrorState, Screen, Text } from '../../components';
+import { showAlert } from '../../lib/alert';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useShelf } from '../../hooks/useShelf';
 import { groupByStep } from '../../lib/routine';
@@ -66,7 +67,7 @@ export default function ShelfScreen() {
   const groups = groupByStep(products);
 
   const confirmRemove = (product: ShelfProduct) => {
-    Alert.alert(t.removeTitle, t.removeBody(product.name), [
+    showAlert(t.removeTitle, t.removeBody(product.name), [
       { text: t.cancel, style: 'cancel' },
       {
         text: t.remove,
@@ -76,7 +77,7 @@ export default function ShelfScreen() {
           // unhandled rejection and the product stayed on screen as though the
           // tap had missed. Say so instead.
           removeProduct(product.id).catch((caught: unknown) => {
-            Alert.alert(t.removeFailedTitle, messageFor(caught, language), [
+            showAlert(t.removeFailedTitle, messageFor(caught, language), [
               { text: t.ok },
             ]);
           });

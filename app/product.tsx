@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -14,6 +13,7 @@ import { goBackOr } from '../lib/navigation';
 
 import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../components';
 import { TimingEvidence } from '../components/TimingEvidence';
+import { showAlert } from '../lib/alert';
 import { useAnalysis } from '../hooks/useAnalysis';
 import { useLanguage } from '../hooks/useLanguage';
 import { useShelf } from '../hooks/useShelf';
@@ -224,7 +224,7 @@ function ProductForm({
       router.replace('/shelf');
     } catch (caught) {
       setSaving(false);
-      Alert.alert(t.saveFailedTitle, messageFor(caught, language), [{ text: t.ok }]);
+      showAlert(t.saveFailedTitle, messageFor(caught, language), [{ text: t.ok }]);
     }
   };
 

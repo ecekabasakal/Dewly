@@ -1,4 +1,5 @@
-import { Alert, Linking, Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { showAlert } from '../lib/alert';
 import { colors, fonts, radius, spacing } from '../theme';
 import { Badge } from './Badge';
 import { Text } from './Text';
@@ -36,7 +37,7 @@ export function SourceLink({
       await Linking.openURL(source.url);
     } catch {
       // Show the URL rather than failing silently — the citation is the point.
-      Alert.alert(COPY[language].openFailed, source.url);
+      showAlert(COPY[language].openFailed, source.url);
     }
   };
 

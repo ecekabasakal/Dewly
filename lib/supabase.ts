@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/db';
 
@@ -17,17 +17,24 @@ if (!supabaseUrl || !supabaseAnonKey) {
  * `.from('ingredients').select()` returns `Ingredient[]` and unknown table or
  * column names are compile errors.
  *
- * Auth options are the React Native set:
+ * Auth options:
  *   - `storage: AsyncStorage` — React Native has no localStorage, so without
- *     this the session lives in memory and is lost on every app restart.
- *   - `detectSessionInUrl: false` — there is no URL to parse outside the web.
+ *     this the session lives in memory and is lost on every app restart. Safe
+ *     to keep on web too: metro resolves the package's non-`.native` build
+ *     there, which is a thin promise wrapper over `window.localStorage`, so
+ *     sessions persist across a browser reload the same way.
+ *   - `detectSessionInUrl` — WEB ONLY. Supabase's confirmation and recovery
+ *     emails send the user to a URL carrying the tokens in the fragment
+ *     (`#access_token=…`). With this off, the browser lands on the app and
+ *     nothing reads them: the confirmation link appears to do nothing and the
+ *     user is still signed out. Off outside the web, where there is no such URL.
  */
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false,
+    detectSessionInUrl: Platform.OS === 'web',
   },
 });
 
@@ -37,11 +44,18 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
  * supabase-js refreshes on a timer; left running in the background it burns
  * requests and can fire while the OS has the process suspended. Supabase's own
  * React Native guidance is to drive it from AppState.
+ *
+ * Native only, deliberately. On web supabase-js already installs its own
+ * `visibilitychange` handling for exactly this, and react-native-web maps
+ * AppState onto the same event — so running both means every tab switch races
+ * two start/stop calls against one refresh ticker.
  */
-AppState.addEventListener('change', (state) => {
-  if (state === 'active') {
-    void supabase.auth.startAutoRefresh();
-  } else {
-    void supabase.auth.stopAutoRefresh();
-  }
-});
+if (Platform.OS !== 'web') {
+  AppState.addEventListener('change', (state) => {
+    if (state === 'active') {
+      void supabase.auth.startAutoRefresh();
+    } else {
+      void supabase.auth.stopAutoRefresh();
+    }
+  });
+}
