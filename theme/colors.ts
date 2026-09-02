@@ -14,6 +14,11 @@ export const palette = {
   butter: '#FBF2CC',
   /** Cream — a shade lighter than butter, used for raised surfaces. */
   cream: '#FDF8E3',
+  /** Soft sage-cream — the product tile ground. Cool enough to read as a
+   *  separate object on butter without competing with the green ink on it. */
+  sage: '#E7EFE0',
+  /** One step down from sage, for the tile's outline. */
+  sageEdge: '#D5E2CC',
 
   /**
    * Warm-tinted neutrals. Deliberately not pure gray: a cool #888 next to
@@ -81,6 +86,16 @@ export const colors = {
    * Status tones. Each pairs a tint background with readable foreground text.
    * Phase 7's conflict engine maps severity high/medium/low onto these.
    */
+  /**
+   * The product tile (`components/BrandTile`). One look everywhere a product
+   * is listed, so a shelf reads as a set rather than a mixed bag of
+   * third-party photography.
+   *
+   * `ink` is the brand green at 8.56:1 on sage — comfortably past WCAG AA even
+   * at the smallest tile size, where the brand name can drop to 9px.
+   */
+  tile: { bg: palette.sage, border: palette.sageEdge, ink: palette.green },
+
   status: {
     success: { bg: '#DCEFE4', fg: '#1B5E3F', border: '#B6DCC6' },
     warning: { bg: '#FBECCB', fg: '#7A5312', border: '#EDD49B' },

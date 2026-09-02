@@ -13,7 +13,17 @@ import { createSupabaseShelfStore } from '../lib/supabase-shelf-store';
 import { useAuth } from './useAuth';
 import { newProductId, type ShelfProduct } from '../types/shelf';
 
-export type NewShelfProduct = Omit<ShelfProduct, 'id' | 'addedAt'>;
+export type NewShelfProduct = Omit<ShelfProduct, 'id' | 'addedAt'> & {
+  /**
+   * Force the catalogue id instead of minting one.
+   *
+   * Only the Open Beauty Facts flow passes this, and only when that barcode is
+   * already in `products`: reusing the existing row keeps two users who own the
+   * same bottle on one catalogue entry, and avoids a unique-constraint failure
+   * on `products.barcode`. Everything else omits it and gets a fresh uuid.
+   */
+  id?: string;
+};
 
 /**
  * `failed` is a first-class state, not an empty shelf.
@@ -121,7 +131,7 @@ export function ShelfProvider({
     async (input: NewShelfProduct) => {
       const product: ShelfProduct = {
         ...input,
-        id: newProductId(),
+        id: input.id ?? newProductId(),
         addedAt: new Date().toISOString(),
       };
       await commit([...products, product]);

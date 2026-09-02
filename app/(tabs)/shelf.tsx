@@ -1,7 +1,15 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 
-import { Badge, Button, Card, ErrorState, Screen, Text } from '../../components';
+import {
+  Badge,
+  BrandTile,
+  Button,
+  Card,
+  ErrorState,
+  Screen,
+  Text,
+} from '../../components';
 import { showAlert } from '../../lib/alert';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useShelf } from '../../hooks/useShelf';
@@ -17,7 +25,8 @@ const COPY = {
     emptySubtitle: 'The products you own, in routine order.',
     subtitle: (n: number) =>
       `${n} product${n === 1 ? '' : 's'}, grouped by step.`,
-    add: 'Add a product',
+    add: 'Add a product manually',
+    findOnline: 'Find a product online',
     viewRoutine: 'View AM / PM routine',
     removeTitle: 'Remove product?',
     removeBody: (name: string) => `"${name}" will be taken off your shelf.`,
@@ -38,7 +47,8 @@ const COPY = {
     title: 'Rafım',
     emptySubtitle: 'Sahip olduğun ürünler, rutin sırasına göre.',
     subtitle: (n: number) => `${n} ürün, adımlara göre gruplanmış.`,
-    add: 'Ürün ekle',
+    add: 'Elle ürün ekle',
+    findOnline: 'Ürünü çevrimiçi bul',
     viewRoutine: 'AM / PM rutinini gör',
     removeTitle: 'Ürün kaldırılsın mı?',
     removeBody: (name: string) => `"${name}" rafından kaldırılacak.`,
@@ -106,8 +116,15 @@ export default function ShelfScreen() {
 
       <View style={styles.actions}>
         <Button
-          label={t.add}
+          label={t.findOnline}
           size="lg"
+          fullWidth
+          disabled={status !== 'ready'}
+          onPress={() => router.push('/obf-search')}
+        />
+        <Button
+          label={t.add}
+          variant="secondary"
           fullWidth
           disabled={status !== 'ready'}
           onPress={() => router.push('/product')}
@@ -135,6 +152,7 @@ export default function ShelfScreen() {
             {group.products.map((product) => (
               <Card key={product.id} style={styles.card}>
                 <View style={styles.cardHeader}>
+                  <BrandTile brand={product.brand} name={product.name} size={56} />
                   <View style={styles.cardTitle}>
                     <Text variant="h2">{product.name}</Text>
                     {product.brand ? (
@@ -220,7 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   cardTitle: { flex: 1, gap: 2 },
   cardActions: {

@@ -11,13 +11,25 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { goBackOr } from '../lib/navigation';
 
-import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../components';
+import {
+  Badge,
+  BrandTile,
+  Button,
+  Card,
+  Chip,
+  ErrorState,
+  Screen,
+  Text,
+} from '../components';
 import { TimingEvidence } from '../components/TimingEvidence';
 import { showAlert } from '../lib/alert';
 import { useAnalysis } from '../hooks/useAnalysis';
 import { useLanguage } from '../hooks/useLanguage';
 import { useShelf } from '../hooks/useShelf';
 import { messageFor } from '../lib/errors';
+import { parseInciList, resolveTokens } from '../lib/inci';
+import { lookupBarcode, OBF_ATTRIBUTION, type ObfProduct } from '../lib/obf';
+import { findCatalogueIdByBarcode } from '../lib/supabase-shelf-store';
 import { guessReasonText, guessStep, isAmOnlyStep } from '../lib/step-guess';
 import {
   resolveRule,
@@ -63,6 +75,19 @@ const COPY = {
     addToShelf: 'Add to shelf',
     saveFailedTitle: "Couldn't save",
     ok: 'OK',
+    fromObf: 'Pulled from Open Beauty Facts — check everything and save.',
+    obfLoading: 'Fetching the product…',
+    obfFailedTitle: "Couldn't reach Open Beauty Facts",
+    obfMissingTitle: 'Product not found',
+    obfMissingBody:
+      "That barcode isn't in Open Beauty Facts. You can still add the product by hand.",
+    obfRetry: 'Try again',
+    obfManual: 'Add it manually instead',
+    obfBack: 'Back to search',
+    obfNoIngredients:
+      'This record has no ingredient list. The name and brand will still be saved — paste the list on the Analyze screen later.',
+    obfResolved: (matched: number, total: number) =>
+      `${matched} of ${total} ingredients recognised and saved.`,
   },
   tr: {
     editTitle: 'Ürünü düzenle',
@@ -89,6 +114,19 @@ const COPY = {
     addToShelf: 'Rafa ekle',
     saveFailedTitle: 'Kaydedilemedi',
     ok: 'Tamam',
+    fromObf: 'Open Beauty Facts’ten alındı — kontrol edip kaydet.',
+    obfLoading: 'Ürün getiriliyor…',
+    obfFailedTitle: 'Open Beauty Facts’e ulaşılamadı',
+    obfMissingTitle: 'Ürün bulunamadı',
+    obfMissingBody:
+      'Bu barkod Open Beauty Facts’te yok. Ürünü yine de elle ekleyebilirsin.',
+    obfRetry: 'Tekrar dene',
+    obfManual: 'Bunun yerine elle ekle',
+    obfBack: 'Aramaya dön',
+    obfNoIngredients:
+      'Bu kayıtta içerik listesi yok. Adı ve markası yine de kaydedilecek — listeyi sonra Analiz ekranında yapıştırabilirsin.',
+    obfResolved: (matched: number, total: number) =>
+      `${total} içerikten ${matched} tanesi tanındı ve kaydedildi.`,
   },
 } as const;
 
@@ -102,8 +140,13 @@ const COPY = {
  * and saving would silently overwrite them.
  */
 export default function AddProductScreen() {
-  const { id, source } = useLocalSearchParams<{ id?: string; source?: string }>();
+  const { id, source, barcode } = useLocalSearchParams<{
+    id?: string;
+    source?: string;
+    barcode?: string;
+  }>();
   const { getProduct, status, reload } = useShelf();
+  const fromObf = source === 'obf' && typeof barcode === 'string' && barcode.length > 0;
 
   if (status === 'loading') {
     return (
@@ -127,6 +170,15 @@ export default function AddProductScreen() {
 
   const editing = id ? getProduct(id) : undefined;
 
+  // Only the barcode travels in the URL, and the product is re-fetched here.
+  // The alternative — serialising name, brand and a 2 KB ingredient list
+  // into query params — breaks on web (URL length) and loses everything on a
+  // reload. A barcode round-trips: pasting /product?source=obf&barcode=… into a
+  // browser rebuilds the whole screen.
+  if (fromObf) {
+    return <ObfProductLoader barcode={barcode} />;
+  }
+
   return (
     <ProductForm
       // Remount if the target product changes, so initialisers re-run.
@@ -137,12 +189,104 @@ export default function AddProductScreen() {
   );
 }
 
+/**
+ * Fetches one Open Beauty Facts product, then mounts the ordinary form with it.
+ *
+ * Kept separate from `ProductForm` so the form still seeds its state from
+ * `useState` initialisers that run exactly once — the same reason the shelf is
+ * gated above. Mounting the form first and filling it in from an effect would
+ * fight the "user has touched this field" flags.
+ */
+function ObfProductLoader({ barcode }: { barcode: string }) {
+  const { language } = useLanguage();
+  const t = COPY[language];
+
+  const [product, setProduct] = useState<ObfProduct | null>(null);
+  const [state, setState] = useState<'loading' | 'ready' | 'missing' | 'failed'>('loading');
+  const [error, setError] = useState<unknown>(null);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    setState('loading');
+
+    lookupBarcode(barcode)
+      .then((found) => {
+        if (cancelled) return;
+        setProduct(found);
+        // A miss is not a failure: OBF simply does not have this product.
+        setState(found ? 'ready' : 'missing');
+      })
+      .catch((caught: unknown) => {
+        if (cancelled) return;
+        setError(caught);
+        setState('failed');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [barcode, attempt]);
+
+  if (state === 'loading') {
+    return (
+      <Screen>
+        <View style={styles.gate}>
+          <ActivityIndicator color={colors.primary} />
+          <Text variant="caption" tone="muted">
+            {t.obfLoading}
+          </Text>
+        </View>
+      </Screen>
+    );
+  }
+
+  if (state !== 'ready' || !product) {
+    const failed = state === 'failed';
+    return (
+      <Screen scroll>
+        <Card style={styles.obfProblem}>
+          <Badge label="!" tone={failed ? 'danger' : 'warning'} />
+          <Text variant="h2">{failed ? t.obfFailedTitle : t.obfMissingTitle}</Text>
+          <Text variant="body" tone="muted">
+            {failed ? messageFor(error, language) : t.obfMissingBody}
+          </Text>
+          <View style={styles.obfProblemActions}>
+            {failed ? (
+              <Button
+                label={t.obfRetry}
+                variant="secondary"
+                onPress={() => setAttempt((n) => n + 1)}
+              />
+            ) : null}
+            <Button
+              label={t.obfManual}
+              variant="secondary"
+              onPress={() => router.replace('/product')}
+            />
+            <Button
+              label={t.obfBack}
+              variant="secondary"
+              onPress={() => router.replace('/obf-search')}
+            />
+          </View>
+        </Card>
+      </Screen>
+    );
+  }
+
+  return <ProductForm key={product.barcode} editing={undefined} fromAnalysis={false} obf={product} />;
+}
+
 function ProductForm({
   editing,
   fromAnalysis,
+  obf,
 }: {
   editing: ShelfProduct | undefined;
   fromAnalysis: boolean;
+  /** Set when the product came from the Open Beauty Facts search. */
+  obf?: ObfProduct;
 }) {
   const { addProduct, updateProduct } = useShelf();
   const { result } = useAnalysis();
@@ -154,8 +298,29 @@ function ProductForm({
     [fromAnalysis, result]
   );
 
-  const [name, setName] = useState(editing?.name ?? '');
-  const [brand, setBrand] = useState(editing?.brand ?? '');
+  /**
+   * OBF's ingredient text put through the SAME Phase 5 pipeline as a pasted
+   * list — `parseInciList` then `resolveTokens`, both pure and offline. Nothing
+   * bespoke: an OBF list and a hand-pasted one resolve identically, so the step
+   * guess and the conflict engine see one kind of input.
+   *
+   * OBF text is messy in ways a label is not. Some contributors flatten
+   * "Caprylic/Capric Triglyceride" into two comma-separated fragments, some
+   * paste a whole paragraph. Unresolvable tokens are simply dropped here and
+   * the count is reported below, so the user can see how much was understood.
+   */
+  const obfResolution = useMemo(() => {
+    if (!obf?.ingredientsText) return { names: [] as string[], total: 0 };
+    const tokens = parseInciList(obf.ingredientsText);
+    const names = resolveTokens(tokens)
+      .map((r) => r.canonical)
+      .filter((n): n is string => n !== null);
+    // De-duplicated: OBF lists repeat ingredients more often than labels do.
+    return { names: [...new Set(names)], total: tokens.length };
+  }, [obf]);
+
+  const [name, setName] = useState(editing?.name ?? obf?.name ?? '');
+  const [brand, setBrand] = useState(editing?.brand ?? obf?.brand ?? '');
   const [stepType, setStepType] = useState<StepType | null>(editing?.stepType ?? null);
   const [timeOfDay, setTimeOfDay] = useState<ProductTimeOfDay>(editing?.timeOfDay ?? 'both');
   const [saving, setSaving] = useState(false);
@@ -167,7 +332,8 @@ function ProductForm({
 
   const { language } = useLanguage();
   const t = COPY[language];
-  const ingredientNames = editing?.ingredientNames ?? analysisIngredients;
+  const ingredientNames =
+    editing?.ingredientNames ?? (obf ? obfResolution.names : analysisIngredients);
   const guess = useMemo(
     () => guessStep(name, ingredientNames),
     [name, ingredientNames]
@@ -210,6 +376,8 @@ function ProductForm({
       stepType,
       timeOfDay,
       ingredientNames,
+      // Preserved on edit so re-saving does not strip the product's origin.
+      barcode: editing?.barcode ?? obf?.barcode ?? null,
     };
 
     // Wrapped because `setSaving(false)` used to exist only on the success
@@ -219,7 +387,11 @@ function ProductForm({
       if (editing) {
         await updateProduct(editing.id, payload);
       } else {
-        await addProduct(payload);
+        // `products.barcode` is unique and the catalogue is shared, so if
+        // somebody has already added this bottle we join their row rather than
+        // minting a second id that the constraint would reject.
+        const existingId = obf ? await findCatalogueIdByBarcode(obf.barcode) : null;
+        await addProduct(existingId ? { ...payload, id: existingId } : payload);
       }
       router.replace('/shelf');
     } catch (caught) {
@@ -237,9 +409,38 @@ function ProductForm({
         <View style={styles.header}>
           <Text variant="h1">{editing ? t.editTitle : t.addTitle}</Text>
           <Text variant="body" tone="muted">
-            {fromAnalysis && !editing ? t.fromAnalysis : t.subtitle}
+            {obf ? t.fromObf : fromAnalysis && !editing ? t.fromAnalysis : t.subtitle}
           </Text>
         </View>
+
+        {/* The brand tile, plus an honest account of how much of the OBF
+            record we could use. Both outcomes are common enough to state. */}
+        {obf ? (
+          <Card style={styles.obfCard}>
+            <View style={styles.obfRow}>
+              <BrandTile brand={obf.brand} name={obf.name} size={96} />
+              <View style={styles.obfMeta}>
+                <Text variant="caption" tone="muted">
+                  {obf.barcode}
+                </Text>
+                <Text variant="caption" tone="muted">
+                  {obf.ingredientsText
+                    ? t.obfResolved(obfResolution.names.length, obfResolution.total)
+                    : t.obfNoIngredients}
+                </Text>
+              </View>
+            </View>
+            <Text variant="caption" tone="muted">
+              {OBF_ATTRIBUTION}
+            </Text>
+          </Card>
+        ) : null}
+
+        {editing ? (
+          <View style={styles.editImage}>
+            <BrandTile brand={editing.brand} name={editing.name} size={96} />
+          </View>
+        ) : null}
 
         <Field label={t.nameLabel}>
           <TextInput
@@ -451,8 +652,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  gate: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  gate: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md },
   header: { marginTop: spacing.lg, gap: spacing.sm },
+  obfCard: { marginTop: spacing.lg, gap: spacing.md, alignItems: 'flex-start' },
+  obfRow: { flexDirection: 'row', gap: spacing.md, alignSelf: 'stretch' },
+  obfMeta: { flex: 1, gap: spacing.xs },
+  obfProblem: { marginTop: spacing.xl, gap: spacing.sm, alignItems: 'flex-start' },
+  obfProblemActions: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  editImage: { marginTop: spacing.lg, alignItems: 'flex-start' },
   field: { marginTop: spacing.xl, gap: spacing.sm },
   fieldLabel: { letterSpacing: 1.2 },
   input: {

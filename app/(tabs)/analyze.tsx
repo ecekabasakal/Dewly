@@ -30,6 +30,8 @@ const COPY = {
     analyze: 'Analyze',
     noBottle: 'Not near a bottle?',
     useSample: 'Use a sample list',
+    lookupHint: "Or let us fetch the list for you, if the product is in Open Beauty Facts.",
+    lookup: 'Look up a product online',
     failedBadge: 'COULDN’T ANALYZE',
     retry: 'Try again',
   },
@@ -46,6 +48,8 @@ const COPY = {
     analyze: 'Analiz et',
     noBottle: 'Yanında ürün yok mu?',
     useSample: 'Örnek liste kullan',
+    lookupHint: 'Ya da ürün Open Beauty Facts’te varsa listeyi biz getirelim.',
+    lookup: 'Ürünü çevrimiçi ara',
     failedBadge: 'ANALİZ EDİLEMEDİ',
     retry: 'Tekrar dene',
   },
@@ -149,6 +153,14 @@ export default function PasteScreen() {
             label={t.useSample}
             variant="secondary"
             onPress={() => setText(SAMPLE)}
+          />
+          <Text variant="caption" tone="muted">
+            {t.lookupHint}
+          </Text>
+          <Button
+            label={t.lookup}
+            variant="secondary"
+            onPress={() => router.push('/obf-search')}
           />
         </View>
       </Screen>

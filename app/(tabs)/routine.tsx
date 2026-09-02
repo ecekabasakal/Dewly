@@ -2,7 +2,16 @@ import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
-import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../../components';
+import {
+  Badge,
+  BrandTile,
+  Button,
+  Card,
+  Chip,
+  ErrorState,
+  Screen,
+  Text,
+} from '../../components';
 import { ConflictCheck } from '../../components/ConflictCheck';
 import { useLanguage } from '../../hooks/useLanguage';
 import { findConflicts } from '../../lib/conflicts';
@@ -167,28 +176,37 @@ function RoutineList({ routine, language }: { routine: Routine; language: Langua
                   entry.misplaced && styles.stepCardFlagged,
                 ])}
               >
-                <View style={styles.stepHeader}>
-                  <Text
-                    variant="caption"
-                    tone="muted"
-                    numberOfLines={2}
-                    style={styles.stepLabel}
-                  >
-                    {STEP_LABELS[language][entry.product.stepType].toUpperCase()}
-                  </Text>
-                  {entry.misplaced ? <Badge label={t.amOnlyBadge} tone="danger" /> : null}
+                <View style={styles.stepBody}>
+                  <BrandTile
+                    brand={entry.product.brand}
+                    name={entry.product.name}
+                    size={48}
+                  />
+                  <View style={styles.stepText}>
+                    <View style={styles.stepHeader}>
+                      <Text
+                        variant="caption"
+                        tone="muted"
+                        numberOfLines={2}
+                        style={styles.stepLabel}
+                      >
+                        {STEP_LABELS[language][entry.product.stepType].toUpperCase()}
+                      </Text>
+                      {entry.misplaced ? <Badge label={t.amOnlyBadge} tone="danger" /> : null}
+                    </View>
+                    <Text variant="h2">{entry.product.name}</Text>
+                    {entry.product.brand ? (
+                      <Text variant="caption" tone="muted">
+                        {entry.product.brand} ·{' '}
+                        {TIME_OF_DAY_LABELS[language][entry.product.timeOfDay]}
+                      </Text>
+                    ) : (
+                      <Text variant="caption" tone="muted">
+                        {TIME_OF_DAY_LABELS[language][entry.product.timeOfDay]}
+                      </Text>
+                    )}
+                  </View>
                 </View>
-                <Text variant="h2">{entry.product.name}</Text>
-                {entry.product.brand ? (
-                  <Text variant="caption" tone="muted">
-                    {entry.product.brand} ·{' '}
-                    {TIME_OF_DAY_LABELS[language][entry.product.timeOfDay]}
-                  </Text>
-                ) : (
-                  <Text variant="caption" tone="muted">
-                    {TIME_OF_DAY_LABELS[language][entry.product.timeOfDay]}
-                  </Text>
-                )}
               </Card>
             </View>
           ))}
@@ -266,6 +284,10 @@ const styles = StyleSheet.create({
   },
   stepNumberText: { color: colors.onPrimary, fontFamily: fonts.bodySemi },
   stepCard: { flex: 1, gap: 2 },
+  stepBody: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
+  // Without flex the text column cannot shrink beside the thumbnail, and a long
+  // Turkish product name pushes the card past the screen edge.
+  stepText: { flex: 1, gap: 2 },
   stepCardFlagged: {
     borderColor: colors.status.danger.border,
     borderWidth: 1.5,

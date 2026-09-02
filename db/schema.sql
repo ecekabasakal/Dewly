@@ -141,6 +141,17 @@ create table if not exists products (
   created_at      timestamptz not null default now()
 );
 
+-- Phase 9A added `image_url` to hold an Open Beauty Facts front photo. Phase 9B
+-- removed it: third-party product photography is too inconsistent (and too
+-- often missing) to build a shelf out of, so the app renders a typographic
+-- `components/BrandTile` instead and never fetches an image.
+--
+-- Kept as an idempotent DROP rather than deleted outright so that a database
+-- which already ran the 9A migration converges when this file is re-run. It
+-- was never populated — the column existed for one phase and the write path
+-- that would have filled it was blocked the whole time.
+alter table products drop column if exists image_url;
+
 comment on column products.inci_raw is
   'Ingredient list exactly as printed/scraped, before normalization. Kept so parsing can be re-run.';
 comment on column products.ingredient_ids is

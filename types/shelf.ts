@@ -26,9 +26,25 @@ export type ShelfProduct = {
    * without another lookup.
    */
   ingredientNames: string[];
+  /**
+   * EAN/GTIN, present only when the product came from Open Beauty Facts.
+   *
+   * Doubles as the "where did this come from" marker: `products.source` is
+   * derived from it rather than stored separately on the client.
+   */
+  barcode?: string | null;
   addedAt: string;
 };
 
+/**
+ * `barcode` is OPTIONAL on purpose, so `SHELF_VERSION` does not move.
+ *
+ * `parseShelf` discards the entire snapshot when the version does not match —
+ * bumping it would wipe the local shelf of anyone upgrading. An added optional
+ * field needs no migration: old rows simply read back as `undefined`. The same
+ * rule made REMOVING `imageUrl` free: a stale snapshot still carrying one
+ * parses fine, and nothing reads it.
+ */
 export const SHELF_VERSION = 1;
 
 /** What is persisted — versioned so a shape change can be migrated later. */

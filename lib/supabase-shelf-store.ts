@@ -44,6 +44,52 @@ async function namesForIds(ids: string[]): Promise<Map<string, string>> {
   return new Map((data ?? []).map((row) => [row.id, row.inci_name]));
 }
 
+/**
+ * Of the given product ids, the ones this user may write.
+ *
+ * A row that does not exist yet counts as writable — the insert half of the
+ * upsert will create it and set `created_by`.
+ */
+async function ownedProductIds(ids: string[], userId: string): Promise<Set<string>> {
+  if (ids.length === 0) return new Set();
+
+  const { data, error } = await supabase
+    .from('products')
+    .select('id, created_by')
+    .in('id', ids);
+
+  if (error) throw new AppError('load-failed', `check product ownership: ${error.message}`);
+
+  const foreign = new Set(
+    (data ?? []).filter((row) => row.created_by !== userId).map((row) => row.id)
+  );
+  return new Set(ids.filter((id) => !foreign.has(id)));
+}
+
+/**
+ * The catalogue id for a barcode, if some user has already added that product.
+ *
+ * Called before creating a shelf entry from Open Beauty Facts so both users end
+ * up pointing at one `products` row. Without it the second user's insert would
+ * hit `products.barcode`'s unique constraint with a freshly generated id and
+ * the save would fail outright.
+ *
+ * Returns null on a read failure as well as on a miss. That is deliberate: the
+ * worst case is a duplicate-key error on save, which is recoverable and
+ * reported, whereas blocking the add on a catalogue lookup would make an
+ * optional optimisation load-bearing.
+ */
+export async function findCatalogueIdByBarcode(barcode: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('id')
+    .eq('barcode', barcode)
+    .maybeSingle();
+
+  if (error) return null;
+  return data?.id ?? null;
+}
+
 export function createSupabaseShelfStore(userId: string): ShelfStore {
   return {
     async load() {
@@ -62,6 +108,7 @@ export function createSupabaseShelfStore(userId: string): ShelfStore {
           id: string;
           name: string;
           brand: string | null;
+          barcode: string | null;
           step_type: StepType | null;
           ingredient_ids: string[];
         } | null;
@@ -84,6 +131,7 @@ export function createSupabaseShelfStore(userId: string): ShelfStore {
             // than dropping a product because the column is nullable in SQL.
             stepType: p.step_type ?? 'serum',
             timeOfDay: row.time_of_day,
+            barcode: p.barcode,
             ingredientNames: p.ingredient_ids
               .map((id) => names.get(id))
               .filter((n): n is string => n !== undefined),
@@ -106,22 +154,44 @@ export function createSupabaseShelfStore(userId: string): ShelfStore {
       const ids = await idsForNames(allNames);
 
       if (products.length > 0) {
-        const { error: productError } = await supabase.from('products').upsert(
-          products.map((p) => ({
-            id: p.id,
-            name: p.name,
-            brand: p.brand,
-            step_type: p.stepType,
-            ingredient_ids: p.ingredientNames
-              .map((name) => ids.get(name))
-              .filter((id): id is string => id !== undefined),
-            source: 'manual',
-            created_by: userId,
-          })),
-          { onConflict: 'id' }
+        // `products` is a SHARED catalogue, and Open Beauty Facts makes that
+        // real: two users adding the same bottle now land on the same row,
+        // because the add flow reuses an existing `products.id` when the
+        // barcode already exists (`findCatalogueIdByBarcode`).
+        //
+        // Rewriting a row somebody else created is both wrong and blocked —
+        // the "users update own products" policy is scoped to `created_by =
+        // auth.uid()`, so the UPDATE half of an upsert against a foreign row
+        // fails at the RLS layer and takes the whole save with it. Skip those
+        // rows: the catalogue entry is already there, and all this user needs
+        // is the `user_shelf` membership written below.
+        const owned = await ownedProductIds(
+          products.map((p) => p.id),
+          userId
         );
-        if (productError) {
-          throw new AppError('save-failed', `save products: ${productError.message}`);
+        const writable = products.filter((p) => owned.has(p.id));
+
+        if (writable.length > 0) {
+          const { error: productError } = await supabase.from('products').upsert(
+            writable.map((p) => ({
+              id: p.id,
+              name: p.name,
+              brand: p.brand,
+              barcode: p.barcode ?? null,
+              step_type: p.stepType,
+              ingredient_ids: p.ingredientNames
+                .map((name) => ids.get(name))
+                .filter((id): id is string => id !== undefined),
+              // Derived rather than stored on the client: a barcode is only
+              // ever set by the Open Beauty Facts flow.
+              source: p.barcode ? 'open_beauty_facts' : 'manual',
+              created_by: userId,
+            })),
+            { onConflict: 'id' }
+          );
+          if (productError) {
+            throw new AppError('save-failed', `save products: ${productError.message}`);
+          }
         }
 
         const { error: shelfError } = await supabase.from('user_shelf').upsert(
