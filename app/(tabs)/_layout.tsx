@@ -2,7 +2,9 @@ import { Feather } from '@expo/vector-icons';
 import { ActivityIndicator, Platform, View } from 'react-native';
 import { Redirect, Tabs } from 'expo-router';
 
+import { Sidebar } from '../../components';
 import { useAuth } from '../../hooks/useAuth';
+import { useIsWide } from '../../hooks/useLayout';
 import { useLanguage } from '../../hooks/useLanguage';
 import { colors, fonts, spacing } from '../../theme';
 
@@ -18,6 +20,7 @@ const LABELS = {
 export default function TabsLayout() {
   const { language } = useLanguage();
   const { isLoaded, sessionUserId } = useAuth();
+  const isWide = useIsWide();
   const t = LABELS[language];
 
   // Auth is required. Render NOTHING until auth resolves — returning <Tabs/>
@@ -35,13 +38,27 @@ export default function TabsLayout() {
 
   return (
     <Tabs
+      /**
+       * Above the desktop breakpoint the bar becomes a left rail; below it,
+       * `undefined` makes the navigator fall back to its OWN `BottomTabBar`.
+       *
+       * That fallback is the whole zero-regression story: the phone bar is not
+       * a re-implementation that could drift from the original, it is
+       * literally the stock component with the same options it always had.
+       */
+      tabBar={isWide ? (props) => <Sidebar {...props} /> : undefined}
       screenOptions={{
         headerShown: false,
+        // The navigator switches its container to `flexDirection: 'row'` for
+        // 'left', which is what puts the rail beside the content.
+        tabBarPosition: isWide ? 'left' : 'bottom',
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.muted,
         // Cream against the butter background, so the bar reads as a raised
         // surface rather than a separate slab of colour.
-        tabBarStyle: {
+        tabBarStyle: isWide
+          ? undefined
+          : {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
           borderTopWidth: 1,

@@ -1,42 +1,56 @@
 /**
- * Layout tokens for the responsive content column.
+ * Responsive layout tokens.
  *
- * Dewly is a mobile-first app, and on a desktop browser that is a real design
- * problem rather than a stylistic one: stretched to 1400px the hero card
- * becomes a squat green band, the three metric cards turn into wide empty
- * slabs, and a routine step is a thin line of text adrift in whitespace. Every
- * proportion in the app was chosen against a phone-width column.
+ * Dewly is a phone app first, and the web build has to serve three genuinely
+ * different situations rather than stretch one layout across all of them:
  *
- * So above a breakpoint the app renders in a fixed-width column, centred, with
- * the page behind it in a deeper tone.
+ *   mobile    < 600   the app, full-bleed. What a phone always gets.
+ *   centered  600-899 the same phone layout in a 480px column, centred on a
+ *                     deeper ground. A narrow desktop window or a tablet in
+ *                     portrait: too wide to fill honestly, too narrow for a
+ *                     sidebar and two columns.
+ *   desktop   >= 900  a real desktop layout — left sidebar nav, wide content
+ *                     area, multi-column screens.
+ *
+ * Three modes rather than two because collapsing `centered` into `desktop`
+ * would put a 248px sidebar and a two-column split into a 650px window, where
+ * the right-hand column would be about 240px wide. And collapsing it into
+ * `mobile` brings back the edge-to-edge sprawl the centred column exists to fix.
  */
 
+export const CENTERED_BREAKPOINT = 600;
+
 /**
- * The column's width above the breakpoint.
+ * Where the desktop layout takes over.
  *
- * 480 rather than a typical 640–768 content width, because this is not a
- * document — it is a phone app being shown on a bigger screen, and every card,
- * type size and gutter in it was tuned at ~430. 480 gives the hero a little
- * more room without letting it flatten, and keeps a routine step's product name
- * on the same number of lines it uses on a phone.
+ * 900 because that is roughly where the sidebar plus a two-column content area
+ * stops being cramped: 900 - 248 sidebar - 64 of padding leaves ~590 for
+ * content, which splits into a ~350 / ~230 pair. Below that the right column
+ * is too narrow for a profile card, which is why `centered` exists.
  */
+export const DESKTOP_BREAKPOINT = 900;
+
+/** The phone column's width in `centered` mode. See the mode table above. */
 export const MAX_CONTENT_WIDTH = 480;
 
 /**
- * Below this, the column is a no-op and the app fills the viewport.
+ * The desktop content column, INSIDE the sidebar's remaining space.
  *
- * 600 rather than 480 so the constraint only engages when there is enough room
- * for the surround to read as intentional. Switching on at exactly 480 would
- * give a 500px window a 10px margin either side, which looks like a rendering
- * bug rather than a decision.
- *
- * Phones never reach 600pt in portrait, so this is automatically inert on
- * native — no `Platform` check needed. A tablet in landscape does cross it and
- * gets the same centred column, which is the right answer there too.
+ * Capped so an ultra-wide monitor does not stretch a routine step into a metre
+ * of whitespace with a product name adrift at one end. Beyond this the butter
+ * background simply continues.
  */
-export const WIDE_BREAKPOINT = 600;
+export const MAX_DESKTOP_WIDTH = 1100;
 
-/** Whether the centred column should engage at this viewport width. */
+export type LayoutMode = 'mobile' | 'centered' | 'desktop';
+
+export function layoutModeFor(width: number): LayoutMode {
+  if (width >= DESKTOP_BREAKPOINT) return 'desktop';
+  if (width >= CENTERED_BREAKPOINT) return 'centered';
+  return 'mobile';
+}
+
+/** The signal screens branch on. True only in `desktop`. */
 export function isWideViewport(width: number): boolean {
-  return width >= WIDE_BREAKPOINT;
+  return layoutModeFor(width) === 'desktop';
 }

@@ -61,6 +61,22 @@ export function greetingText(language: Language, date?: Date): string {
  * The real fix is a name field in onboarding. Until then this is a deliberate,
  * contained approximation and not a general-purpose identity helper.
  */
+/**
+ * The name to show, in preference order: the one the user gave us, then the
+ * guess from their email, then nothing.
+ *
+ * One function because two places need the same order — the home hero and the
+ * desktop sidebar — and a disagreement between them would show a user two
+ * different names on one screen. Callers supply their own fallback copy, since
+ * "Welcome back" and "You" are not interchangeable.
+ */
+export function resolveDisplayName(
+  profileName: string | null | undefined,
+  email: string | null | undefined
+): string | null {
+  return profileName ?? displayNameFromEmail(email);
+}
+
 export function displayNameFromEmail(email: string | null | undefined): string | null {
   if (!email) return null;
 

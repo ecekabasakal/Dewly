@@ -1,11 +1,18 @@
 import { describe, expect, test } from 'bun:test';
 
-import { isWideViewport, MAX_CONTENT_WIDTH, WIDE_BREAKPOINT } from './layout';
+import {
+  CENTERED_BREAKPOINT,
+  DESKTOP_BREAKPOINT,
+  isWideViewport,
+  layoutModeFor,
+  MAX_CONTENT_WIDTH,
+  MAX_DESKTOP_WIDTH,
+} from './layout';
 
-describe('isWideViewport', () => {
+describe('layoutModeFor', () => {
   /**
-   * The requirement that matters most: a phone must be byte-for-byte the layout
-   * it had before this existed. These are real portrait widths in points.
+   * The requirement that outranks everything else here: a phone must get the
+   * layout it had before any of this existed. These are real portrait widths.
    */
   test.each([
     [320, 'iPhone SE (1st gen)'],
@@ -14,35 +21,68 @@ describe('isWideViewport', () => {
     [402, 'iPhone 16 Pro'],
     [430, 'iPhone 16 Pro Max'],
     [412, 'Pixel 8'],
-  ])('%ipt (%s) stays full-bleed', (width) => {
+  ])('%ipt (%s) is mobile', (width) => {
+    expect(layoutModeFor(width)).toBe('mobile');
     expect(isWideViewport(width)).toBe(false);
   });
 
   test.each([
+    [600, 'the centred breakpoint itself'],
     [768, 'iPad portrait'],
+    [899, 'one below desktop'],
+  ])('%ipt (%s) is centered', (width) => {
+    expect(layoutModeFor(width)).toBe('centered');
+    // Screens must NOT take the desktop branch here — a sidebar plus two
+    // columns does not fit, which is the reason this middle mode exists.
+    expect(isWideViewport(width)).toBe(false);
+  });
+
+  test.each([
+    [900, 'the desktop breakpoint itself'],
     [1024, 'iPad landscape'],
     [1280, 'laptop'],
     [1920, 'desktop'],
-  ])('%ipt (%s) gets the centred column', (width) => {
+    [3440, 'ultrawide'],
+  ])('%ipt (%s) is desktop', (width) => {
+    expect(layoutModeFor(width)).toBe('desktop');
     expect(isWideViewport(width)).toBe(true);
   });
 
-  test('the breakpoint itself is wide, one point under is not', () => {
-    expect(isWideViewport(WIDE_BREAKPOINT)).toBe(true);
-    expect(isWideViewport(WIDE_BREAKPOINT - 1)).toBe(false);
+  test('each boundary is exact', () => {
+    expect(layoutModeFor(CENTERED_BREAKPOINT - 1)).toBe('mobile');
+    expect(layoutModeFor(CENTERED_BREAKPOINT)).toBe('centered');
+    expect(layoutModeFor(DESKTOP_BREAKPOINT - 1)).toBe('centered');
+    expect(layoutModeFor(DESKTOP_BREAKPOINT)).toBe('desktop');
+  });
+});
+
+describe('the breakpoints and the widths they gate agree', () => {
+  test('the modes are ordered', () => {
+    expect(CENTERED_BREAKPOINT).toBeLessThan(DESKTOP_BREAKPOINT);
   });
 
   /**
-   * The breakpoint has to clear the column by enough that the surround reads as
-   * a decision. Engaging at exactly `MAX_CONTENT_WIDTH` would give a 490px
-   * window a 5px margin, which looks like a bug.
+   * Engaging the centred column at exactly its own width would give a 490px
+   * window a 5px margin either side, which reads as a rendering bug rather
+   * than a decision.
    */
-  test('leaves a visible margin the moment it engages', () => {
-    const marginEachSide = (WIDE_BREAKPOINT - MAX_CONTENT_WIDTH) / 2;
-    expect(marginEachSide).toBeGreaterThanOrEqual(48);
+  test('the centred column has visible surround the moment it engages', () => {
+    expect((CENTERED_BREAKPOINT - MAX_CONTENT_WIDTH) / 2).toBeGreaterThanOrEqual(48);
   });
 
-  test('the column never exceeds the breakpoint that reveals it', () => {
-    expect(MAX_CONTENT_WIDTH).toBeLessThan(WIDE_BREAKPOINT);
+  /** The desktop cap must be reachable, or it would never do anything. */
+  test('the desktop column is wider than the phone column but capped', () => {
+    expect(MAX_DESKTOP_WIDTH).toBeGreaterThan(MAX_CONTENT_WIDTH);
+    expect(MAX_DESKTOP_WIDTH).toBeGreaterThan(DESKTOP_BREAKPOINT);
+  });
+
+  /**
+   * At the moment the sidebar appears there must still be usable room beside
+   * it for two columns — the sizing argument behind picking 900.
+   */
+  test('the sidebar leaves workable content width at the breakpoint', () => {
+    const SIDEBAR = 248;
+    const PADDING = 32 * 2;
+    expect(DESKTOP_BREAKPOINT - SIDEBAR - PADDING).toBeGreaterThanOrEqual(560);
   });
 });

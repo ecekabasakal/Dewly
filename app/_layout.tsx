@@ -1,5 +1,5 @@
 import { useCallback, type ReactNode } from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -10,13 +10,8 @@ import { AuthProvider } from '../hooks/useAuth';
 import { LanguageProvider } from '../hooks/useLanguage';
 import { ProfileProvider } from '../hooks/useProfile';
 import { ShelfProvider } from '../hooks/useShelf';
-import {
-  colors,
-  elevation,
-  isWideViewport,
-  MAX_CONTENT_WIDTH,
-  useAppFonts,
-} from '../theme';
+import { useLayoutMode } from '../hooks/useLayout';
+import { colors, elevation, MAX_CONTENT_WIDTH, useAppFonts } from '../theme';
 
 // Hold the native splash until the fonts are in, so the first paint is
 // already branded — no flash of system serif behind Fraunces.
@@ -98,12 +93,14 @@ function AppFrame({
   children: ReactNode;
   onLayout: () => void;
 }) {
-  const { width } = useWindowDimensions();
-  const wide = isWideViewport(width);
+  // Only the middle mode centres a phone-width column. `desktop` fills the
+  // window — the sidebar and `DesktopPage` do the constraining there — and
+  // `mobile` is full-bleed as it has always been.
+  const centered = useLayoutMode() === 'centered';
 
   return (
-    <View style={[styles.page, wide && styles.pageWide]} onLayout={onLayout}>
-      <View style={[styles.column, wide && styles.columnWide]}>{children}</View>
+    <View style={[styles.page, centered && styles.pageWide]} onLayout={onLayout}>
+      <View style={[styles.column, centered && styles.columnWide]}>{children}</View>
     </View>
   );
 }

@@ -1,7 +1,15 @@
 export { colors, palette, type StatusTone } from './colors';
 export { elevation, type ElevationLevel } from './elevation';
 export { gradients } from './gradients';
-export { isWideViewport, MAX_CONTENT_WIDTH, WIDE_BREAKPOINT } from './layout';
+export {
+  CENTERED_BREAKPOINT,
+  DESKTOP_BREAKPOINT,
+  isWideViewport,
+  layoutModeFor,
+  MAX_CONTENT_WIDTH,
+  MAX_DESKTOP_WIDTH,
+  type LayoutMode,
+} from './layout';
 export { spacing, radius } from './spacing';
 export {
   fonts,
