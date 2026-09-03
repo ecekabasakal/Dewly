@@ -26,7 +26,18 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Visual polish pass (premium UI, web + mobile)` · **Next task:** _redesign screens toward the reference look_
+> **Active phase:** `Visual upgrade pass — desktop layout done for Home` · **Next task:** _apply the desktop layout to the other screens (Analyze, Routine, Shelf, Profile), then mobile styling polish_
+
+## ✨ Recent
+
+What landed in the current pass:
+
+- **Open Beauty Facts integration** — look a product up by typed barcode *or* by name, pull its name, brand and ingredient list, and run that list through the existing Phase 5 normalizer and Phase 6 step/timing guess. No camera: the whole flow is keyboard-driven so it works in the simulator and in a browser.
+- **Brand-name tiles instead of product photos** — third-party product photography was too inconsistent (and too often missing) to build a shelf out of, so `BrandTile` renders a typographic tile that needs no network and cannot 404. The `image_url` column was added and then dropped again.
+- **Onboarding name field** — an optional, skippable first step, editable later from Profile. The home greeting prefers it over the guess-from-email it used before.
+- **Design tokens** — a warm accent palette with semantic roles, layered `boxShadow` elevation tokens that work on native *and* web (retiring the deprecated `shadow*` props), a hero gradient token, and a card radius scale.
+- **New Home screen** — gradient greeting hero with the brand's own sunrise mark, plus a row of metric cards counted from the user's real rows. No scores, no invented numbers; a card with nothing behind it is omitted rather than filled.
+- **Responsive desktop web layout** — three modes from one breakpoint system: the phone app below 600, the centred mobile-on-web column to 900, and above that a real desktop layout with a left sidebar nav and a two-column Home. The phone layout is untouched at every step.
 
 ## 📌 Backlog / later
 
@@ -34,6 +45,14 @@ Small things deliberately deferred — not blockers for the MVP:
 
 - ~~**Language toggle (EN/TR) in a Settings screen.**~~ **DONE** — the toggle lives in the Profile/Settings tab and drives the whole app: a persisted `LanguageProvider` is the single source of truth, every screen resolves copy at render time, and the choice survives a restart.
 - **Localize `common_name` for TR** (e.g. Water → Su). `description_*` and `caution_*` are bilingual, but `common_name` is English-only, so a Turkish ingredient card still shows an English subtitle.
+
+**Deferred, with the reason:**
+
+- **Camera barcode scanning (Phase 9 Part B).** Needs a native dev build — `expo-camera` is not in Expo Go. Part A already covers everything downstream of the scan, so this is one screen that hands a barcode to code that exists.
+- **Google login.** Also needs a dev build. Email/password is live; the deployed origin now gives OAuth a stable redirect to come back to.
+- **Desktop layout for the remaining screens** — Analyze, Routine, Shelf, Profile. The foundation (`useIsWide`, the sidebar, `DesktopPage`) is built and app-wide; only Home consumes it so far, so those four still render their phone layout inside the desktop content area.
+- **Mobile styling polish** — the routine card's contrast is flatter than the rest of the app, and a long brand name in a 48pt `BrandTile` hits the font-size floor and breaks mid-word ("Cetaphi / l").
+- **Offline detection (#11).** Every failure path reports cleanly, but nothing checks connectivity up front, so an offline user finds out by trying.
 
 ## 📊 Progress Dashboard
 
@@ -50,7 +69,7 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 | 6 | Routine Builder | ✅ |
 | 7 | Conflict/Interaction Engine ★ | ✅ |
 | 8 | Auth & Saving | 🟡 |
-| 9 | Barcode & Open Beauty Facts | ⬜ |
+| 9 | Barcode & Open Beauty Facts | 🟡 |
 | 10 | Polish & Testing | ✅ |
 | 11 | Deploy & Launch | ✅ |
 | 12 | Portfolio & CV | ⬜ |
@@ -240,14 +259,24 @@ Status markers: ⬜ Not started · 🟡 In progress · ✅ Done
 
 ## Phase 9 — Barcode & Open Beauty Facts
 
-- [ ] Camera permission + barcode scan screen (`expo-camera` / `expo-barcode-scanner`)
-- [ ] Open Beauty Facts API integration (barcode → product + ingredient list)
-- [ ] Run the incoming messy data through the normalization layer
-- [ ] Flow to add the found product to the "Shelf"
-- [ ] Manual-add fallback if the product isn't found
-- [ ] Attribution note: credit Open Beauty Facts (ODbL) in the app
+Split in two. **Part A** is everything that does not need a camera, which is
+everything except the scan itself — deliberately, so the whole feature is
+testable in the simulator and in a browser by typing.
+
+**Part A — lookup, done**
+- [x] Open Beauty Facts API integration (`lib/obf.ts`) — barcode via the v2 endpoint, name search via `cgi/search.pl`. The legacy endpoint for search on purpose: `/api/v2/search` filters by tag only and has no free-text parameter
+- [x] Typed **barcode** *or* **name search** from one box — a run of digits is a barcode, anything else is a name
+- [x] Run the incoming messy data through the normalization layer — the same `parseInciList` → `resolveTokens` a pasted list uses, then the Phase 6 step and timing guess. Nothing bespoke
+- [x] Flow to add the found product to the "Shelf", storing barcode, resolved ingredient ids, step and time of day
+- [x] Manual-add fallback if the product isn't found — every empty or failed outcome offers it, because OBF's cosmetics coverage is thin enough that "not found" is a normal answer
+- [x] Attribution note: credit Open Beauty Facts (ODbL) on the search and product screens
+- [x] Handle the messy cases: no ingredients, no brand, no name, a corporate pile-up in `brands`, and the two different ways OBF says "not found"
+
+**Part B — the scan, deferred**
+- [ ] Camera permission + barcode scan screen (`expo-camera`) — needs a native dev build; hands a barcode to the Part A code that already exists
 
 **Definition of Done:** Scanning a barcode auto-fetches the product and its ingredients can be analyzed.
+_Fetch and analyze: done. The scan itself: waiting on a dev build._
 
 ---
 
