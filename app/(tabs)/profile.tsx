@@ -1,4 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 
 import { Badge, Button, Card, Chip, ErrorState, Screen, Text } from '../../components';
@@ -7,8 +8,11 @@ import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
 import { messageFor } from '../../lib/errors';
-import { colors, spacing } from '../../theme';
+import type { Language } from '../../lib/language';
+import { colors, fonts, radius, spacing, typography } from '../../theme';
 import {
+  normalizeDisplayName,
+  MAX_NAME_LENGTH,
   AGE_RANGE_LABELS,
   SENSITIVITY_LABELS,
   SKIN_TYPE_LABELS,
@@ -19,6 +23,14 @@ const COPY = {
     title: 'Profile',
     subtitle: 'Your account and how Dewly is set up for you.',
     accountSection: 'Account',
+    nameSection: 'Name',
+    nameLabel: 'What we call you',
+    namePlaceholder: 'e.g. Ece',
+    nameHint: 'Shown on your home screen. Leave it empty to go back to a plain greeting.',
+    nameSave: 'Save name',
+    nameSaving: 'Saving…',
+    nameSaved: 'Saved',
+    nameFailed: "Couldn't save your name",
     signedInAs: 'Signed in as',
     signOut: 'Sign out',
     signOutTitle: 'Sign out?',
@@ -48,6 +60,14 @@ const COPY = {
     title: 'Profil',
     subtitle: 'Hesabın ve Dewly’nin sana göre ayarları.',
     accountSection: 'Hesap',
+    nameSection: 'Ad',
+    nameLabel: 'Sana nasıl hitap edelim',
+    namePlaceholder: 'ör. Ece',
+    nameHint: 'Ana sayfanda görünür. Boş bırakırsan sade bir karşılamaya dönersin.',
+    nameSave: 'Adı kaydet',
+    nameSaving: 'Kaydediliyor…',
+    nameSaved: 'Kaydedildi',
+    nameFailed: 'Adın kaydedilemedi',
     signedInAs: 'Giriş yapılan hesap',
     signOut: 'Çıkış yap',
     signOutTitle: 'Çıkış yapılsın mı?',
@@ -78,7 +98,7 @@ const COPY = {
 export default function ProfileScreen() {
   const { email, signOut } = useAuth();
   const { language, setLanguage } = useLanguage();
-  const { profile, status, reload, resetProfile } = useProfile();
+  const { profile, status, reload, resetProfile, updateName } = useProfile();
   const t = COPY[language];
 
   const confirmSignOut = () => {
@@ -138,6 +158,18 @@ export default function ProfileScreen() {
           </Text>
           <Button label={t.signOut} variant="secondary" onPress={confirmSignOut} />
         </Card>
+      </Section>
+
+      {/* Editable outside onboarding because it is the one profile answer that
+          is a preference rather than a fact about the user's skin. */}
+      <Section title={t.nameSection}>
+        <NameEditor
+          key={profile?.name ?? 'none'}
+          saved={profile?.name ?? null}
+          disabled={status !== 'ready' || !profile}
+          onSave={updateName}
+          language={language}
+        />
       </Section>
 
       <Section title={t.skinSection}>
@@ -210,6 +242,96 @@ export default function ProfileScreen() {
   );
 }
 
+/**
+ * Inline name editor.
+ *
+ * Save is only offered when the field differs from what is stored, so the
+ * control is never a no-op the user has to guess about. An empty field is a
+ * legitimate edit — it clears the name and returns the hero to a plain
+ * greeting — which is why "is it different" is compared on the NORMALISED
+ * value rather than on the raw text: typing a trailing space is not a change.
+ */
+function NameEditor({
+  saved,
+  disabled,
+  onSave,
+  language,
+}: {
+  saved: string | null;
+  disabled: boolean;
+  onSave: (name: string | null) => Promise<void>;
+  language: Language;
+}) {
+  const t = COPY[language];
+  const [typed, setTyped] = useState(saved ?? '');
+  const [saving, setSaving] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+
+  const normalized = normalizeDisplayName(typed);
+  const dirty = normalized !== saved;
+
+  // The confirmation is transient — leaving it up would make a stale "Saved"
+  // sit next to a field the user has since edited.
+  useEffect(() => {
+    if (!justSaved) return;
+    const timer = setTimeout(() => setJustSaved(false), 2400);
+    return () => clearTimeout(timer);
+  }, [justSaved]);
+
+  const save = async () => {
+    setSaving(true);
+    try {
+      await onSave(normalized);
+      setJustSaved(true);
+    } catch (caught) {
+      showAlert(t.nameFailed, messageFor(caught, language), [{ text: t.ok }]);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Card style={styles.card}>
+      <Text variant="caption" tone="muted">
+        {t.nameLabel.toUpperCase()}
+      </Text>
+      <TextInput
+        value={typed}
+        onChangeText={(next) => {
+          setTyped(next);
+          setJustSaved(false);
+        }}
+        placeholder={t.namePlaceholder}
+        placeholderTextColor={colors.muted}
+        style={styles.nameInput}
+        autoCapitalize="words"
+        autoCorrect={false}
+        autoComplete="given-name"
+        maxLength={MAX_NAME_LENGTH}
+        editable={!disabled && !saving}
+        returnKeyType="done"
+        onSubmitEditing={() => {
+          if (dirty && !saving) void save();
+        }}
+        accessibilityLabel={t.nameLabel}
+      />
+      <Text variant="caption" tone="muted">
+        {t.nameHint}
+      </Text>
+      <View style={styles.nameActions}>
+        <Button
+          label={saving ? t.nameSaving : t.nameSave}
+          variant="secondary"
+          disabled={disabled || saving || !dirty}
+          loading={saving}
+          onPress={() => void save()}
+        />
+        {justSaved ? <Badge label={t.nameSaved} tone="success" /> : null}
+      </View>
+    </Card>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={styles.section}>
@@ -238,5 +360,17 @@ const styles = StyleSheet.create({
   // a long sensitivity badge overflows the card on a narrow screen.
   rowTitle: { flex: 1 },
   langRow: { flexDirection: 'row', gap: spacing.sm },
+  nameInput: {
+    ...typography.body,
+    alignSelf: 'stretch',
+    color: colors.text,
+    padding: spacing.md,
+    backgroundColor: colors.background,
+    borderRadius: radius.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    fontFamily: fonts.body,
+  },
+  nameActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   danger: { borderColor: colors.status.danger.border },
 });

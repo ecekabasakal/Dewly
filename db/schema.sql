@@ -396,8 +396,19 @@ create table if not exists skin_profiles (
   updated_at   timestamptz not null default now()
 );
 
+-- Added after the table shipped, so an idempotent ALTER rather than a column in
+-- the CREATE above — re-running this file must stay safe.
+--
+-- Nullable with no default, deliberately: the onboarding step that collects it
+-- is skippable, so "no name" is a normal state and not a missing value to be
+-- backfilled. No grant needed — the grants at the bottom of this file are
+-- table-level, and in PostgreSQL those cover columns added later.
+alter table skin_profiles add column if not exists name text;
+
 comment on table skin_profiles is
   'Onboarding answers (Phase 4). One row per user; user_id is the primary key.';
+comment on column skin_profiles.name is
+  'Optional first name, used only to personalise the home greeting. Null when the user skipped the step.';
 comment on column skin_profiles.concerns is
   'Matched against ingredients.targets_concerns, so these must stay text[] with the same vocabulary.';
 

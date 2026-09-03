@@ -41,7 +41,7 @@ export default function GoalsStep() {
 
   return (
     <OnboardingStep
-      step={3}
+      step={4}
       title={t.title}
       subtitle={t.subtitle}
       // Goals are optional: unlike concerns they do not gate any Phase 5
@@ -49,7 +49,7 @@ export default function GoalsStep() {
       hint={draft.goals.length === 0 ? t.optional : t.selected(draft.goals.length)}
       canAdvance
       nextLabel={draft.goals.length === 0 ? t.skip : t.next}
-      onBack={() => goBackOr('/onboarding')}
+      onBack={() => goBackOr('/onboarding/concerns')}
       onNext={() => router.push('/onboarding/age')}
     >
       <View style={styles.grid}>

@@ -69,12 +69,12 @@ export default function SensitivityStep() {
 
   return (
     <OnboardingStep
-      step={5}
+      step={6}
       title={t.title}
       subtitle={t.subtitle}
       canAdvance={draft.sensitivity !== undefined && !saving}
       nextLabel={saving ? t.saving : t.finish}
-      onBack={() => goBackOr('/onboarding')}
+      onBack={() => goBackOr('/onboarding/age')}
       onNext={finish}
     >
       {SENSITIVITY_LEVELS.map((level) => (

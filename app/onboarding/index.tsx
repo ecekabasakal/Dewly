@@ -1,61 +1,99 @@
+import { StyleSheet, TextInput } from 'react-native';
 import { router } from 'expo-router';
 
-import { OnboardingStep, OptionRow } from '../../components';
+import { OnboardingStep } from '../../components';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useProfile } from '../../hooks/useProfile';
-import type { Language } from '../../lib/language';
-import { SKIN_TYPES, SKIN_TYPE_LABELS, type SkinType } from '../../types/profile';
+import { colors, fonts, radius, spacing, typography } from '../../theme';
+import { MAX_NAME_LENGTH, normalizeDisplayName } from '../../types/profile';
 
 const COPY = {
   en: {
-    title: "What's your skin type?",
-    subtitle: 'Pick the one that sounds most like your skin on an average day.',
+    title: 'What should we call you?',
+    subtitle: 'Just a first name — it only shows up on your own home screen.',
+    label: 'First name',
+    placeholder: 'e.g. Ece',
+    hint: "Optional. You can add or change this later in Profile.",
+    skip: 'Skip',
   },
   tr: {
-    title: 'Cilt tipin nedir?',
-    subtitle: 'Ortalama bir günde cildine en çok uyanı seç.',
+    title: 'Sana nasıl hitap edelim?',
+    subtitle: 'Sadece adın — yalnızca kendi ana sayfanda görünür.',
+    label: 'Ad',
+    placeholder: 'ör. Ece',
+    hint: 'İsteğe bağlı. Sonradan Profil’den ekleyebilir veya değiştirebilirsin.',
+    skip: 'Geç',
   },
 } as const;
 
-const DESCRIPTIONS: Record<Language, Record<SkinType, string>> = {
-  en: {
-    dry: 'Feels tight, flaky patches',
-    oily: 'Shiny by midday, visible pores',
-    combination: 'Oily T-zone, dry cheeks',
-    sensitive: 'Reacts easily, stings or flushes',
-    normal: 'Balanced, few complaints',
-  },
-  tr: {
-    dry: 'Gergin hissettiriyor, pul pul dökülüyor',
-    oily: 'Öğlene doğru parlıyor, gözenekler belirgin',
-    combination: 'T bölgesi yağlı, yanaklar kuru',
-    sensitive: 'Kolay tepki veriyor, yanma veya kızarma oluyor',
-    normal: 'Dengeli, pek şikâyet yok',
-  },
-};
-
-export default function SkinTypeStep() {
-  const { draft, updateDraft } = useProfile();
+/**
+ * Step 1 — the name.
+ *
+ * First because it is the one question that is not about skin: opening with
+ * "what should we call you?" reads as an introduction, where opening with
+ * "what's your skin type?" reads as a form.
+ *
+ * Optional end to end. The footer button is always enabled and simply changes
+ * label — "Skip" with the field empty, "Continue" once something is typed — so
+ * there is one control that always says what it will do, rather than a disabled
+ * primary next to a separate skip link.
+ */
+export default function NameStep() {
+  const { draft, updateDraft, profile } = useProfile();
   const { language } = useLanguage();
   const t = COPY[language];
+
+  // Seeded from the saved profile so "Redo onboarding" arrives with the name
+  // already filled in. Without this, redoing the flow to change a skin type
+  // would quietly clear a name the user never touched. `draft.name` wins once
+  // the field has been edited — including when it has been edited to empty,
+  // which is `''` and not nullish, so clearing still works.
+  const typed = draft.name ?? profile?.name ?? '';
+  const hasName = normalizeDisplayName(typed) !== null;
+
+  const advance = () => {
+    // Normalised on the way out, so nothing downstream has to trim it again.
+    updateDraft({ name: normalizeDisplayName(typed) });
+    router.push('/onboarding/skin-type');
+  };
 
   return (
     <OnboardingStep
       step={1}
       title={t.title}
       subtitle={t.subtitle}
-      canAdvance={draft.skinType !== undefined}
-      onNext={() => router.push('/onboarding/concerns')}
+      hint={t.hint}
+      canAdvance
+      nextLabel={hasName ? undefined : t.skip}
+      onNext={advance}
     >
-      {SKIN_TYPES.map((type) => (
-        <OptionRow
-          key={type}
-          label={SKIN_TYPE_LABELS[language][type]}
-          description={DESCRIPTIONS[language][type]}
-          selected={draft.skinType === type}
-          onPress={() => updateDraft({ skinType: type })}
-        />
-      ))}
+      <TextInput
+        value={typed}
+        onChangeText={(next) => updateDraft({ name: next })}
+        placeholder={t.placeholder}
+        placeholderTextColor={colors.muted}
+        style={styles.input}
+        autoCapitalize="words"
+        autoCorrect={false}
+        autoComplete="given-name"
+        maxLength={MAX_NAME_LENGTH}
+        returnKeyType="done"
+        onSubmitEditing={advance}
+        accessibilityLabel={t.label}
+      />
     </OnboardingStep>
   );
 }
+
+const styles = StyleSheet.create({
+  input: {
+    ...typography.body,
+    color: colors.text,
+    padding: spacing.lg,
+    backgroundColor: colors.surface,
+    borderRadius: radius.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    fontFamily: fonts.body,
+  },
+});

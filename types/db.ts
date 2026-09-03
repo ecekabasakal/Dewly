@@ -202,6 +202,8 @@ export type Database = {
       skin_profiles: {
         Row: {
           user_id: string;
+          /** First name for the home greeting. Null when the step was skipped. */
+          name: string | null;
           skin_type: Database['public']['Enums']['skin_type'];
           concerns: string[];
           goals: string[];
@@ -213,6 +215,7 @@ export type Database = {
         };
         Insert: {
           user_id: string;
+          name?: string | null;
           skin_type: Database['public']['Enums']['skin_type'];
           concerns?: string[];
           goals?: string[];
@@ -224,6 +227,7 @@ export type Database = {
         };
         Update: {
           user_id?: string;
+          name?: string | null;
           skin_type?: Database['public']['Enums']['skin_type'];
           concerns?: string[];
           goals?: string[];

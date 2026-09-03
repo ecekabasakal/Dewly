@@ -39,12 +39,12 @@ export default function ConcernsStep() {
 
   return (
     <OnboardingStep
-      step={2}
+      step={3}
       title={t.title}
       subtitle={t.subtitle}
       hint={draft.concerns.length === 0 ? t.pickOne : t.selected(draft.concerns.length)}
       canAdvance={draft.concerns.length > 0}
-      onBack={() => goBackOr('/onboarding')}
+      onBack={() => goBackOr('/onboarding/skin-type')}
       onNext={() => router.push('/onboarding/goals')}
     >
       <View style={styles.grid}>

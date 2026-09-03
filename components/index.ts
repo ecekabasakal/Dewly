@@ -9,6 +9,7 @@ export {
   ONBOARDING_STEP_COUNT,
   type OnboardingStepProps,
 } from './OnboardingStep';
+export { MetricCard, type MetricCardProps, type MetricTone } from './MetricCard';
 export { OptionRow, type OptionRowProps } from './OptionRow';
 export { ProgressBar, type ProgressBarProps } from './ProgressBar';
 export { Screen, type ScreenProps } from './Screen';

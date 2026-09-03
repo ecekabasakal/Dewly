@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
-import { colors, radius, spacing } from '../theme';
+import { colors, elevation, radius, spacing } from '../theme';
 
 export type CardProps = {
   children: ReactNode;
@@ -28,17 +28,18 @@ export function Card({ children, onPress, style }: CardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    borderRadius: radius.card,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.lg,
     // Cream on butter is a low-contrast pairing by design; a soft green-tinted
     // shadow does the lifting that a stronger border would make feel heavy.
-    shadowColor: colors.primary,
-    shadowOpacity: 0.07,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
+    //
+    // Was four `shadow*` props plus `elevation`, which react-native-web has
+    // deprecated and warned about on every render. `elevation.sm` is one
+    // `boxShadow` that both renderers understand, and it can layer two shadows
+    // where the old single `shadowRadius` could only describe one.
+    ...elevation.sm,
   },
   pressed: { opacity: 0.85 },
 });

@@ -25,11 +25,11 @@ export default function AgeStep() {
 
   return (
     <OnboardingStep
-      step={4}
+      step={5}
       title={t.title}
       subtitle={t.subtitle}
       canAdvance={draft.ageRange !== undefined}
-      onBack={() => goBackOr('/onboarding')}
+      onBack={() => goBackOr('/onboarding/goals')}
       onNext={() => router.push('/onboarding/sensitivity')}
     >
       {AGE_RANGES.map((range) => (

@@ -90,6 +90,15 @@ export type SensitivityLevel = (typeof SENSITIVITY_LEVELS)[number];
  * shape and removes the need for null checks after onboarding.
  */
 export type Profile = {
+  /**
+   * What to call the user. OPTIONAL everywhere — the onboarding step can be
+   * skipped, and every reader must cope with null.
+   *
+   * First name only, by design: it exists to make the home greeting personal,
+   * not to identify anyone. `null` and `''` are the same thing here, and
+   * `normalizeDisplayName` collapses them so callers only handle one.
+   */
+  name?: string | null;
   skinType: SkinType;
   concerns: Concern[];
   goals: Goal[];
@@ -103,6 +112,7 @@ export type Profile = {
 
 /** In-progress answers. Multi-selects start as empty arrays, not undefined. */
 export type ProfileDraft = {
+  name?: string | null;
   skinType?: SkinType;
   concerns: Concern[];
   goals: Goal[];
@@ -110,12 +120,36 @@ export type ProfileDraft = {
   sensitivity?: SensitivityLevel;
 };
 
+/**
+ * Stays at 1 even though `Profile` gained a field.
+ *
+ * `parseProfile` discards the whole stored profile when the version does not
+ * match, which would push every existing user back through onboarding. An added
+ * OPTIONAL field needs no migration — older rows simply read back with `name`
+ * undefined, which is exactly what skipping the step produces anyway.
+ */
 export const PROFILE_VERSION = 1;
 
 export const EMPTY_DRAFT: ProfileDraft = {
   concerns: [],
   goals: [],
 };
+
+/** Longer than this is not a first name, and it wraps the home hero. */
+export const MAX_NAME_LENGTH = 24;
+
+/**
+ * Trims a typed name to what gets stored, or `null` if there is nothing left.
+ *
+ * One function so onboarding and the Settings editor cannot disagree about
+ * whether "  " is a name. Collapses inner whitespace too, so a stray double
+ * space does not survive into the greeting.
+ */
+export function normalizeDisplayName(raw: string | null | undefined): string | null {
+  const value = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (value.length === 0) return null;
+  return value.slice(0, MAX_NAME_LENGTH);
+}
 
 // ---------------------------------------------------------------------------
 // Display labels

@@ -35,6 +35,7 @@ export function createSupabaseProfileStore(userId: string): ProfileStore {
       if (!data) return null;
 
       return {
+        name: data.name,
         skinType: data.skin_type as SkinType,
         concerns: data.concerns as Concern[],
         goals: data.goals as Goal[],
@@ -51,6 +52,10 @@ export function createSupabaseProfileStore(userId: string): ProfileStore {
       const { error } = await supabase.from('skin_profiles').upsert(
         {
           user_id: userId,
+          // `?? null` rather than omitting the key: an omitted column leaves the
+          // previous value in place on an upsert, so clearing a name in Settings
+          // would silently keep the old one.
+          name: profile.name ?? null,
           skin_type: profile.skinType,
           concerns: profile.concerns,
           goals: profile.goals,

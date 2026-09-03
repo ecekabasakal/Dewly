@@ -14,6 +14,7 @@ import { createSupabaseProfileStore } from '../lib/supabase-profile-store';
 import { useAuth } from './useAuth';
 import {
   EMPTY_DRAFT,
+  normalizeDisplayName,
   PROFILE_VERSION,
   type Profile,
   type ProfileDraft,
@@ -51,6 +52,8 @@ type ProfileContextValue = {
 
   /** Promotes the draft to a saved Profile. Throws if a required answer is missing. */
   completeOnboarding: () => Promise<Profile>;
+  /** Edits just the name on a saved profile. Pass null to clear it. */
+  updateName: (name: string | null) => Promise<void>;
   /** Clears the saved profile and the draft. Used by the dev reset control. */
   resetProfile: () => Promise<void>;
 };
@@ -133,8 +136,9 @@ export function ProfileProvider({
       throw new AppError('not-loaded', `completeOnboarding blocked: status=${effectiveStatus}`);
     }
 
-    const { skinType, ageRange, sensitivity, concerns, goals } = draft;
+    const { name, skinType, ageRange, sensitivity, concerns, goals } = draft;
 
+    // `name` is deliberately absent from this check — its step is skippable.
     if (!skinType || !ageRange || !sensitivity) {
       throw new Error(
         'Cannot complete onboarding: skin type, age range and sensitivity are all required.'
@@ -142,6 +146,10 @@ export function ProfileProvider({
     }
 
     const completed: Profile = {
+      // Normalised again on the way in. The step already does it, but this is
+      // the only path into storage and it should not depend on a screen having
+      // been careful.
+      name: normalizeDisplayName(name),
       skinType,
       concerns,
       goals,
@@ -156,6 +164,29 @@ export function ProfileProvider({
     setDraft(EMPTY_DRAFT);
     return completed;
   }, [draft, activeStore, effectiveStatus]);
+
+  /**
+   * Changes just the name on an already-saved profile.
+   *
+   * Narrow on purpose. A general `updateProfile(patch)` would let a caller
+   * write a half-built profile over a complete one; the name is the only field
+   * editable outside onboarding, so this is the only opening that exists.
+   *
+   * Guarded like `completeOnboarding`: writing against a store whose last read
+   * failed is what the `guardStore` wrapper exists to prevent.
+   */
+  const updateName = useCallback(
+    async (name: string | null) => {
+      if (effectiveStatus !== 'ready' || !profile) {
+        throw new AppError('not-loaded', `updateName blocked: status=${effectiveStatus}`);
+      }
+
+      const next: Profile = { ...profile, name: normalizeDisplayName(name) };
+      await activeStore.save(next);
+      setProfile(next);
+    },
+    [profile, activeStore, effectiveStatus]
+  );
 
   const resetProfile = useCallback(async () => {
     await activeStore.clear();
@@ -174,6 +205,7 @@ export function ProfileProvider({
       updateDraft,
       resetDraft,
       completeOnboarding,
+      updateName,
       resetProfile,
     }),
     [
@@ -184,6 +216,7 @@ export function ProfileProvider({
       updateDraft,
       resetDraft,
       completeOnboarding,
+      updateName,
       resetProfile,
     ]
   );

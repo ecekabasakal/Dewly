@@ -7,7 +7,7 @@ import { ProgressBar } from './ProgressBar';
 import { Screen } from './Screen';
 import { Text } from './Text';
 
-export const ONBOARDING_STEP_COUNT = 5;
+export const ONBOARDING_STEP_COUNT = 6;
 
 const COPY = {
   en: { back: 'Back', next: 'Continue' },
@@ -32,7 +32,7 @@ export type OnboardingStepProps = {
 /**
  * Shared chrome for every onboarding step: progress, question, options, footer.
  *
- * Keeping this in one place means the five step screens hold only their own
+ * Keeping this in one place means the six step screens hold only their own
  * question and answer handling, so adding or reordering a step is a small edit.
  */
 export function OnboardingStep({

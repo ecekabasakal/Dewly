@@ -21,6 +21,39 @@ export const palette = {
   sageEdge: '#D5E2CC',
 
   /**
+   * Warm accent family. Each is an ink paired with its own tinted ground, so a
+   * chip, ring or badge is always a two-token pair rather than an ink dropped
+   * on whatever surface happens to be behind it.
+   *
+   * These carry MEANING on the home screen and should keep carrying it: peach
+   * is attention, sage is what you own, blue is what we understand. Mint is the
+   * odd one out — it exists only to sit on the deep green hero, where the other
+   * three are too dark to read.
+   */
+  peach: '#EE9F5B',
+  peachBg: '#FBE7D2',
+  leaf: '#6E9A6B',
+  leafBg: '#E4EFDE',
+  blue: '#5E90A8',
+  blueBg: '#DCEAF0',
+  /**
+   * Only legible on the dark hero: 7.7:1 on `greenDeep`, 4.79:1 on `greenLift`,
+   * but 1.49:1 on butter. Never put mint on a light surface.
+   */
+  mint: '#7FD8C4',
+
+  /**
+   * The hero gradient's stops: brand green deepened, then lifted.
+   *
+   * `greenLift` was #1A6459 until the mint eyebrow was measured against it at
+   * 4.16:1 — under AA for small text, and the eyebrow is small tracked caps.
+   * Darkened until mint clears 4.5:1 anywhere on the ramp, so the eyebrow stays
+   * legible wherever the gradient happens to fall behind it.
+   */
+  greenDeep: '#0A3833',
+  greenLift: '#175A50',
+
+  /**
    * Warm-tinted neutrals. Deliberately not pure gray: a cool #888 next to
    * butter reads as dirty, so every step carries a slight yellow-green cast.
    *
@@ -95,6 +128,43 @@ export const colors = {
    * at the smallest tile size, where the brand name can drop to 9px.
    */
   tile: { bg: palette.sage, border: palette.sageEdge, ink: palette.green },
+
+  /**
+   * Accent roles, named for the JOB rather than the hue, so a screen asks for
+   * "attention" and not "peach". Re-tinting the app later means editing this
+   * map; it should never mean grepping for a hex.
+   *
+   * Each pairs `ink` with the `bg` it is designed to sit on. Measured:
+   *
+   *   attention  #EE9F5B on #FBE7D2 -> 1.79:1
+   *   owned      #6E9A6B on #E4EFDE -> 2.72:1
+   *   understood #5E90A8 on #DCEAF0 -> 2.83:1
+   *
+   * Those are far under AA, and that is fine because `ink` is never text. It
+   * draws the ring around a metric; the numeral inside is `colors.text`, which
+   * measures 11.4–11.9:1 on all three grounds, and the caption below is
+   * `colors.muted` at 4.58–4.75:1. Using `ink` for a label would fail — the
+   * pairing is a ring colour and a ground, not a foreground and a background.
+   */
+  accents: {
+    /** Something the user may want to look at. Cautions, flags. */
+    attention: { ink: palette.peach, bg: palette.peachBg },
+    /** Things the user has. Shelf counts, collections. */
+    owned: { ink: palette.leaf, bg: palette.leafBg },
+    /** Things Dewly has understood. Recognised ingredients, matches. */
+    understood: { ink: palette.blue, bg: palette.blueBg },
+  },
+
+  /** Reserved for type placed ON the hero gradient. */
+  onHero: {
+    /** The eyebrow — mint reads as dawn light against the deep green. */
+    eyebrow: palette.mint,
+    /** Headline. */
+    title: palette.white,
+    /** Supporting line. Cream rather than a transparent white so it stays
+     *  a fixed, checkable value instead of drifting with the gradient. */
+    body: palette.cream,
+  },
 
   status: {
     success: { bg: '#DCEFE4', fg: '#1B5E3F', border: '#B6DCC6' },

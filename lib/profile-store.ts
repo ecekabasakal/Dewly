@@ -31,7 +31,7 @@ function parseProfile(raw: string): Profile | null {
     if (!value || typeof value !== 'object') return null;
     if (value.version !== PROFILE_VERSION) return null;
 
-    const { skinType, concerns, goals, ageRange, sensitivity, completedAt } = value;
+    const { skinType, concerns, goals, ageRange, sensitivity, completedAt, name } = value;
 
     if (
       typeof skinType !== 'string' ||
@@ -42,6 +42,14 @@ function parseProfile(raw: string): Profile | null {
       !Array.isArray(goals)
     ) {
       return null;
+    }
+
+    // `name` is optional, so its absence is fine — but a non-string in that slot
+    // would reach the home hero and render as "[object Object]". Drop the bad
+    // value rather than the whole profile: the name is the least important
+    // field here, and losing it costs a greeting, not the user's answers.
+    if (name != null && typeof name !== 'string') {
+      return { ...(value as Profile), name: null };
     }
 
     return value as Profile;
