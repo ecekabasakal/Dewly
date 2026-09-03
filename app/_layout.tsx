@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useCallback, type ReactNode } from 'react';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -10,7 +10,13 @@ import { AuthProvider } from '../hooks/useAuth';
 import { LanguageProvider } from '../hooks/useLanguage';
 import { ProfileProvider } from '../hooks/useProfile';
 import { ShelfProvider } from '../hooks/useShelf';
-import { colors, useAppFonts } from '../theme';
+import {
+  colors,
+  elevation,
+  isWideViewport,
+  MAX_CONTENT_WIDTH,
+  useAppFonts,
+} from '../theme';
 
 // Hold the native splash until the fonts are in, so the first paint is
 // already branded — no flash of system serif behind Fraunces.
@@ -42,7 +48,7 @@ export default function RootLayout() {
             {/* Inside ProfileProvider: analysis is personalised with the profile. */}
             <AnalysisProvider>
               <ShelfProvider>
-                <View style={styles.root} onLayout={onLayoutRootView}>
+                <AppFrame onLayout={onLayoutRootView}>
                   <StatusBar style="dark" />
                   <Stack
                     screenOptions={{
@@ -52,7 +58,7 @@ export default function RootLayout() {
                       animation: 'slide_from_right',
                     }}
                   />
-                </View>
+                </AppFrame>
               </ShelfProvider>
             </AnalysisProvider>
           </ProfileProvider>
@@ -62,6 +68,63 @@ export default function RootLayout() {
   );
 }
 
+/**
+ * Centres the whole app in a fixed-width column on wide viewports.
+ *
+ * ## Why it lives here and not in `components/Screen`
+ *
+ * `Screen` wraps the content of one screen, but the bottom tab bar is a sibling
+ * of the screens, not part of any of them — constraining `Screen` would leave a
+ * 1400px-wide tab bar under a 480px column. The Tabs navigator renders INSIDE
+ * this Stack, so constraining here catches the tab bar, every tab screen, the
+ * auth screens and the onboarding flow from one place, and nothing new has to
+ * opt in.
+ *
+ * ## Why `useWindowDimensions` rather than a media query
+ *
+ * It is the one API that works on both targets: react-native-web recomputes it
+ * on window resize, and native reports orientation changes through the same
+ * hook. A CSS media query would be web-only, and `Dimensions.get()` read once
+ * would not react to a browser resize at all.
+ *
+ * Below the breakpoint every wide style drops out and this is a plain
+ * full-bleed `View` — the exact tree the app had before, so a phone renders
+ * identically.
+ */
+function AppFrame({
+  children,
+  onLayout,
+}: {
+  children: ReactNode;
+  onLayout: () => void;
+}) {
+  const { width } = useWindowDimensions();
+  const wide = isWideViewport(width);
+
+  return (
+    <View style={[styles.page, wide && styles.pageWide]} onLayout={onLayout}>
+      <View style={[styles.column, wide && styles.columnWide]}>{children}</View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
+  /** The full viewport. Butter on a phone; the deeper surround when centred. */
+  page: { flex: 1, backgroundColor: colors.background },
+  pageWide: { backgroundColor: colors.surround },
+
+  /** The app itself. Full-bleed until the breakpoint. */
+  column: { flex: 1, width: '100%', backgroundColor: colors.background },
+  columnWide: {
+    maxWidth: MAX_CONTENT_WIDTH,
+    alignSelf: 'center',
+    // Edges only — the column runs the full height, so a top or bottom border
+    // would be a line across nothing.
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: colors.border,
+    // Lifts the column off the surround, so the narrower app reads as a
+    // deliberate frame rather than content that failed to fill the window.
+    ...elevation.md,
+  },
 });

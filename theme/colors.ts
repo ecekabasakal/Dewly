@@ -89,6 +89,15 @@ export const colors = {
   surface: palette.cream,
   /** Highest elevation (modals, sheets). */
   surfaceElevated: palette.white,
+  /**
+   * The page BEHIND the app on wide viewports, where the content is a centred
+   * column rather than the whole window. See `theme/layout.ts`.
+   *
+   * A half-step down from butter — 1.15:1, enough to read as a separate plane
+   * without becoming a second background colour competing with the app's own.
+   * Never has text on it, so contrast is a matter of taste rather than AA.
+   */
+  surround: '#EFE3B2',
 
   // Content
   /** Body/heading ink. Green-tinted rather than black, to stay on-brand. */
