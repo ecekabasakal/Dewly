@@ -1,10 +1,10 @@
 import { Feather } from '@expo/vector-icons';
-import { ActivityIndicator, Platform, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { Redirect, Tabs } from 'expo-router';
 
-import { Sidebar } from '../../components';
+import { DiscoverPanel, Sidebar } from '../../components';
 import { useAuth } from '../../hooks/useAuth';
-import { useIsWide } from '../../hooks/useLayout';
+import { useHasDiscoverPanel, useIsWide } from '../../hooks/useLayout';
 import { useLanguage } from '../../hooks/useLanguage';
 import { colors, fonts, spacing } from '../../theme';
 
@@ -21,6 +21,7 @@ export default function TabsLayout() {
   const { language } = useLanguage();
   const { isLoaded, sessionUserId } = useAuth();
   const isWide = useIsWide();
+  const hasPanel = useHasDiscoverPanel();
   const t = LABELS[language];
 
   // Auth is required. Render NOTHING until auth resolves — returning <Tabs/>
@@ -36,7 +37,14 @@ export default function TabsLayout() {
   }
   if (!sessionUserId) return <Redirect href="/auth/sign-in" />;
 
-  return (
+  /**
+   * The Discover rail is a sibling of the WHOLE navigator, not a piece of any
+   * screen. That is what makes it persistent: it survives a tab switch, no
+   * screen has to opt in, and a screen added later gets it for free. The tab
+   * screens simply have less width, which they already learn from
+   * `desktopContentWidth`.
+   */
+  const tabs = (
     <Tabs
       /**
        * Above the desktop breakpoint the bar becomes a left rail; below it,
@@ -123,4 +131,18 @@ export default function TabsLayout() {
       />
     </Tabs>
   );
+
+  if (!hasPanel) return tabs;
+
+  return (
+    <View style={styles.withPanel}>
+      <View style={styles.tabsArea}>{tabs}</View>
+      <DiscoverPanel />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  withPanel: { flex: 1, flexDirection: 'row' },
+  tabsArea: { flex: 1 },
+});

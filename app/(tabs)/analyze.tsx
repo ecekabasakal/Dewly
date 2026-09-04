@@ -17,13 +17,12 @@ import {
   Button,
   Card,
   DesktopPage,
-  DiscoverColumn,
   Screen,
   Text,
 } from '../../components';
 import { NothingRecognized } from '../results';
 import { useAnalysis } from '../../hooks/useAnalysis';
-import { useIsWide } from '../../hooks/useLayout';
+import { useIsWide, useMaxGridColumns } from '../../hooks/useLayout';
 import { useLanguage } from '../../hooks/useLanguage';
 import { appErrorMessage, type AppErrorCode } from '../../lib/errors';
 import { parseInciList } from '../../lib/inci';
@@ -96,6 +95,7 @@ export default function PasteScreen() {
   const { language } = useLanguage();
   const isWide = useIsWide();
   const { width } = useWindowDimensions();
+  const maxColumns = useMaxGridColumns();
   const t = COPY[language];
 
   // Set by a Discover trend card: /analyze?prefill=Sodium%20DNA. Analysing on
@@ -144,7 +144,7 @@ export default function PasteScreen() {
         error={error}
         result={result}
         tokenCount={tokenCount}
-        columns={resultsGridColumns(desktopContentWidth(width))}
+        columns={resultsGridColumns(desktopContentWidth(width), maxColumns)}
         language={language}
       />
     );
@@ -356,23 +356,15 @@ function AnalyzeDesktop({
           <NothingRecognized result={result} language={language} />
         </View>
       ) : (
-        // No analysis yet, so the page is mostly empty — this is the "empty
-        // right space" Discover exists to fill. Once results arrive the grid
-        // takes the full width back and Discover steps aside, rather than
-        // permanently costing the results a column.
-        <View style={styles.wideSplit}>
-          <View style={styles.wideSplitMain}>
-            <Card style={styles.wideAwaiting}>
-              <Text variant="h2">{t.awaitingTitle}</Text>
-              <Text variant="body" tone="muted">
-                {t.awaitingBody}
-              </Text>
-            </Card>
-          </View>
-          <View style={styles.wideSplitSide}>
-            <DiscoverColumn />
-          </View>
-        </View>
+        // Discover is no longer this screen's problem — it is a persistent
+        // rail mounted in the tabs layout, present whether or not results are
+        // showing.
+        <Card style={styles.wideAwaiting}>
+          <Text variant="h2">{t.awaitingTitle}</Text>
+          <Text variant="body" tone="muted">
+            {t.awaitingBody}
+          </Text>
+        </Card>
       )}
     </DesktopPage>
   );
@@ -444,10 +436,5 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   wideResultsTitle: { flex: 1, gap: 2 },
-  wideAwaiting: { gap: spacing.sm, alignItems: 'flex-start' },
-  wideSplit: { flexDirection: 'row', gap: spacing.xl, marginTop: spacing['2xl'] },
-  wideSplitMain: { flex: 3 },
-  // ~2/5 of the content column: wide enough for a trend note to breathe,
-  // narrow enough that it reads as a rail rather than a second page.
-  wideSplitSide: { flex: 2 },
+  wideAwaiting: { marginTop: spacing['2xl'], gap: spacing.sm, alignItems: 'flex-start' },
 });

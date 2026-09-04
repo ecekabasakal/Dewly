@@ -1,5 +1,11 @@
 import { useWindowDimensions } from 'react-native';
-import { isWideViewport, layoutModeFor, type LayoutMode } from '../theme/layout';
+import {
+  hasDiscoverPanel,
+  isWideViewport,
+  layoutModeFor,
+  maxGridColumns,
+  type LayoutMode,
+} from '../theme/layout';
 
 /**
  * Which of the three layouts the current viewport should get.
@@ -28,4 +34,22 @@ export function useLayoutMode(): LayoutMode {
 export function useIsWide(): boolean {
   const { width } = useWindowDimensions();
   return isWideViewport(width);
+}
+
+/**
+ * Whether the persistent Discover rail is mounted at this viewport.
+ *
+ * Separate from `useIsWide` because the rail needs more room than the desktop
+ * layout does — see `PANEL_BREAKPOINT`. A screen that only wants to know "am I
+ * on desktop" should keep using `useIsWide`.
+ */
+export function useHasDiscoverPanel(): boolean {
+  const { width } = useWindowDimensions();
+  return hasDiscoverPanel(width);
+}
+
+/** The column ceiling a results grid should respect at this viewport. */
+export function useMaxGridColumns(): number {
+  const { width } = useWindowDimensions();
+  return maxGridColumns(width);
 }

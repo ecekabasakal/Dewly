@@ -4,11 +4,17 @@ import {
   CENTERED_BREAKPOINT,
   desktopContentWidth,
   DESKTOP_BREAKPOINT,
+  hasDiscoverPanel,
   isWideViewport,
   layoutModeFor,
   MAX_CONTENT_WIDTH,
   MAX_DESKTOP_WIDTH,
+  MAX_DESKTOP_WIDTH_WITH_PANEL,
+  maxGridColumns,
+  PANEL_BREAKPOINT,
+  PANEL_WIDTH,
   resultsGridColumns,
+  SIDEBAR_WIDTH,
 } from './layout';
 
 describe('layoutModeFor', () => {
@@ -89,16 +95,59 @@ describe('the breakpoints and the widths they gate agree', () => {
   });
 });
 
-describe('desktopContentWidth', () => {
-  test('subtracts the sidebar and the page gutters', () => {
-    // 900 window - 248 sidebar - 64 gutters = 588.
-    expect(desktopContentWidth(900)).toBe(588);
-    expect(desktopContentWidth(1280)).toBe(968);
+describe('hasDiscoverPanel', () => {
+  test.each([390, 430, 768, 899, 900, 1024, 1149])('%ipt has no rail', (width) => {
+    expect(hasDiscoverPanel(width)).toBe(false);
   });
 
-  test('caps at the desktop column so ultrawide does not sprawl', () => {
-    expect(desktopContentWidth(1920)).toBe(MAX_DESKTOP_WIDTH);
-    expect(desktopContentWidth(3440)).toBe(MAX_DESKTOP_WIDTH);
+  test.each([1150, 1280, 1440, 1920, 2560])('%ipt has the rail', (width) => {
+    expect(hasDiscoverPanel(width)).toBe(true);
+  });
+
+  /**
+   * The rail deliberately starts later than the desktop layout. At 900 the
+   * sidebar plus the rail would leave 318pt of content, which cannot hold a
+   * routine step or a results card.
+   */
+  test('starts above the desktop breakpoint', () => {
+    expect(PANEL_BREAKPOINT).toBeGreaterThan(DESKTOP_BREAKPOINT);
+    const atDesktop = DESKTOP_BREAKPOINT - SIDEBAR_WIDTH - PANEL_WIDTH - 64;
+    expect(atDesktop).toBeLessThan(400);
+  });
+
+  test('leaves workable content the moment it appears', () => {
+    expect(desktopContentWidth(PANEL_BREAKPOINT)).toBeGreaterThanOrEqual(520);
+  });
+
+  /** Never on a phone or a centred window — that is the mobile guarantee. */
+  test.each([320, 375, 390, 430, 599, 768])('%ipt never gets the rail', (width) => {
+    expect(hasDiscoverPanel(width)).toBe(false);
+    expect(maxGridColumns(width)).toBe(3);
+  });
+});
+
+describe('desktopContentWidth', () => {
+  test('subtracts the sidebar and gutters when there is no rail', () => {
+    // 900 - 248 sidebar - 64 gutters = 588.
+    expect(desktopContentWidth(900)).toBe(588);
+    expect(desktopContentWidth(1024)).toBe(712);
+  });
+
+  test('also subtracts the rail once it appears', () => {
+    // 1280 - 248 sidebar - 270 rail - 64 gutters = 698.
+    expect(desktopContentWidth(1280)).toBe(698);
+  });
+
+  test('caps lower with the rail up, so two columns stay readable', () => {
+    expect(desktopContentWidth(1920)).toBe(MAX_DESKTOP_WIDTH_WITH_PANEL);
+    expect(desktopContentWidth(3440)).toBe(MAX_DESKTOP_WIDTH_WITH_PANEL);
+    expect(MAX_DESKTOP_WIDTH_WITH_PANEL).toBeLessThan(MAX_DESKTOP_WIDTH);
+  });
+
+  test('the rail never starves the content', () => {
+    for (let w = PANEL_BREAKPOINT; w <= 2560; w += 10) {
+      expect(desktopContentWidth(w)).toBeGreaterThanOrEqual(520);
+    }
   });
 
   test('never goes negative', () => {
@@ -111,23 +160,31 @@ describe('resultsGridColumns', () => {
    * The cards hold an INCI name, a badge row and a sentence. These assert the
    * card width that actually falls out, not just the column count — the count
    * alone can be "right" while the cards are unreadably narrow or absurdly
-   * wide. This is what caught the 442pt cards the first threshold produced.
+   * wide. This is what caught the 442pt cards an earlier threshold produced.
    */
   test.each([
     [900, 2],
     [1140, 3],
-    [1280, 3],
-    [1920, 3],
+    [1280, 2],
+    [1920, 2],
   ])('a %ipt window gives %i columns', (windowWidth, expected) => {
-    expect(resultsGridColumns(desktopContentWidth(windowWidth))).toBe(expected);
+    expect(
+      resultsGridColumns(desktopContentWidth(windowWidth), maxGridColumns(windowWidth))
+    ).toBe(expected);
+  });
+
+  /** The trade the rail buys: a column, in exchange for staying on screen. */
+  test('the rail caps the grid at two columns', () => {
+    expect(maxGridColumns(1140)).toBe(3);
+    expect(maxGridColumns(1150)).toBe(2);
+    expect(resultsGridColumns(2000, 2)).toBe(2);
   });
 
   test('every desktop width lands on a comfortable card width', () => {
-    for (let w = DESKTOP_BREAKPOINT; w <= 2560; w += 20) {
+    for (let w = DESKTOP_BREAKPOINT; w <= 2560; w += 10) {
       const content = desktopContentWidth(w);
-      const columns = resultsGridColumns(content);
-      const gaps = (columns - 1) * 16;
-      const card = (content - gaps) / columns;
+      const columns = resultsGridColumns(content, maxGridColumns(w));
+      const card = (content - (columns - 1) * 16) / columns;
       expect(card).toBeGreaterThanOrEqual(250);
       expect(card).toBeLessThanOrEqual(430);
     }

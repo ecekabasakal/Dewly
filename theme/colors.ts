@@ -176,6 +176,31 @@ export const colors = {
   },
 
   /**
+   * The persistent Discover rail on wide screens.
+   *
+   * `bg` is the one knob for the rail's colour — everything else here is
+   * derived from what stays legible on it, so re-shading the panel means
+   * editing one value and re-checking these three.
+   *
+   * Measured on #C3D6BD:
+   *   ink    #14302C -> 9.18:1   titles and card text
+   *   muted  #465852 -> 4.92:1   section labels, hints, attribution
+   *   card   #FFFFFF -> 1.54:1   card separation from the ground
+   *
+   * `muted` is NOT `colors.muted`. The app-wide muted (#5A6B66) measures
+   * 3.67:1 here — under AA — because it was tuned against butter and cream,
+   * which are far lighter than this ground. Same hue, darkened until it
+   * clears, and it still reads as secondary on a white card (7.1:1).
+   */
+  panel: {
+    bg: '#C3D6BD',
+    ink: '#14302C',
+    muted: '#465852',
+    /** Cards sit on the panel in white, not cream: 1.54:1 vs 1.44:1. */
+    card: palette.white,
+  },
+
+  /**
    * Evidence grades on the Discover feed.
    *
    * Three calm, distinguishable states rather than a traffic light. A red

@@ -48,6 +48,41 @@ export const SIDEBAR_WIDTH = 248;
 /** Horizontal padding inside `components/DesktopPage`, per side. */
 export const DESKTOP_PAGE_PADDING = 32;
 
+/** The persistent Discover rail on the right of every desktop tab screen. */
+export const PANEL_WIDTH = 270;
+
+/**
+ * Where the Discover rail becomes affordable.
+ *
+ * Higher than `DESKTOP_BREAKPOINT` on purpose. The sidebar and the rail
+ * together take 518pt of chrome, so at 900 the content column would be
+ *
+ *   900 - 248 sidebar - 270 rail - 64 gutters = 318pt
+ *
+ * which cannot hold a routine step (a 48pt tile plus two lines of product
+ * name) or a results card. 1150 is the first width where the content keeps a
+ * workable ~568pt and the grid still manages two columns.
+ *
+ * Between `DESKTOP_BREAKPOINT` and this, screens get the sidebar and the full
+ * content width but no rail — the layout the app had before the rail existed.
+ */
+export const PANEL_BREAKPOINT = 1150;
+
+/**
+ * The content cap once the rail is up.
+ *
+ * Lower than `MAX_DESKTOP_WIDTH` because the rail also caps the grid at two
+ * columns: at the full 1100 those two would be 542pt each, roughly a
+ * paragraph-and-a-half wide. 820 keeps them at ~402, the top of the range the
+ * ingredient cards were designed for.
+ */
+export const MAX_DESKTOP_WIDTH_WITH_PANEL = 820;
+
+/** Whether the Discover rail should be mounted at this viewport width. */
+export function hasDiscoverPanel(width: number): boolean {
+  return width >= PANEL_BREAKPOINT;
+}
+
 export type LayoutMode = 'mobile' | 'centered' | 'desktop';
 
 export function layoutModeFor(width: number): LayoutMode {
@@ -70,8 +105,21 @@ export function isWideViewport(width: number): boolean {
  * reflows one frame after paint is visible.
  */
 export function desktopContentWidth(windowWidth: number): number {
-  const available = windowWidth - SIDEBAR_WIDTH - DESKTOP_PAGE_PADDING * 2;
-  return Math.max(0, Math.min(available, MAX_DESKTOP_WIDTH));
+  const panel = hasDiscoverPanel(windowWidth) ? PANEL_WIDTH : 0;
+  const cap = panel > 0 ? MAX_DESKTOP_WIDTH_WITH_PANEL : MAX_DESKTOP_WIDTH;
+  const available = windowWidth - SIDEBAR_WIDTH - panel - DESKTOP_PAGE_PADDING * 2;
+  return Math.max(0, Math.min(available, cap));
+}
+
+/**
+ * The most columns a results grid may use at this viewport.
+ *
+ * Two once the rail is up. That is the trade the rail buys: the grid gives up
+ * a column so Discover can stay on screen while results are shown, instead of
+ * vanishing the moment an analysis lands.
+ */
+export function maxGridColumns(windowWidth: number): number {
+  return hasDiscoverPanel(windowWidth) ? 2 : 3;
 }
 
 /**
@@ -95,8 +143,7 @@ export function desktopContentWidth(windowWidth: number): number {
  * Never more than 3. A fourth column at the 1100 cap gives ~257pt cards, which
  * is inside the range but leaves no room for the wider INCI names.
  */
-export function resultsGridColumns(contentWidth: number): number {
-  if (contentWidth >= 820) return 3;
-  if (contentWidth >= 520) return 2;
-  return 1;
+export function resultsGridColumns(contentWidth: number, maxColumns = 3): number {
+  const natural = contentWidth >= 820 ? 3 : contentWidth >= 520 ? 2 : 1;
+  return Math.max(1, Math.min(natural, maxColumns));
 }

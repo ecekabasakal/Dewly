@@ -62,11 +62,17 @@ const COPY = {
 } as const;
 
 export type DiscoverColumnProps = {
-  /**
-   * Cap the trending list. Analyze shows the whole feed in a dedicated rail;
-   * Home appends it under three other cards and wants a shorter one.
-   */
+  /** Cap the trending list. The persistent rail shows the whole feed. */
   maxTrending?: number;
+  /**
+   * Rendered on the green Discover rail rather than the butter page.
+   *
+   * The app-wide `colors.muted` was tuned against butter and cream and drops to
+   * 3.67:1 on the panel's ground — under AA. Anything sitting DIRECTLY on the
+   * panel switches to `colors.panel.muted` (4.92:1), and the cards go white for
+   * a cleaner separation. Text INSIDE a card is unaffected: it sits on white.
+   */
+  onPanel?: boolean;
 };
 
 /**
@@ -90,13 +96,18 @@ export type DiscoverColumnProps = {
  *
  * The caller decides whether there is room; this renders unconditionally.
  */
-export function DiscoverColumn({ maxTrending }: DiscoverColumnProps = {}) {
+export function DiscoverColumn({
+  maxTrending,
+  onPanel = false,
+}: DiscoverColumnProps = {}) {
   const { language } = useLanguage();
   const t = COPY[language];
 
   const all = trendingIngredients(language);
   const trending = maxTrending ? all.slice(0, maxTrending) : all;
   const theme = brandThemeFor(language);
+  // One style object, spread onto every label that lands on the panel ground.
+  const onPanelInk = onPanel ? styles.panelInk : null;
 
   const [brands, setBrands] = useState<ObfProduct[] | null>(null);
   const [brandsFailed, setBrandsFailed] = useState(false);
@@ -124,30 +135,30 @@ export function DiscoverColumn({ maxTrending }: DiscoverColumnProps = {}) {
   return (
     <View style={styles.column}>
       <View style={styles.group}>
-        <Text variant="caption" tone="muted" style={styles.groupTitle}>
+        <Text variant="caption" tone="muted" style={[styles.groupTitle, onPanelInk]}>
           {t.trendingTitle.toUpperCase()}
         </Text>
-        <Text variant="caption" tone="muted">
+        <Text variant="caption" tone="muted" style={onPanelInk}>
           {t.trendingHint}
         </Text>
         <View style={styles.cards}>
           {trending.map((item) => (
-            <TrendCard key={item.inciName} item={item} language={language} />
+            <TrendCard key={item.inciName} item={item} language={language} onPanel={onPanel} />
           ))}
         </View>
       </View>
 
       <View style={styles.group}>
-        <Text variant="caption" tone="muted" style={styles.groupTitle}>
+        <Text variant="caption" tone="muted" style={[styles.groupTitle, onPanelInk]}>
           {t.brandsTitle.toUpperCase()}
         </Text>
-        <Text variant="caption" tone="muted">
+        <Text variant="caption" tone="muted" style={onPanelInk}>
           {t.brandsHint(theme.label)}
         </Text>
 
         <View style={styles.cards}>
           {brandsFailed ? (
-            <Text variant="caption" tone="muted">
+            <Text variant="caption" tone="muted" style={onPanelInk}>
               {t.brandsFailed}
             </Text>
           ) : brands === null ? (
@@ -155,16 +166,18 @@ export function DiscoverColumn({ maxTrending }: DiscoverColumnProps = {}) {
               <ActivityIndicator size="small" color={colors.muted} />
             </View>
           ) : brands.length === 0 ? (
-            <Text variant="caption" tone="muted">
+            <Text variant="caption" tone="muted" style={onPanelInk}>
               {t.brandsEmpty}
             </Text>
           ) : (
-            brands.map((product) => <BrandCard key={product.barcode} product={product} />)
+            brands.map((product) => (
+              <BrandCard key={product.barcode} product={product} onPanel={onPanel} />
+            ))
           )}
         </View>
 
         {/* ODbL requires attribution wherever the data is shown. */}
-        <Text variant="caption" tone="muted" style={styles.attribution}>
+        <Text variant="caption" tone="muted" style={[styles.attribution, onPanelInk]}>
           {t.attribution}
         </Text>
       </View>
@@ -184,9 +197,11 @@ export function DiscoverColumn({ maxTrending }: DiscoverColumnProps = {}) {
 function TrendCard({
   item,
   language,
+  onPanel,
 }: {
   item: TrendingIngredient;
   language: 'en' | 'tr';
+  onPanel: boolean;
 }) {
   const t = COPY[language];
   const scheme = colors.evidence[item.evidence];
@@ -196,7 +211,7 @@ function TrendCard({
   // source row would nest one <button> inside another on web: invalid HTML, a
   // hydration error, and an ambiguous target for a screen reader.
   return (
-    <Card style={styles.card}>
+    <Card style={StyleSheet.flatten([styles.card, onPanel && styles.cardOnPanel])}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={item.inciName}
@@ -252,10 +267,10 @@ function TrendCard({
 }
 
 /** One Open Beauty Facts product. Brand tile, never a photo. */
-function BrandCard({ product }: { product: ObfProduct }) {
+function BrandCard({ product, onPanel }: { product: ObfProduct; onPanel: boolean }) {
   return (
     <Card
-      style={styles.brandCard}
+      style={StyleSheet.flatten([styles.brandCard, onPanel && styles.cardOnPanel])}
       onPress={() =>
         router.push(`/product?source=obf&barcode=${encodeURIComponent(product.barcode)}`)
       }
@@ -281,6 +296,10 @@ const styles = StyleSheet.create({
   groupTitle: { letterSpacing: 1.2 },
   cards: { gap: spacing.md, marginTop: spacing.xs },
   loading: { paddingVertical: spacing.lg, alignItems: 'center' },
+  /** Labels sitting directly on the panel ground. See the `onPanel` prop. */
+  panelInk: { color: colors.panel.muted },
+  /** White rather than cream: 1.54:1 against the panel, cream only 1.44:1. */
+  cardOnPanel: { backgroundColor: colors.panel.card, borderColor: colors.panel.bg },
 
   card: { gap: spacing.xs, alignItems: 'stretch' },
   trendBody: { gap: 2 },
