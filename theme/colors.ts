@@ -175,6 +175,24 @@ export const colors = {
     body: palette.cream,
   },
 
+  /**
+   * Evidence grades on the Discover feed.
+   *
+   * Three calm, distinguishable states rather than a traffic light. A red
+   * "evolving" badge would read as a warning, and the grade is not a warning —
+   * it says how settled the science is, not whether the ingredient is risky.
+   * So they differ in hue but share the same low saturation, and none of them
+   * shouts. `fg` on `bg` clears AA at badge size in all three.
+   */
+  evidence: {
+    /** Well studied, broadly agreed. */
+    established: { bg: '#DCEFE4', fg: '#1B5E3F', border: '#B6DCC6' },
+    /** Real research, still thin or early. */
+    emerging: { bg: '#DCE9EC', fg: '#1C5560', border: '#B4D2D9' },
+    /** Genuinely unsettled — the claim is ahead of the evidence. */
+    evolving: { bg: '#EFE7DC', fg: '#6B5334', border: '#DCCBB4' },
+  },
+
   status: {
     success: { bg: '#DCEFE4', fg: '#1B5E3F', border: '#B6DCC6' },
     warning: { bg: '#FBECCB', fg: '#7A5312', border: '#EDD49B' },

@@ -1,5 +1,12 @@
-import { getLocales } from 'expo-localization';
-
+/**
+ * Deliberately free of native imports.
+ *
+ * `deviceLanguage` used to live here, and its `expo-localization` import made
+ * this module — and everything that reads `pick` — unloadable in `bun test`.
+ * It now sits in `lib/device-language.ts`, so the language vocabulary and the
+ * bilingual `pick` rule stay testable. Same pure/impure split as
+ * `lib/tile-fit.ts` and `theme/layout.ts`.
+ */
 export const LANGUAGES = ['en', 'tr'] as const;
 
 export type Language = (typeof LANGUAGES)[number];
@@ -7,21 +14,6 @@ export type Language = (typeof LANGUAGES)[number];
 /** Narrows unknown input (stored JSON, a route param) to a Language. */
 export function isLanguage(value: unknown): value is Language {
   return typeof value === 'string' && (LANGUAGES as readonly string[]).includes(value);
-}
-
-/**
- * The language to start in when the user has never chosen one.
- *
- * Only a default: once a choice is saved, `useLanguage` prefers it over this,
- * so someone reading Turkish on an English phone stays in Turkish.
- */
-export function deviceLanguage(): Language {
-  try {
-    const code = getLocales()[0]?.languageCode;
-    return code === 'tr' ? 'tr' : 'en';
-  } catch {
-    return 'en';
-  }
 }
 
 /**

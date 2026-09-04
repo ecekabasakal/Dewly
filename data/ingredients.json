@@ -2223,5 +2223,175 @@
     "caution_tr": "",
     "comedogenic_rating": 0,
     "is_active": true
+  },
+  {
+    "inci_name": "Sodium DNA",
+    "common_name": "PDRN (Polydeoxyribonucleotide)",
+    "category": "active",
+    "functions": [
+      "regenerating",
+      "soothing",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "aging",
+      "redness",
+      "barrier",
+      "texture"
+    ],
+    "description_en": "A salmon-DNA–derived ingredient associated with skin recovery, hydration and a smoother look. Long used in Korean clinics, now common in serums and ampoules.",
+    "description_tr": "Somon DNA'sından elde edilen, cilt onarımı, nemlendirme ve daha pürüzsüz görünümle ilişkilendirilen bir bileşen. Uzun süredir Kore kliniklerinde kullanılıyor, artık serum ve ampullerde yaygın.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Exosomes",
+    "common_name": "Exosomes",
+    "category": "active",
+    "functions": [
+      "signaling",
+      "regenerating",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "aging",
+      "barrier",
+      "dullness"
+    ],
+    "description_en": "Microscopic vesicles that carry signals between skin cells. Adapted from clinical use into topical formulas aiming to support renewal.",
+    "description_tr": "Cilt hücreleri arasında sinyal taşıyan mikroskobik kesecikler. Klinik kullanımdan, yenilenmeyi desteklemeyi amaçlayan topikal formüllere uyarlanıyor.",
+    "caution_en": "Topical exosome science is still developing; sourcing, stability and delivery vary a lot between products.",
+    "caution_tr": "Topikal ekzozom bilimi hâlâ gelişiyor; kaynak, stabilite ve iletim ürünler arasında çok değişir.",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "sh-Oligopeptide-1",
+    "common_name": "EGF (Epidermal Growth Factor)",
+    "category": "active",
+    "functions": [
+      "signaling",
+      "regenerating",
+      "anti-aging"
+    ],
+    "targets_concerns": [
+      "aging",
+      "texture",
+      "barrier"
+    ],
+    "description_en": "A growth-factor peptide associated with supporting skin renewal and a firmer, smoother look.",
+    "description_tr": "Cilt yenilenmesini desteklemek ve daha sıkı, pürüzsüz bir görünümle ilişkilendirilen büyüme faktörü peptidi.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Polynucleotides",
+    "common_name": "Polynucleotides (PN)",
+    "category": "active",
+    "functions": [
+      "regenerating",
+      "hydration",
+      "barrier-support"
+    ],
+    "targets_concerns": [
+      "aging",
+      "dryness",
+      "barrier"
+    ],
+    "description_en": "A regenerative molecule in the same family as PDRN, associated with hydration and skin-repair support.",
+    "description_tr": "PDRN ile aynı aileden, nemlendirme ve cilt onarımı desteğiyle ilişkilendirilen rejeneratif bir molekül.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": true
+  },
+  {
+    "inci_name": "Ectoin",
+    "common_name": "Ectoin",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "protective",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "sensitivity",
+      "barrier",
+      "redness"
+    ],
+    "description_en": "A microbe-derived molecule that binds water and helps protect skin from environmental stress; gentle and barrier-friendly.",
+    "description_tr": "Suyu bağlayan ve cildi çevresel stresten korumaya yardımcı, mikrop kaynaklı bir molekül; nazik ve bariyer dostu.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Spongilla Spicules",
+    "common_name": "Spicules (Sponge Spicules)",
+    "category": "other",
+    "functions": [
+      "resurfacing",
+      "delivery"
+    ],
+    "targets_concerns": [
+      "texture",
+      "dullness",
+      "acne"
+    ],
+    "description_en": "Microscopic freshwater-sponge needles that create micro-channels to boost absorption and resurface the skin.",
+    "description_tr": "Emilimi artırmak ve cildi yenilemek için mikro kanallar oluşturan mikroskobik tatlı su süngeri iğneleri.",
+    "caution_en": "Potent and mechanically active; can irritate. Not for sensitive, broken or inflamed skin; introduce slowly.",
+    "caution_tr": "Güçlü ve mekanik olarak aktif; tahriş edebilir. Hassas, çatlak veya iltihaplı cilde uygun değil; yavaş başla.",
+    "comedogenic_rating": null,
+    "is_active": false
+  },
+  {
+    "inci_name": "Tremella Fuciformis Sporocarp Extract",
+    "common_name": "Snow Mushroom",
+    "category": "humectant",
+    "functions": [
+      "hydration",
+      "antioxidant",
+      "soothing"
+    ],
+    "targets_concerns": [
+      "dryness",
+      "dullness",
+      "sensitivity"
+    ],
+    "description_en": "A mushroom-derived humectant that holds water in the skin; often compared to hyaluronic acid, with a lighter feel.",
+    "description_tr": "Ciltte su tutan mantar kaynaklı bir nemlendirici; sık sık hyaluronik asitle kıyaslanır, daha hafif bir hisle.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
+  },
+  {
+    "inci_name": "Avena Sativa (Oat) Kernel Flour",
+    "common_name": "Colloidal Oatmeal",
+    "category": "emollient",
+    "functions": [
+      "soothing",
+      "barrier-support",
+      "anti-inflammatory"
+    ],
+    "targets_concerns": [
+      "redness",
+      "sensitivity",
+      "barrier",
+      "dryness"
+    ],
+    "description_en": "A finely milled oat that calms and protects; a well-established soother for reactive, barrier-stressed skin.",
+    "description_tr": "İnce öğütülmüş yulaf; yatıştırır ve korur; reaktif, bariyeri yıpranmış cilt için köklü bir yatıştırıcı.",
+    "caution_en": "",
+    "caution_tr": "",
+    "comedogenic_rating": 0,
+    "is_active": false
   }
 ]

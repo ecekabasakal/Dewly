@@ -4,6 +4,7 @@ export { BrandTile, type BrandTileProps } from './BrandTile';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { DesktopPage, type DesktopPageProps } from './DesktopPage';
+export { DiscoverColumn, type DiscoverColumnProps } from './DiscoverColumn';
 export { Chip, type ChipProps } from './Chip';
 export { ErrorState, type ErrorStateProps } from './ErrorState';
 export {

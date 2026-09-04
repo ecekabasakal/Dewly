@@ -1,0 +1,141 @@
+{
+  "_note": "Editorial layer for the Discover column. Deliberately NOT in the database: trend notes, evidence grades and sources are curation that changes when an editor decides, not facts about the molecule. Keyed by inci_name into data/ingredients.json, in the order the feed should show them. Same pattern as conflict_rules.json and timing_rules.json.",
+  "trending": [
+    {
+      "inci_name": "Sodium DNA",
+      "trend_note_en": "One of 2026's defining 'regenerative skincare' ingredients — moving from clinic to everyday products.",
+      "trend_note_tr": "2026'nın öne çıkan 'rejeneratif bakım' bileşenlerinden — klinikten günlük ürünlere geçiyor.",
+      "evidence": "emerging",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    },
+    {
+      "inci_name": "Exosomes",
+      "trend_note_en": "The biggest buzzword of 2026 K-beauty — but dermatologists note the at-home topical science is still evolving.",
+      "trend_note_tr": "2026 K-beauty'nin en çok konuşulanı — ancak dermatologlar evde kullanılan topikal bilimin hâlâ geliştiğini belirtiyor.",
+      "evidence": "evolving",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    },
+    {
+      "inci_name": "sh-Oligopeptide-1",
+      "trend_note_en": "Part of the 2026 'skin longevity' shift toward regeneration over quick fixes.",
+      "trend_note_tr": "2026'daki, hızlı çözüm yerine yenilenmeye odaklanan 'cilt uzun ömürlülüğü' akımının parçası.",
+      "evidence": "emerging",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    },
+    {
+      "inci_name": "Polynucleotides",
+      "trend_note_en": "Rising alongside PDRN as regenerative 'bio-actives' move into consumer skincare.",
+      "trend_note_tr": "Rejeneratif 'biyo-aktifler' tüketici bakımına geçerken PDRN'in yanında yükseliyor.",
+      "evidence": "emerging",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    },
+    {
+      "inci_name": "Ectoin",
+      "trend_note_en": "A gentler barrier-care active gaining traction in 2026's 'less aggressive, more strategic' routines.",
+      "trend_note_tr": "2026'nın 'daha az agresif, daha stratejik' rutinlerinde öne çıkan, nazik bir bariyer-bakım aktifi.",
+      "evidence": "established",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    },
+    {
+      "inci_name": "Spongilla Spicules",
+      "trend_note_en": "A high-tech 'at-home resurfacing' trend — potent, and not for sensitive or compromised skin.",
+      "trend_note_tr": "Yüksek teknolojili 'evde yenileme' trendi — güçlü, ve hassas/hasarlı cilde uygun değil.",
+      "evidence": "emerging",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    },
+    {
+      "inci_name": "Tremella Fuciformis Sporocarp Extract",
+      "trend_note_en": "A gentle, plant-based hydrator trending as a 'skin longevity' favourite.",
+      "trend_note_tr": "'Cilt uzun ömürlülüğü' favorisi olarak yükselen nazik, bitki bazlı bir nemlendirici.",
+      "evidence": "established",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    },
+    {
+      "inci_name": "Avena Sativa (Oat) Kernel Flour",
+      "trend_note_en": "Barrier care stays the evergreen backbone of 2026 routines, next to the flashier bio-actives.",
+      "trend_note_tr": "Bariyer bakımı, gösterişli biyo-aktiflerin yanında 2026 rutinlerinin değişmez omurgası olmaya devam ediyor.",
+      "evidence": "established",
+      "sources": [
+        {
+          "label_en": "2026 K-beauty ingredient roundup, with board-certified dermatologist commentary",
+          "label_tr": "2026 K-beauty bileşen derlemesi, sertifikalı dermatolog yorumlarıyla",
+          "url": "https://shopping.yahoo.com/beauty/skincare/articles/pdrn-peptides-10-k-beauty-110000228.html"
+        }
+      ]
+    }
+  ],
+  "brand_themes": [
+    {
+      "id": "peptides",
+      "query": "peptide serum",
+      "label_en": "Peptide serums",
+      "label_tr": "Peptit serumlar"
+    },
+    {
+      "id": "niacinamide",
+      "query": "niacinamide serum",
+      "label_en": "Niacinamide serums",
+      "label_tr": "Niasinamid serumlar"
+    },
+    {
+      "id": "barrier",
+      "query": "barrier cream",
+      "label_en": "Barrier creams",
+      "label_tr": "Bariyer kremleri"
+    },
+    {
+      "id": "centella",
+      "query": "centella",
+      "label_en": "Centella products",
+      "label_tr": "Centella ürünleri"
+    },
+    {
+      "id": "oat",
+      "query": "oat",
+      "label_en": "Oat-based care",
+      "label_tr": "Yulaf bazlı bakım"
+    }
+  ]
+}

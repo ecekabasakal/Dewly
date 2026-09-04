@@ -9,6 +9,7 @@ import {
   Card,
   Chip,
   DesktopPage,
+  DiscoverColumn,
   ErrorState,
   MetricCard,
   Screen,
@@ -313,6 +314,12 @@ function HomeDesktop(data: HomeData) {
               {t.tipBody}
             </Text>
           </Card>
+
+          {/* A short feed — Home's side column already carries three cards, so
+              the full eight would bury them. Analyze gets the whole thing. */}
+          <View style={styles.sideDiscover}>
+            <DiscoverColumn maxTrending={3} />
+          </View>
         </View>
       </View>
     </DesktopPage>
@@ -590,6 +597,7 @@ const styles = StyleSheet.create({
   columnMain: { flex: 3 },
   columnSide: { flex: 2, gap: spacing.md },
   sideCard: { gap: spacing.sm, alignItems: 'flex-start' },
+  sideDiscover: { marginTop: spacing.lg },
   sideLabel: { letterSpacing: 1.2 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.xs },
 

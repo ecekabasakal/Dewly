@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 
 import { recognizedSummary } from '../../components/AnalysisResult';
 import {
@@ -17,6 +17,7 @@ import {
   Button,
   Card,
   DesktopPage,
+  DiscoverColumn,
   Screen,
   Text,
 } from '../../components';
@@ -96,6 +97,20 @@ export default function PasteScreen() {
   const isWide = useIsWide();
   const { width } = useWindowDimensions();
   const t = COPY[language];
+
+  // Set by a Discover trend card: /analyze?prefill=Sodium%20DNA. Analysing on
+  // arrival is the point — the card is standing in for an ingredient-detail
+  // screen this app does not have, and the results view already renders
+  // everything such a screen would.
+  const { prefill } = useLocalSearchParams<{ prefill?: string }>();
+  const handledPrefill = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!prefill || handledPrefill.current === prefill) return;
+    handledPrefill.current = prefill;
+    setText(prefill);
+    void analyze(prefill);
+  }, [prefill, analyze]);
 
   const tokenCount = parseInciList(text).length;
   const isLoading = status === 'loading';
@@ -341,12 +356,23 @@ function AnalyzeDesktop({
           <NothingRecognized result={result} language={language} />
         </View>
       ) : (
-        <Card style={styles.wideAwaiting}>
-          <Text variant="h2">{t.awaitingTitle}</Text>
-          <Text variant="body" tone="muted">
-            {t.awaitingBody}
-          </Text>
-        </Card>
+        // No analysis yet, so the page is mostly empty — this is the "empty
+        // right space" Discover exists to fill. Once results arrive the grid
+        // takes the full width back and Discover steps aside, rather than
+        // permanently costing the results a column.
+        <View style={styles.wideSplit}>
+          <View style={styles.wideSplitMain}>
+            <Card style={styles.wideAwaiting}>
+              <Text variant="h2">{t.awaitingTitle}</Text>
+              <Text variant="body" tone="muted">
+                {t.awaitingBody}
+              </Text>
+            </Card>
+          </View>
+          <View style={styles.wideSplitSide}>
+            <DiscoverColumn />
+          </View>
+        </View>
       )}
     </DesktopPage>
   );
@@ -418,5 +444,10 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   wideResultsTitle: { flex: 1, gap: 2 },
-  wideAwaiting: { marginTop: spacing['2xl'], gap: spacing.sm, alignItems: 'flex-start' },
+  wideAwaiting: { gap: spacing.sm, alignItems: 'flex-start' },
+  wideSplit: { flexDirection: 'row', gap: spacing.xl, marginTop: spacing['2xl'] },
+  wideSplitMain: { flex: 3 },
+  // ~2/5 of the content column: wide enough for a trend note to breathe,
+  // narrow enough that it reads as a rail rather than a second page.
+  wideSplitSide: { flex: 2 },
 });

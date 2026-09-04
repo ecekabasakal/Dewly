@@ -7,7 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { deviceLanguage, type Language } from '../lib/language';
+import { deviceLanguage } from '../lib/device-language';
+import type { Language } from '../lib/language';
 import { asyncStorageLanguageStore, type LanguageStore } from '../lib/language-store';
 
 /**
