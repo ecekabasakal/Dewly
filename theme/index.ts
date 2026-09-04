@@ -3,11 +3,15 @@ export { elevation, type ElevationLevel } from './elevation';
 export { gradients } from './gradients';
 export {
   CENTERED_BREAKPOINT,
+  desktopContentWidth,
   DESKTOP_BREAKPOINT,
+  DESKTOP_PAGE_PADDING,
   isWideViewport,
   layoutModeFor,
   MAX_CONTENT_WIDTH,
   MAX_DESKTOP_WIDTH,
+  resultsGridColumns,
+  SIDEBAR_WIDTH,
   type LayoutMode,
 } from './layout';
 export { spacing, radius } from './spacing';

@@ -2,52 +2,26 @@ import { StyleSheet, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
 import { goBackOr } from '../lib/navigation';
 
-import { Badge, Button, Card, Chip, Screen, Text } from '../components';
+import { AnalysisResult, Button, Card, Chip, Screen, Text } from '../components';
+import { recognizedSummary } from '../components/AnalysisResult';
 import { useAnalysis } from '../hooks/useAnalysis';
+import { useIsWide } from '../hooks/useLayout';
 import { useLanguage } from '../hooks/useLanguage';
 import { appErrorMessage } from '../lib/errors';
-import {
-  describe,
-  headsUpCopy,
-  type AnalyzedIngredient,
-  type HeadsUpKind,
-} from '../lib/analysis';
+import type { AnalysisResult as AnalysisResultData } from '../lib/analysis';
 import type { Language } from '../lib/language';
 import { colors, radius, spacing } from '../theme';
-import { CONCERN_LABELS, type Concern } from '../types/profile';
-import type { StatusTone } from '../theme';
-
-const HEADS_UP_TONE: Record<HeadsUpKind, StatusTone> = {
-  caution: 'warning',
-  fragrance: 'warning',
-  comedogenic: 'warning',
-  'active-on-sensitive': 'info',
-};
 
 /**
- * Results-screen copy, resolved at render from the global language.
+ * Screen chrome only. Everything about the analysis itself — the summary, the
+ * ingredient cards, the unmatched tokens, the disclaimer — lives in
+ * `components/AnalysisResult`, which the desktop Analyze tab renders too.
  */
 const UI = {
   en: {
     title: "What's in it",
-    recognized: (m: number, t: number) => `${m} of ${t} ingredients recognized`,
-    notRecognizedSuffix: (n: number) => ` · ${n} not recognized`,
-    matchYourConcerns: 'match your concerns',
-    worthALook: 'worth a look',
-    goodForYou: 'Good for you',
-    goodForYouHint: 'These target concerns you picked during onboarding.',
-    allIngredients: (n: number) => `All ingredients (${n})`,
-    notRecognized: (n: number) => `Not recognized (${n})`,
-    notRecognizedHint:
-      "Dewly doesn't have these in its database yet — that doesn't mean anything is wrong with them.",
-    listedTwice: 'Listed more than once',
-    targetsYour: 'Targets your',
-    matchedLoosely: (raw: string) => `Matched loosely from “${raw}”.`,
     analyzeAnother: 'Analyze another',
     addToShelf: 'Add to my shelf',
-    poreBadge: (n: number) => `PORE ${n}/5`,
-    activeBadge: 'ACTIVE',
-    forYouBadge: 'FOR YOU',
     noneTitle: 'Nothing recognized',
     noneBody:
       "Dewly couldn't match any of that against its ingredient database. That usually means the text wasn't an INCI list, or it came through garbled.",
@@ -62,29 +36,11 @@ const UI = {
     errorTitle: 'Something went wrong',
     errorFallback: 'Please try again.',
     back: 'Back',
-    disclaimer:
-      'Dewly provides educational information only and is not medical advice. Ingredient effects vary from person to person. If you have a skin condition or are unsure about a product, speak to a dermatologist. Patch test anything new.',
   },
   tr: {
     title: 'İçinde ne var',
-    recognized: (m: number, t: number) => `${t} içerikten ${m} tanesi tanındı`,
-    notRecognizedSuffix: (n: number) => ` · ${n} tanınmadı`,
-    matchYourConcerns: 'endişelerinizle eşleşiyor',
-    worthALook: 'dikkat edilmeli',
-    goodForYou: 'Size uygun',
-    goodForYouHint: 'Bunlar, başlangıçta seçtiğiniz endişeleri hedefliyor.',
-    allIngredients: (n: number) => `Tüm içerikler (${n})`,
-    notRecognized: (n: number) => `Tanınmayan (${n})`,
-    notRecognizedHint:
-      'Bunlar henüz Dewly veritabanında yok — bu, onlarda bir sorun olduğu anlamına gelmez.',
-    listedTwice: 'Birden fazla kez listelenmiş',
-    targetsYour: 'Şunu hedefliyor',
-    matchedLoosely: (raw: string) => `“${raw}” ifadesinden yaklaşık eşleşme.`,
     analyzeAnother: 'Başka bir ürün analiz et',
     addToShelf: 'Rafıma ekle',
-    poreBadge: (n: number) => `GÖZENEK ${n}/5`,
-    activeBadge: 'AKTİF',
-    forYouBadge: 'SİZE UYGUN',
     noneTitle: 'Hiçbir içerik tanınmadı',
     noneBody:
       'Dewly bunların hiçbirini içerik veritabanıyla eşleştiremedi. Bu genellikle metnin bir INCI listesi olmadığı ya da bozuk geldiği anlamına gelir.',
@@ -99,41 +55,26 @@ const UI = {
     errorTitle: 'Bir şeyler ters gitti',
     errorFallback: 'Lütfen tekrar deneyin.',
     back: 'Geri',
-    disclaimer:
-      'Dewly yalnızca eğitim amaçlı bilgi sunar, tıbbi tavsiye değildir. İçeriklerin etkisi kişiden kişiye değişir. Bir cilt rahatsızlığınız varsa veya bir ürün konusunda emin değilseniz bir dermatoloğa danışın. Yeni ürünleri önce küçük bir alanda deneyin.',
   },
 } as const;
-
-const CATEGORY_LABELS: Record<Language, Record<string, string>> = {
-  en: {
-    humectant: 'Humectant',
-    occlusive: 'Occlusive',
-    emollient: 'Emollient',
-    active: 'Active',
-    antioxidant: 'Antioxidant',
-    spf_filter: 'SPF filter',
-    preservative: 'Preservative',
-    fragrance: 'Fragrance',
-    solvent: 'Solvent',
-    other: 'Other',
-  },
-  tr: {
-    humectant: 'Nemlendirici',
-    occlusive: 'Örtücü',
-    emollient: 'Yumuşatıcı',
-    active: 'Aktif',
-    antioxidant: 'Antioksidan',
-    spf_filter: 'Güneş filtresi',
-    preservative: 'Koruyucu',
-    fragrance: 'Koku',
-    solvent: 'Çözücü',
-    other: 'Diğer',
-  },
-};
 
 export default function ResultsScreen() {
   const { result, status, error } = useAnalysis();
   const { language, setLanguage } = useLanguage();
+  const isWide = useIsWide();
+  const t = UI[language];
+
+  /**
+   * On desktop the results are shown INLINE on the Analyze tab, so this route
+   * has nothing to add — and pushing it would replace the whole window,
+   * sidebar included, because `/results` is a root route rather than a tab.
+   *
+   * The redirect matters for more than the button that no longer navigates
+   * here: `/results` is a real URL that can be bookmarked or reloaded into, and
+   * it has to land somewhere coherent at every width. The analysis lives in
+   * context, so `/analyze` renders it immediately.
+   */
+  if (isWide) return <Redirect href="/analyze" />;
 
   if (status === 'idle' || (!result && status !== 'error')) {
     return <Redirect href="/analyze" />;
@@ -143,27 +84,19 @@ export default function ResultsScreen() {
     return (
       <Screen>
         <View style={styles.header}>
-          <Text variant="h1">{UI[language].errorTitle}</Text>
+          <Text variant="h1">{t.errorTitle}</Text>
           <Text variant="body" tone="muted">
             {/* Was `error` — the raw Supabase message, English on every screen
                 including Turkish ones. `error` is now a code we translate. */}
-            {error ? appErrorMessage(error, language) : UI[language].errorFallback}
+            {error ? appErrorMessage(error, language) : t.errorFallback}
           </Text>
-          <Button
-            label={UI[language].back}
-            variant="secondary"
-            onPress={() => goBackOr('/analyze')}
-          />
+          <Button label={t.back} variant="secondary" onPress={() => goBackOr('/analyze')} />
         </View>
       </Screen>
     );
   }
 
   if (!result) return null;
-
-  const goodForYou = result.matched.filter((m) => m.matchedConcerns.length > 0);
-  const headsUp = result.matched.filter((m) => m.headsUp.length > 0);
-  const t = UI[language];
 
   // Nothing matched. The normal layout degrades badly here — two "0" tiles and
   // an "ALL INGREDIENTS (0)" heading over blank space — and this is the most
@@ -172,45 +105,7 @@ export default function ResultsScreen() {
   if (result.matched.length === 0) {
     return (
       <Screen scroll>
-        <View style={styles.header}>
-          <Text variant="h1">{t.noneTitle}</Text>
-          <Text variant="body" tone="muted">
-            {t.noneBody}
-          </Text>
-        </View>
-
-        <Card style={styles.noneCard}>
-          <Text variant="caption" tone="muted" style={styles.sectionTitle}>
-            {t.noneTipsTitle.toUpperCase()}
-          </Text>
-          {t.noneTips.map((tip) => (
-            <View key={tip} style={styles.tipRow}>
-              <Text variant="caption" tone="muted" style={styles.tipBullet}>
-                •
-              </Text>
-              <Text variant="caption" tone="muted" style={styles.tipText}>
-                {tip}
-              </Text>
-            </View>
-          ))}
-        </Card>
-
-        {/* The tokens stay visible: seeing exactly what was parsed is usually
-            what makes the mistake obvious. */}
-        {result.unmatched.length > 0 ? (
-          <Section title={t.noneUnrecognized}>
-            <View style={styles.chipRow}>
-              {result.unmatched.map((token) => (
-                <View key={`${token.index}-${token.raw}`} style={styles.unmatchedChip}>
-                  <Text variant="caption" tone="muted">
-                    {token.raw}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </Section>
-        ) : null}
-
+        <NothingRecognized result={result} language={language} />
         <View style={styles.actions}>
           <Button
             label={t.tryAgain}
@@ -229,10 +124,7 @@ export default function ResultsScreen() {
       <View style={styles.header}>
         <Text variant="h1">{t.title}</Text>
         <Text variant="body" tone="muted">
-          {t.recognized(result.matched.length, result.totalTokens)}
-          {result.unmatched.length > 0
-            ? t.notRecognizedSuffix(result.unmatched.length)
-            : ''}
+          {recognizedSummary(result, language)}
         </Text>
       </View>
 
@@ -241,67 +133,8 @@ export default function ResultsScreen() {
         <Chip label="TR" selected={language === 'tr'} onPress={() => setLanguage('tr')} />
       </View>
 
-      {/* Summary strip so the two personalised signals are visible before scrolling. */}
-      <View style={styles.summaryRow}>
-        <SummaryTile
-          value={goodForYou.length}
-          label={t.matchYourConcerns}
-          tone="success"
-        />
-        <SummaryTile value={headsUp.length} label={t.worthALook} tone="warning" />
-      </View>
-
-      {goodForYou.length > 0 ? (
-        <Section title={t.goodForYou}>
-          <Text variant="caption" tone="muted">
-            {t.goodForYouHint}
-          </Text>
-          <View style={styles.chipRow}>
-            {goodForYou.map((m) => (
-              <Chip key={m.ingredient.id} label={m.ingredient.inci_name} selected />
-            ))}
-          </View>
-        </Section>
-      ) : null}
-
-      <Section title={t.allIngredients(result.matched.length)}>
-        {result.matched.map((m) => (
-          <IngredientCard key={m.ingredient.id} analyzed={m} language={language} />
-        ))}
-      </Section>
-
-      {result.unmatched.length > 0 ? (
-        <Section title={t.notRecognized(result.unmatched.length)}>
-          <Text variant="caption" tone="muted">
-            {t.notRecognizedHint}
-          </Text>
-          <View style={styles.chipRow}>
-            {result.unmatched.map((token) => (
-              <View key={`${token.index}-${token.raw}`} style={styles.unmatchedChip}>
-                <Text variant="caption" tone="muted">
-                  {token.raw}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </Section>
-      ) : null}
-
-      {result.duplicates.length > 0 ? (
-        <Section title={t.listedTwice}>
-          <Text variant="caption" tone="muted">
-            {result.duplicates
-              .map((d) => `${d.canonical} (×${d.tokens.length})`)
-              .join(', ')}
-          </Text>
-        </Section>
-      ) : null}
-
-      <View style={styles.disclaimer}>
-        <Text variant="caption" tone="muted">
-          {t.disclaimer}
-        </Text>
-      </View>
+      {/* One column — the phone list, unchanged. */}
+      <AnalysisResult result={result} language={language} />
 
       <View style={styles.actions}>
         {/* Carries the matched ingredients into the shelf, so the step guess can
@@ -326,118 +159,66 @@ export default function ResultsScreen() {
   );
 }
 
-function IngredientCard({
-  analyzed,
+/**
+ * The "nothing matched" explainer.
+ *
+ * Exported so the desktop Analyze panel shows the same thing rather than an
+ * empty grid — it is the most likely first-run outcome and deserves one
+ * explanation, not two.
+ */
+export function NothingRecognized({
+  result,
   language,
 }: {
-  analyzed: AnalyzedIngredient;
-  language: 'en' | 'tr';
+  result: AnalysisResultData;
+  language: Language;
 }) {
-  const { ingredient, matchedConcerns, headsUp, via, token } = analyzed;
-  const description = describe(ingredient, language);
-  const isGoodForYou = matchedConcerns.length > 0;
+  const t = UI[language];
 
   return (
-    <Card style={StyleSheet.flatten([styles.card, isGoodForYou && styles.cardHighlighted])}>
-      <View style={styles.cardHeader}>
-        <View style={styles.cardTitle}>
-          <Text variant="h2">{ingredient.inci_name}</Text>
-          {ingredient.common_name && ingredient.common_name !== ingredient.inci_name ? (
-            <Text variant="caption" tone="muted">
-              {ingredient.common_name}
+    <>
+      <View style={styles.header}>
+        <Text variant="h1">{t.noneTitle}</Text>
+        <Text variant="body" tone="muted">
+          {t.noneBody}
+        </Text>
+      </View>
+
+      <Card style={styles.noneCard}>
+        <Text variant="caption" tone="muted" style={styles.sectionTitle}>
+          {t.noneTipsTitle.toUpperCase()}
+        </Text>
+        {t.noneTips.map((tip) => (
+          <View key={tip} style={styles.tipRow}>
+            <Text variant="caption" tone="muted" style={styles.tipBullet}>
+              •
             </Text>
-          ) : null}
-        </View>
-        {isGoodForYou ? <Badge label={UI[language].forYouBadge} tone="success" /> : null}
-      </View>
-
-      <View style={styles.badgeRow}>
-        <Badge
-          label={CATEGORY_LABELS[language][ingredient.category] ?? ingredient.category}
-        />
-        {ingredient.is_active ? (
-          <Badge label={UI[language].activeBadge} tone="info" />
-        ) : null}
-        {ingredient.comedogenic_rating != null ? (
-          <Badge
-            label={UI[language].poreBadge(ingredient.comedogenic_rating)}
-            tone={ingredient.comedogenic_rating >= 3 ? 'warning' : 'success'}
-          />
-        ) : null}
-      </View>
-
-      {description ? <Text style={styles.description}>{description}</Text> : null}
-
-      {matchedConcerns.length > 0 ? (
-        <View style={styles.concernRow}>
-          <Text variant="caption" tone="muted">
-            {UI[language].targetsYour}:{' '}
-            {matchedConcerns
-              .map((c) => CONCERN_LABELS[language][c as Concern] ?? c)
-              .join(', ')}
-          </Text>
-        </View>
-      ) : null}
-
-      {headsUp.map((flag) => {
-        const { label, detail } = headsUpCopy(flag, ingredient, language);
-        const scheme = colors.status[HEADS_UP_TONE[flag.kind]];
-        return (
-          <View
-            key={flag.kind}
-            style={[
-              styles.flag,
-              { backgroundColor: scheme.bg, borderColor: scheme.border },
-            ]}
-          >
-            <Badge label={label.toUpperCase()} tone={HEADS_UP_TONE[flag.kind]} />
-            <Text variant="caption" style={styles.flagText}>
-              {detail}
+            <Text variant="caption" tone="muted" style={styles.tipText}>
+              {tip}
             </Text>
           </View>
-        );
-      })}
+        ))}
+      </Card>
 
-      {/* A loose match is a guess; say so rather than presenting it as certain. */}
-      {via === 'loose' ? (
-        <Text variant="caption" tone="muted">
-          {UI[language].matchedLoosely(token.raw)}
-        </Text>
+      {/* The tokens stay visible: seeing exactly what was parsed is usually
+          what makes the mistake obvious. */}
+      {result.unmatched.length > 0 ? (
+        <View style={styles.section}>
+          <Text variant="caption" tone="muted" style={styles.sectionTitle}>
+            {t.noneUnrecognized.toUpperCase()}
+          </Text>
+          <View style={[styles.sectionBody, styles.chipRow]}>
+            {result.unmatched.map((token) => (
+              <View key={`${token.index}-${token.raw}`} style={styles.unmatchedChip}>
+                <Text variant="caption" tone="muted">
+                  {token.raw}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
       ) : null}
-    </Card>
-  );
-}
-
-function SummaryTile({
-  value,
-  label,
-  tone,
-}: {
-  value: number;
-  label: string;
-  tone: StatusTone;
-}) {
-  const scheme = colors.status[tone];
-  return (
-    <View style={[styles.tile, { backgroundColor: scheme.bg, borderColor: scheme.border }]}>
-      <Text variant="h1" style={{ color: scheme.fg }}>
-        {value}
-      </Text>
-      <Text variant="caption" style={{ color: scheme.fg }}>
-        {label}
-      </Text>
-    </View>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.section}>
-      <Text variant="caption" tone="muted" style={styles.sectionTitle}>
-        {title.toUpperCase()}
-      </Text>
-      <View style={styles.sectionBody}>{children}</View>
-    </View>
+    </>
   );
 }
 
@@ -448,39 +229,10 @@ const styles = StyleSheet.create({
   tipBullet: { lineHeight: 18 },
   tipText: { flex: 1 },
   langRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
-  summaryRow: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
-  tile: {
-    flex: 1,
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    gap: spacing.xs,
-  },
   section: { marginTop: spacing.xl },
   sectionTitle: { letterSpacing: 1.2 },
   sectionBody: { marginTop: spacing.md, gap: spacing.md },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  card: { gap: spacing.sm },
-  cardHighlighted: { borderColor: colors.status.success.border, borderWidth: 1.5 },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  cardTitle: { flex: 1, gap: 2 },
-  badgeRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  description: { marginTop: spacing.xs },
-  concernRow: { marginTop: spacing.xs },
-  flag: {
-    marginTop: spacing.xs,
-    padding: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.xs,
-    alignItems: 'flex-start',
-  },
-  flagText: { color: colors.text },
   unmatchedChip: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
@@ -489,14 +241,6 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: colors.borderStrong,
     backgroundColor: 'transparent',
-  },
-  disclaimer: {
-    marginTop: spacing['2xl'],
-    padding: spacing.lg,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
   },
   actions: { marginTop: spacing.lg, gap: spacing.sm, alignItems: 'stretch' },
 });

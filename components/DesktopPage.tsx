@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { colors, MAX_DESKTOP_WIDTH, spacing } from '../theme';
+import { colors, DESKTOP_PAGE_PADDING, MAX_DESKTOP_WIDTH, spacing } from '../theme';
 
 export type DesktopPageProps = {
   children: ReactNode;
@@ -34,7 +34,7 @@ export function DesktopPage({ children }: DesktopPageProps) {
 const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: colors.background },
   content: {
-    paddingHorizontal: spacing['2xl'],
+    paddingHorizontal: DESKTOP_PAGE_PADDING,
     paddingTop: spacing['2xl'],
     paddingBottom: spacing['3xl'],
     // Centres the capped column without stretching short pages.

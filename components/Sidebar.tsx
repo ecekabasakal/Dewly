@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 import { useProfile } from '../hooks/useProfile';
 import { resolveDisplayName } from '../lib/greeting';
-import { colors, fonts, palette, radius, spacing } from '../theme';
+import { colors, fonts, palette, radius, SIDEBAR_WIDTH, spacing } from '../theme';
 import { SKIN_TYPE_LABELS } from '../types/profile';
 import { SunriseMark } from './SunriseMark';
 import { Text } from './Text';
@@ -14,8 +14,6 @@ const COPY = {
   en: { you: 'You', noProfile: 'No skin profile yet', skin: (type: string) => `${type} skin` },
   tr: { you: 'Sen', noProfile: 'Henüz cilt profili yok', skin: (type: string) => `${type} cilt` },
 } as const;
-
-export const SIDEBAR_WIDTH = 248;
 
 /**
  * The desktop navigation rail, replacing the bottom tab bar above the desktop
