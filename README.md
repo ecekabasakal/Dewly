@@ -26,7 +26,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Visual upgrade pass — desktop layout done for Home` · **Next task:** _apply the desktop layout to the other screens (Analyze, Routine, Shelf, Profile), then mobile styling polish_
+> **Active phase:** `Visual upgrade pass — desktop layout in progress.` Home and Analyze have desktop layouts, plus a persistent Discover panel (trending 2026 ingredients with evidence badges + Open Beauty Facts brand themes) · **Next task:** _apply the desktop layout to Routine, Shelf and Profile, then mobile styling polish_
 
 ## ✨ Recent
 
@@ -37,7 +37,10 @@ What landed in the current pass:
 - **Onboarding name field** — an optional, skippable first step, editable later from Profile. The home greeting prefers it over the guess-from-email it used before.
 - **Design tokens** — a warm accent palette with semantic roles, layered `boxShadow` elevation tokens that work on native *and* web (retiring the deprecated `shadow*` props), a hero gradient token, and a card radius scale.
 - **New Home screen** — gradient greeting hero with the brand's own sunrise mark, plus a row of metric cards counted from the user's real rows. No scores, no invented numbers; a card with nothing behind it is omitted rather than filled.
-- **Responsive desktop web layout** — three modes from one breakpoint system: the phone app below 600, the centred mobile-on-web column to 900, and above that a real desktop layout with a left sidebar nav and a two-column Home. The phone layout is untouched at every step.
+- **Responsive desktop web layout** — three modes from one breakpoint system: the phone app below 600, the centred mobile-on-web column to 900, and above that a real desktop layout with a left sidebar nav. The sidebar is the navigator's own `tabBar`, so routes, order, labels and the active state all still come from `<Tabs.Screen>` — and below the breakpoint the prop is left undefined, which makes the phone fall back to the stock bottom bar rather than a re-implementation that could drift. **The phone layout is untouched at every step**, verified by a pixel diff rather than by eye.
+- **Home and Analyze desktop layouts** — Home is a full-width hero, a metric row and a two-column split; Analyze puts the input on top and lays the ingredient cards out in a responsive 2–3 column grid instead of one long list. Both branch on `useIsWide()` and share one data computation with their phone versions, so the two can never disagree about what they show.
+- **Eight trending 2026 ingredients** — PDRN, exosomes, EGF, polynucleotides, ectoin, spicules, snow mushroom and colloidal oatmeal, seeded into the ingredients table through the existing path, with aliases so a pasted `PDRN` or `ekzozom` resolves in an analysis. Each carries an **honest evidence grade**: exosomes are marked *evolving* and PDRN *emerging*, because the claims are ahead of the research and a feed that hid that would be marketing.
+- **Persistent Discover column** — a mid-green panel (`#C3D6BD`, one token) down the right of every desktop screen, carrying the trending feed and a rotating Open Beauty Facts brand theme. Mounted beside the whole navigator rather than inside a screen, so it survives tab switches and no screen has to opt in. Wide screens only: on a phone none of it is rendered at all.
 
 ## 📌 Backlog / later
 
@@ -50,7 +53,7 @@ Small things deliberately deferred — not blockers for the MVP:
 
 - **Camera barcode scanning (Phase 9 Part B).** Needs a native dev build — `expo-camera` is not in Expo Go. Part A already covers everything downstream of the scan, so this is one screen that hands a barcode to code that exists.
 - **Google login.** Also needs a dev build. Email/password is live; the deployed origin now gives OAuth a stable redirect to come back to.
-- **Desktop layout for the remaining screens** — Analyze, Routine, Shelf, Profile. The foundation (`useIsWide`, the sidebar, `DesktopPage`) is built and app-wide; only Home consumes it so far, so those four still render their phone layout inside the desktop content area.
+- **Desktop layout for Routine, Shelf and Profile.** The foundation (`useIsWide`, the sidebar, `DesktopPage`, the Discover rail) is built and app-wide, and Home and Analyze consume it — these three still render their phone layout inside the desktop content area. They already sit beside the sidebar and the Discover panel, so what is missing is the multi-column arrangement, not the frame.
 - **Mobile styling polish** — the routine card's contrast is flatter than the rest of the app, and a long brand name in a 48pt `BrandTile` hits the font-size floor and breaks mid-word ("Cetaphi / l").
 - **Offline detection (#11).** Every failure path reports cleanly, but nothing checks connectivity up front, so an offline user finds out by trying.
 
