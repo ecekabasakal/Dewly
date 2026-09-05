@@ -16,6 +16,7 @@ export {
   PANEL_BREAKPOINT,
   PANEL_WIDTH,
   resultsGridColumns,
+  routineStepColumns,
   SIDEBAR_WIDTH,
   type LayoutMode,
 } from './layout';

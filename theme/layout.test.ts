@@ -14,6 +14,7 @@ import {
   PANEL_BREAKPOINT,
   PANEL_WIDTH,
   resultsGridColumns,
+  routineStepColumns,
   SIDEBAR_WIDTH,
 } from './layout';
 
@@ -192,5 +193,55 @@ describe('resultsGridColumns', () => {
 
   test('falls back to a single column when there is no room', () => {
     expect(resultsGridColumns(400)).toBe(1);
+  });
+});
+
+describe('routineStepColumns', () => {
+  /**
+   * Everything a step card spends before the product name gets any: the 32pt
+   * position marker and its gap, the card's own padding, the 48pt brand tile
+   * and its gap. Subtract it from a column and what is left is the name width,
+   * which is the number that actually decides whether two columns are honest.
+   */
+  const STEP_CHROME = 32 + 12 + 16 * 2 + 48 + 12;
+  const GUTTER = 16;
+
+  /** The phone's name width at 375pt, the width the card was drawn against. */
+  const PHONE_NAME_WIDTH = 375 - 16 * 2 - STEP_CHROME;
+
+  test.each([
+    [689, 1],
+    [690, 2],
+    [820, 2],
+    [1100, 2],
+  ])('a %ipt content column gives %i step columns', (content, expected) => {
+    expect(routineStepColumns(content)).toBe(expected);
+  });
+
+  test('one column below the floor, never three above it', () => {
+    expect(routineStepColumns(0)).toBe(1);
+    expect(routineStepColumns(568)).toBe(1);
+    expect(routineStepColumns(4000)).toBe(2);
+  });
+
+  /**
+   * The guarantee: going to two columns never makes a product name narrower
+   * than it already is on a phone. A two-column routine that reads worse than
+   * the mobile one would be a regression dressed up as a desktop layout.
+   */
+  test('two columns never undercut the phone', () => {
+    for (let w = DESKTOP_BREAKPOINT; w <= 2560; w += 10) {
+      const content = desktopContentWidth(w);
+      const columns = routineStepColumns(content);
+      if (columns === 1) continue;
+      const name = (content - (columns - 1) * GUTTER) / columns - STEP_CHROME;
+      expect(name).toBeGreaterThanOrEqual(PHONE_NAME_WIDTH - 8);
+    }
+  });
+
+  /** Both desktop bands — rail up and rail down — reach two columns. */
+  test('each band reaches two columns before it ends', () => {
+    expect(routineStepColumns(desktopContentWidth(PANEL_BREAKPOINT - 1))).toBe(2);
+    expect(routineStepColumns(desktopContentWidth(1440))).toBe(2);
   });
 });

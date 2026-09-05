@@ -147,3 +147,27 @@ export function resultsGridColumns(contentWidth: number, maxColumns = 3): number
   const natural = contentWidth >= 820 ? 3 : contentWidth >= 520 ? 2 : 1;
   return Math.max(1, Math.min(natural, maxColumns));
 }
+
+/**
+ * Columns for the ordered routine steps at a given content width.
+ *
+ * A step is a 32pt position marker, a 48pt brand tile and a product name that
+ * must not break into a column of two-word lines. The phone is the yardstick:
+ * 375 - 32 gutter - 32 marker - 12 - 32 card padding - 48 tile - 12 leaves the
+ * name about 207pt, and that is the width the step card was drawn against.
+ * A second column is only worth having when each one still clears it:
+ *
+ *   689 -> 1 column                        (two would give a 200pt name)
+ *   690 -> 2 columns of 337, name ~201     (the floor)
+ *   820 (the cap with the rail up)   -> 2 of 402, name ~266
+ *   837 (the widest the rail-less band reaches) -> 2 of 410
+ *
+ * Below the floor one full-width column beats two cramped ones — the steps
+ * simply run wider than they do on a phone, which is not a regression.
+ *
+ * Never three. A NUMBERED sequence in three columns stops reading as an order
+ * and starts reading as a grid of tiles.
+ */
+export function routineStepColumns(contentWidth: number): number {
+  return contentWidth >= 690 ? 2 : 1;
+}

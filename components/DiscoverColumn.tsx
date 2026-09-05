@@ -9,6 +9,7 @@ import { useLanguage } from '../hooks/useLanguage';
 import {
   BRAND_RESULT_COUNT,
   brandThemeFor,
+  evidenceLabel,
   sourceLabel,
   trendingIngredients,
   type EvidenceLevel,
@@ -28,11 +29,6 @@ const COPY = {
     brandsFailed: "Couldn't reach Open Beauty Facts.",
     source: 'Source',
     attribution: 'Data: Open Beauty Facts (ODbL)',
-    evidence: {
-      established: 'ESTABLISHED',
-      emerging: 'EMERGING',
-      evolving: 'EVOLVING',
-    } satisfies Record<EvidenceLevel, string>,
     evidenceHint: {
       established: 'Well studied, broadly agreed.',
       emerging: 'Real research, still early.',
@@ -48,11 +44,6 @@ const COPY = {
     brandsFailed: 'Open Beauty Facts’e ulaşılamadı.',
     source: 'Kaynak',
     attribution: 'Veri: Open Beauty Facts (ODbL)',
-    evidence: {
-      established: 'YERLEŞİK',
-      emerging: 'YENİ',
-      evolving: 'GELİŞEN',
-    } satisfies Record<EvidenceLevel, string>,
     evidenceHint: {
       established: 'İyi çalışılmış, geniş kabul görmüş.',
       emerging: 'Gerçek araştırma var, henüz erken.',
@@ -241,7 +232,7 @@ function TrendCard({
           ]}
         >
           <Text style={[styles.evidenceLabel, { color: scheme.fg }]}>
-            {t.evidence[item.evidence]}
+            {evidenceLabel(item.evidence, language)}
           </Text>
           <Text style={[styles.evidenceHint, { color: scheme.fg }]}>
             {t.evidenceHint[item.evidence]}

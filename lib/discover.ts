@@ -120,6 +120,49 @@ export function brandThemeFor(language: Language, date: Date = new Date()): Bran
   };
 }
 
+/**
+ * Which trending ingredient is featured today.
+ *
+ * The same rotation as `brandThemeFor`, for the same reasons — a card that
+ * reshuffles on every React render is disorienting, one that never moves stops
+ * being a feed, and a `Math.random()` pick cannot be tested. `getTime()` over
+ * 86_400_000 is the count of whole days since the epoch, so the choice is fixed
+ * for a UTC day, steps by exactly one each night, and is identical on every
+ * device in a timezone.
+ *
+ * Null only if the feed is empty, which the ingredient-database join in
+ * `trendingIngredients` could in principle produce.
+ */
+export function ingredientOfTheDay(
+  language: Language,
+  date: Date = new Date()
+): TrendingIngredient | null {
+  const feed = trendingIngredients(language);
+  if (feed.length === 0) return null;
+  const dayNumber = Math.floor(date.getTime() / 86_400_000);
+  return feed[Math.abs(dayNumber) % feed.length]!;
+}
+
+/**
+ * The badge word for an evidence grade.
+ *
+ * Lives here rather than in a screen's copy block because two surfaces now
+ * render it — the Discover feed and the sidebar's ingredient of the day — and
+ * the grade is the honesty mechanism of both. Two copies could drift, and a
+ * grade worded differently in two places is exactly the kind of drift that
+ * would undermine it.
+ */
+const EVIDENCE_LABELS: Record<EvidenceLevel, { en: string; tr: string }> = {
+  established: { en: 'ESTABLISHED', tr: 'YERLEŞİK' },
+  emerging: { en: 'EMERGING', tr: 'YENİ' },
+  evolving: { en: 'EVOLVING', tr: 'GELİŞEN' },
+};
+
+export function evidenceLabel(level: EvidenceLevel, language: Language): string {
+  const label = EVIDENCE_LABELS[level];
+  return pick(language, label.en, label.tr);
+}
+
 /** How many OBF products the brand card shows. Enough to browse, not a catalogue. */
 export const BRAND_RESULT_COUNT = 3;
 

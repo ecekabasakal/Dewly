@@ -24,6 +24,7 @@
     "react-native": "0.86.3",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
@@ -37,7 +38,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "seed:ingredients": "bun run scripts/seed-ingredients.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "build:pattern": "bun run scripts/build-pattern.ts"
   },
   "private": true
 }
