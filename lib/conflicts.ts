@@ -83,8 +83,11 @@ export type ConflictFinding = {
    * time_of_day. The slot is carried per product because a `both` product
    * legitimately appears in an AM finding — without showing that, the list
    * reads as if the engine had pooled the two slots together.
+   *
+   * `id` is what lets `lib/howto.ts` ask "which findings involve THIS product"
+   * without joining on the name, which two shelf entries are free to share.
    */
-  products: { name: string; timeOfDay: ProductTimeOfDay }[];
+  products: { id: string; name: string; timeOfDay: ProductTimeOfDay }[];
   rule: RawPairRule | RawDerivedRule;
 };
 
@@ -98,7 +101,7 @@ export type ResolvedFinding = {
   title: string;
   explanation: string;
   recommendation: string;
-  products: { name: string; timeOfDay: ProductTimeOfDay }[];
+  products: { id: string; name: string; timeOfDay: ProductTimeOfDay }[];
   sources: { label: string; url: string }[];
 };
 
@@ -212,7 +215,7 @@ function evaluatePairRule(
     evidence: rule.evidence_strength,
     products: products
       .filter((p) => offenders.includes(p))
-      .map((p) => ({ name: p.name, timeOfDay: p.timeOfDay })),
+      .map((p) => ({ id: p.id, name: p.name, timeOfDay: p.timeOfDay })),
     rule,
   };
 }
@@ -262,7 +265,7 @@ function evaluateDerivedRule(
       slot,
       severity: rule.severity,
       evidence: rule.evidence_strength,
-      products: matching.map((p) => ({ name: p.name, timeOfDay: p.timeOfDay })),
+      products: matching.map((p) => ({ id: p.id, name: p.name, timeOfDay: p.timeOfDay })),
       rule,
     };
   }

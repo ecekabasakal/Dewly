@@ -10,6 +10,7 @@ import {
   Chip,
   DesktopPage,
   ErrorState,
+  HowToApply,
   Screen,
   Text,
 } from '../../components';
@@ -174,7 +175,7 @@ export default function RoutineScreen() {
         </Card>
       ) : (
         <>
-          <RoutineList routine={routine} language={language} />
+          <RoutineList routine={routine} shelf={products} language={language} />
           <ConflictCheck findings={findings} language={language} />
         </>
       )}
@@ -182,7 +183,15 @@ export default function RoutineScreen() {
   );
 }
 
-function RoutineList({ routine, language }: { routine: Routine; language: Language }) {
+function RoutineList({
+  routine,
+  shelf,
+  language,
+}: {
+  routine: Routine;
+  shelf: ShelfProduct[];
+  language: Language;
+}) {
   const { entries, missingSteps, slot } = routine;
   const t = COPY[language];
 
@@ -200,7 +209,12 @@ function RoutineList({ routine, language }: { routine: Routine; language: Langua
       ) : (
         <View style={styles.steps}>
           {entries.map((entry) => (
-            <StepCard key={entry.product.id} entry={entry} language={language} />
+            <StepCard
+              key={entry.product.id}
+              entry={entry}
+              shelf={shelf}
+              language={language}
+            />
           ))}
         </View>
       )}
@@ -230,7 +244,16 @@ function RoutineList({ routine, language }: { routine: Routine; language: Langua
 // ---------------------------------------------------------------------------
 
 /** One numbered step: position marker, brand tile, step label, product. */
-function StepCard({ entry, language }: { entry: RoutineEntry; language: Language }) {
+function StepCard({
+  entry,
+  shelf,
+  language,
+}: {
+  entry: RoutineEntry;
+  /** Context for the guidance block's dynamic half. See `lib/howto.ts`. */
+  shelf: ShelfProduct[];
+  language: Language;
+}) {
   const t = COPY[language];
 
   return (
@@ -274,6 +297,16 @@ function StepCard({ entry, language }: { entry: RoutineEntry; language: Language
             )}
           </View>
         </View>
+
+        {/* Collapsed by default: the routine is a list to work down, and a
+            paragraph plus citations under all six steps would bury it. */}
+        <HowToApply
+          product={entry.product}
+          shelf={shelf}
+          language={language}
+          detail="long"
+          collapsible
+        />
       </Card>
     </View>
   );
@@ -450,7 +483,12 @@ function RoutineDesktop({
                 {splitIntoColumns(entries, columns).map((column, index) => (
                   <View key={index} style={styles.stepColumn}>
                     {column.map((entry) => (
-                      <StepCard key={entry.product.id} entry={entry} language={language} />
+                      <StepCard
+                        key={entry.product.id}
+                        entry={entry}
+                        shelf={products}
+                        language={language}
+                      />
                     ))}
                   </View>
                 ))}

@@ -5,6 +5,7 @@ export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { DesktopPage, type DesktopPageProps } from './DesktopPage';
 export { DewlyPattern } from './DewlyPattern';
+export { HowToApply, type HowToApplyProps } from './HowToApply';
 export { DiscoverColumn, type DiscoverColumnProps } from './DiscoverColumn';
 export { DiscoverPanel } from './DiscoverPanel';
 export { Chip, type ChipProps } from './Chip';

@@ -18,6 +18,7 @@ import {
   Card,
   Chip,
   ErrorState,
+  HowToApply,
   Screen,
   Text,
 } from '../components';
@@ -278,6 +279,16 @@ function ObfProductLoader({ barcode }: { barcode: string }) {
   return <ProductForm key={product.barcode} editing={undefined} fromAnalysis={false} obf={product} />;
 }
 
+/**
+ * Stands in for the product's id while it is still a draft.
+ *
+ * `howToFor` appends the product to the shelf when its id is not already
+ * there, then matches findings back by id — so an unsaved product needs one
+ * that cannot collide with a real row. Shelf ids are v4 UUIDs, so no saved
+ * product can ever carry this.
+ */
+const DRAFT_ID = 'draft';
+
 function ProductForm({
   editing,
   fromAnalysis,
@@ -288,7 +299,7 @@ function ProductForm({
   /** Set when the product came from the Open Beauty Facts search. */
   obf?: ObfProduct;
 }) {
-  const { addProduct, updateProduct } = useShelf();
+  const { addProduct, updateProduct, products: shelf } = useShelf();
   const { result } = useAnalysis();
 
   // Ingredients carried over from an analysis, used for the fallback guess and
@@ -522,6 +533,27 @@ function ProductForm({
           language={language}
           overridden={timeTouched && timing.rule !== null && timeOfDay !== timing.time}
         />
+
+        {/* The guidance block. The SHORT static line for the chosen step, plus
+            the conflict this product would cause on the shelf as it stands —
+            asked before the product is saved, which is the one thing this
+            screen has no other way to say. The timing half stays compact
+            because `TimingSuggestion` directly above already carries the full
+            reason and its citations. */}
+        {stepType ? (
+          <HowToApply
+            product={{
+              id: editing?.id ?? DRAFT_ID,
+              name,
+              stepType,
+              timeOfDay,
+              ingredientNames,
+            }}
+            shelf={shelf}
+            language={language}
+            detail="short"
+          />
+        ) : null}
 
         {spfAtNight ? (
           <View style={styles.warning}>
