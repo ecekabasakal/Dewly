@@ -3,7 +3,10 @@ import { describe, expect, test } from 'bun:test';
 import {
   estimateEmWidth,
   fitFontSize,
+  fitTileLabel,
+  MAX_LINES,
   MIN_FONT_SIZE,
+  tileInitials,
   tilePadding,
   wrappedEmWidth,
 } from './tile-fit';
@@ -150,5 +153,92 @@ describe('fitFontSize', () => {
     const short = fitFontSize('Nivea', 72);
     const long = fitFontSize('Beauty of Joseon', 72);
     expect(long).toBeLessThanOrEqual(short);
+  });
+});
+
+describe('tileInitials', () => {
+  test.each([
+    ['Neutrogena', 'N'],
+    ['Cetaphil', 'C'],
+    ['La Roche Posay', 'LRP'],
+    ['Beauty of Joseon', 'BoJ'],
+    ['The Ordinary', 'TO'],
+    ['COSRX', 'C'],
+  ])('%s -> %s', (brand, expected) => {
+    expect(tileInitials(brand)).toBe(expected);
+  });
+
+  test('caps at three, so a long name does not become a word again', () => {
+    expect(tileInitials('One Two Three Four Five').length).toBe(3);
+  });
+
+  /** Bilingual: a Turkish brand must not lose its diacritics or its case. */
+  test('preserves case and non-ASCII initials', () => {
+    expect(tileInitials('Şifa Bitkisel')).toBe('ŞB');
+    expect(tileInitials('cosrx')).toBe('c');
+  });
+
+  test('survives odd spacing', () => {
+    expect(tileInitials('  La   Roche  ')).toBe('LR');
+    expect(tileInitials('')).toBe('');
+  });
+});
+
+describe('fitTileLabel', () => {
+  /**
+   * The regression this exists for. At the 48pt routine and shelf tile these
+   * names were handed to the renderer at the 9pt floor while still too wide
+   * for the box, and every renderer the app ships to breaks the word rather
+   * than overflow: "Neutrog / ena", "Cetaphi / l".
+   */
+  test.each([
+    ['Neutrogena', 'N'],
+    ['Cetaphil', 'C'],
+    ['La Roche Posay', 'LRP'],
+    ['Beauty of Joseon', 'BoJ'],
+  ])('%s falls back to %s on a 48pt tile', (brand, expected) => {
+    expect(fitTileLabel(brand, 48).label).toBe(expected);
+  });
+
+  /** The names that already worked must not be traded away for the fix. */
+  test.each(['CeraVe', 'COSRX', 'Paulas Choice', 'Nivea', 'Klairs'])(
+    '%s still renders whole on a 48pt tile',
+    (brand) => {
+      expect(fitTileLabel(brand, 48).label).toBe(brand);
+    }
+  );
+
+  /** A bigger tile has the room, so the full name comes back. */
+  test('the detail tile shows every brand in full', () => {
+    for (const [brand] of MEASURED) {
+      expect(fitTileLabel(brand, 96).label).toBe(brand);
+    }
+  });
+
+  test('the fallback is driven by fit, not by a hardcoded size', () => {
+    // Neutrogena needs a ~69pt tile before its 10 letters clear the floor.
+    expect(fitTileLabel('Neutrogena', 56).label).toBe('N');
+    expect(fitTileLabel('Neutrogena', 72).label).toBe('Neutrogena');
+  });
+
+  /**
+   * The guarantee, stated directly: whatever a tile draws fits inside it at a
+   * legible size, on every size the app renders. No word is ever sawn in half
+   * and no second line is ever lost to an ellipsis.
+   */
+  test.each(TILE_SIZES)('what is drawn always fits at %ipt', (size) => {
+    const inner = size - tilePadding(size) * 2;
+    for (const [brand] of MEASURED) {
+      const { label, fontSize } = fitTileLabel(brand, size);
+      expect(fontSize).toBeGreaterThanOrEqual(MIN_FONT_SIZE);
+      // Widest wrapped line inside the box: covers the mid-word break AND the
+      // dropped-word case, since a name that needs three lines busts this too.
+      expect(wrappedEmWidth(label) * fontSize).toBeLessThanOrEqual(inner + 0.01);
+      expect(fontSize * 1.15 * MAX_LINES).toBeLessThanOrEqual(inner + 0.01);
+    }
+  });
+
+  test('an empty label is left alone rather than turned into initials', () => {
+    expect(fitTileLabel('', 48).label).toBe('');
   });
 });

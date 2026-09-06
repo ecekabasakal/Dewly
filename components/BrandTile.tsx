@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { StyleSheet, Text as RNText, View } from 'react-native';
-import { fitFontSize, MAX_LINES, tilePadding } from '../lib/tile-fit';
+import { fitTileLabel, MAX_LINES, tilePadding } from '../lib/tile-fit';
 import { colors, fonts, radius } from '../theme';
 
 export type BrandTileProps = {
@@ -47,7 +47,9 @@ export function BrandTile({ brand, name, size = 64 }: BrandTileProps) {
     );
   }
 
-  const fontSize = fitFontSize(label, size);
+  // On a small tile a long brand falls back to its initials rather than being
+  // broken mid-word ("Neutrog / ena"). See `fitTileLabel`.
+  const { label: shown, fontSize } = fitTileLabel(label, size);
 
   return (
     <View style={[styles.tile, box]}>
@@ -60,7 +62,7 @@ export function BrandTile({ brand, name, size = 64 }: BrandTileProps) {
         accessible={false}
         importantForAccessibility="no"
       >
-        {label}
+        {shown}
       </RNText>
     </View>
   );

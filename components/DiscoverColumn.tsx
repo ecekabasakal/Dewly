@@ -266,7 +266,11 @@ function BrandCard({ product, onPanel }: { product: ObfProduct; onPanel: boolean
         router.push(`/product?source=obf&barcode=${encodeURIComponent(product.barcode)}`)
       }
     >
-      <BrandTile brand={product.brand} name={product.name} size={44} />
+      {/* 48, not 44: at 44 the inner box is 34pt, which is one point short of
+          holding "CeraVe" whole at the 9pt floor. 48 is the smallest tile the
+          app draws anywhere, and keeping this one on it means a six-letter
+          brand never drops to an initial for the sake of four points. */}
+      <BrandTile brand={product.brand} name={product.name} size={48} />
       <View style={styles.brandText}>
         <Text variant="caption" numberOfLines={2} style={styles.brandName}>
           {product.name}

@@ -26,7 +26,7 @@
 ## 🧭 Where am I right now?
 
 > Update this line at the end of every session:
-> **Active phase:** `Visual upgrade pass — desktop layout in progress.` Home and Analyze have desktop layouts, plus a persistent Discover panel (trending 2026 ingredients with evidence badges + Open Beauty Facts brand themes) · **Next task:** _apply the desktop layout to Routine, Shelf and Profile, then mobile styling polish_
+> **Active phase:** `Visual upgrade pass.` The desktop web layout is in place across the app — sidebar nav, a persistent Discover panel, an ingredient-of-the-day card and a decorative doodle texture behind the sidebar. Home, Analyze and Routine have purpose-built desktop arrangements; Shelf and Profile inherit the frame but still render their phone layout inside it · **Next task:** _desktop layouts for Shelf and Profile, then mobile styling polish (routine card contrast, long brand-name tile wrapping), then final review_
 
 ## ✨ Recent
 
@@ -41,6 +41,10 @@ What landed in the current pass:
 - **Home and Analyze desktop layouts** — Home is a full-width hero, a metric row and a two-column split; Analyze puts the input on top and lays the ingredient cards out in a responsive 2–3 column grid instead of one long list. Both branch on `useIsWide()` and share one data computation with their phone versions, so the two can never disagree about what they show.
 - **Eight trending 2026 ingredients** — PDRN, exosomes, EGF, polynucleotides, ectoin, spicules, snow mushroom and colloidal oatmeal, seeded into the ingredients table through the existing path, with aliases so a pasted `PDRN` or `ekzozom` resolves in an analysis. Each carries an **honest evidence grade**: exosomes are marked *evolving* and PDRN *emerging*, because the claims are ahead of the research and a feed that hid that would be marketing.
 - **Persistent Discover column** — a mid-green panel (`#C3D6BD`, one token) down the right of every desktop screen, carrying the trending feed and a rotating Open Beauty Facts brand theme. Mounted beside the whole navigator rather than inside a screen, so it survives tab switches and no screen has to opt in. Wide screens only: on a phone none of it is rendered at all.
+- **Routine desktop layout** — the AM/PM toggle and both actions across the top, the ordered steps in two column-major columns, and the conflict check given the full content width below them. Two columns of one slot rather than AM and PM side by side, so the toggle keeps its job; the column count is derived from the content width and falls back to one whenever two would make a product name narrower than it already is on a phone.
+- **Ingredient of the day** — a compact card at the foot of the sidebar showing one trending ingredient with its evidence badge, rotated by date (`ingredientOfTheDay`, same day-count rotation as the brand themes) so it is stable within a day and testable rather than random per render. Tapping it runs an analysis of the INCI name, exactly as a Discover card does. The EN/TR badge wording moved into `lib/discover.ts` so the two surfaces cannot word a grade differently.
+- **Sidebar vertical rhythm** — the rail's ~350pt of slack was pooled in one gap, which read as a hole with the nav jammed under the wordmark. Now split 2:3 across two weighted spacers, so both gaps scale with the window and neither dominates; the nav also absorbs some of it as breathing room inside itself.
+- **Doodle texture behind the sidebar** — 36 mint line-art skincare and botanic doodles at 8–16% opacity on the deep green, rendered from the vector asset through `react-native-svg` (web *and* native) and scaled `slice` so it covers any window height without a tiling seam. It sits behind everything and takes no taps. Measured against it: one label that sat directly on the rail dropped to 3.58:1 where a doodle passed behind it and was recoloured to clear AA.
 
 ## 📌 Backlog / later
 
@@ -53,7 +57,7 @@ Small things deliberately deferred — not blockers for the MVP:
 
 - **Camera barcode scanning (Phase 9 Part B).** Needs a native dev build — `expo-camera` is not in Expo Go. Part A already covers everything downstream of the scan, so this is one screen that hands a barcode to code that exists.
 - **Google login.** Also needs a dev build. Email/password is live; the deployed origin now gives OAuth a stable redirect to come back to.
-- **Desktop layout for Routine, Shelf and Profile.** The foundation (`useIsWide`, the sidebar, `DesktopPage`, the Discover rail) is built and app-wide, and Home and Analyze consume it — these three still render their phone layout inside the desktop content area. They already sit beside the sidebar and the Discover panel, so what is missing is the multi-column arrangement, not the frame.
+- **Desktop layout for Shelf and Profile.** The foundation (`useIsWide`, the sidebar, `DesktopPage`, the Discover rail) is built and app-wide, and Home, Analyze and Routine consume it — these two still render their phone layout inside the desktop content area. They already sit beside the sidebar and the Discover panel, so what is missing is the multi-column arrangement, not the frame.
 - **Mobile styling polish** — the routine card's contrast is flatter than the rest of the app, and a long brand name in a 48pt `BrandTile` hits the font-size floor and breaks mid-word ("Cetaphi / l").
 - **Offline detection (#11).** Every failure path reports cleanly, but nothing checks connectivity up front, so an offline user finds out by trying.
 

@@ -548,7 +548,15 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   stepNumberText: { color: colors.onPrimary, fontFamily: fonts.bodySemi },
-  stepCard: { flex: 1, gap: 2 },
+  // White on a stronger outline — see the note on `styles.step` in
+  // `app/(tabs)/home.tsx` for the measurements. `stepCardFlagged` below is
+  // applied after this one, so a misplaced step keeps its danger border.
+  stepCard: {
+    flex: 1,
+    gap: 2,
+    backgroundColor: colors.surfaceElevated,
+    borderColor: colors.borderStrong,
+  },
   stepBody: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
   // Without flex the text column cannot shrink beside the thumbnail, and a long
   // Turkish product name pushes the card past the screen edge.

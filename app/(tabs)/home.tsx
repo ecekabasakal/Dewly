@@ -599,7 +599,26 @@ const styles = StyleSheet.create({
   empty: { gap: spacing.md, alignItems: 'flex-start' },
 
   steps: { gap: spacing.md },
-  step: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  /**
+   * White on a stronger outline, matching `MetricCard` directly above it.
+   *
+   * `Card` defaults to cream, which measures 1.06:1 against the butter page —
+   * so a routine step read as text lying on the background rather than as a
+   * card, while the metric row right above it (already `surfaceElevated`)
+   * stood up properly. White lifts the ground to 1.13:1 and `borderStrong`
+   * takes the outline from 1.23:1 to 1.49:1, which is the edge that actually
+   * does the separating. `elevation.sm` comes from `Card` and is unchanged.
+   *
+   * The Routine screen's own step card carries the same pair — see
+   * `styles.stepCard` in `app/(tabs)/routine.tsx`.
+   */
+  step: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.surfaceElevated,
+    borderColor: colors.borderStrong,
+  },
   // Without flex the text column cannot shrink and a long Turkish product name
   // pushes the step number off the card.
   stepText: { flex: 1, gap: 2 },

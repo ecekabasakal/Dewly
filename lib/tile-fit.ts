@@ -136,3 +136,79 @@ export function fitFontSize(text: string, size: number): number {
 
   return Math.max(MIN_FONT_SIZE, Math.min(max, byWidth, byHeight));
 }
+
+/** How many initials a tile will show. Four is already unreadable at 48pt. */
+const MAX_INITIALS = 3;
+
+/**
+ * The initial of each word, capped at `MAX_INITIALS`.
+ *
+ *   Neutrogena       -> N
+ *   La Roche Posay   -> LRP
+ *   Beauty of Joseon -> BoJ
+ *
+ * Every word counts, including "of" — dropping stop words would need a word
+ * list per language, and this app is bilingual with Turkish brand names ("ve",
+ * "ile") squarely in scope. Keeping them is language-neutral, and the lowercase
+ * initial reads as deliberate rather than as a missing letter.
+ *
+ * Case is preserved from the source for the same reason: `COSRX` must not come
+ * back as `c`.
+ */
+export function tileInitials(text: string): string {
+  return text
+    .split(/\s+/)
+    .filter((word) => word.length > 0)
+    .slice(0, MAX_INITIALS)
+    .map((word) => [...word][0]!)
+    .join('');
+}
+
+export type TileLabel = {
+  /** What to draw — the full name, or its initials when that cannot fit. */
+  label: string;
+  fontSize: number;
+};
+
+/**
+ * What a `size` tile should actually draw for `text`, and at what size.
+ *
+ * ## The bug this fixes
+ *
+ * `fitFontSize` clamps at `MIN_FONT_SIZE`, and a name too long to fit even
+ * there was handed to the renderer anyway. Every renderer this app ships to
+ * then breaks the word rather than overflow the box, so the 48pt routine and
+ * shelf tiles read "Neutrog / ena" and "Cetaphi / l". At the floor the
+ * two-line budget also silently ran out: "La Roche Posay" wrapped to
+ * "La / Roche" and lost "Posay" to an ellipsis.
+ *
+ * ## The fix
+ *
+ * Ask first whether the whole name fits in `MAX_LINES` at the smallest legible
+ * size. If it does, nothing changes — `CeraVe`, `COSRX` and `Paulas Choice`
+ * still render whole at 48pt. If it does not, draw the initials instead of a
+ * word sawn in half. The tile is a visual anchor, never the only place the
+ * brand appears: every context that renders one also prints the full name in
+ * the text beside it.
+ *
+ * Initials rather than a truncation ("Neutrog…") because a truncation is the
+ * same mid-word break with an ellipsis on it, and rather than a bigger minimum
+ * tile because the size that fits `Neutrogena` whole is 69pt — a third larger
+ * than the routine row was designed around, for one brand.
+ *
+ * The threshold falls out of the arithmetic rather than being a magic size, so
+ * it stays right if the padding, the floor or the line budget ever move. In
+ * practice: initials below about 56pt for a long single word, full name at the
+ * 72pt search tile and the 96pt detail tile.
+ */
+export function fitTileLabel(text: string, size: number): TileLabel {
+  const label = text.trim();
+  const inner = size - tilePadding(size) * 2;
+
+  if (wrappedEmWidth(label) * MIN_FONT_SIZE <= inner) {
+    return { label, fontSize: fitFontSize(label, size) };
+  }
+
+  const initials = tileInitials(label);
+  return { label: initials, fontSize: fitFontSize(initials, size) };
+}
