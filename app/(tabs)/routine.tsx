@@ -298,15 +298,10 @@ function StepCard({
           </View>
         </View>
 
-        {/* Collapsed by default: the routine is a list to work down, and a
-            paragraph plus citations under all six steps would bury it. */}
-        <HowToApply
-          product={entry.product}
-          shelf={shelf}
-          language={language}
-          detail="long"
-          collapsible
-        />
+        {/* The short line under every step keeps the routine readable at a
+            glance; "Show" swaps in the full instructions without leaving the
+            screen. Same block, same behaviour, on the product screen. */}
+        <HowToApply product={entry.product} shelf={shelf} language={language} />
       </Card>
     </View>
   );

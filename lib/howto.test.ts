@@ -83,7 +83,7 @@ describe('howtoDisclaimer', () => {
 describe('howToFor — timing', () => {
   test('a retinol serum is suggested for the evening, with its rule attached', () => {
     const retinol = product('Retinol Night Serum', 'serum', 'pm', ['Retinol']);
-    const guidance = howToFor(retinol, [retinol], 'en', 'long');
+    const guidance = howToFor(retinol, [retinol], 'en');
 
     expect(guidance.timing).not.toBeNull();
     expect(guidance.timing!.time).toBe('pm');
@@ -95,19 +95,19 @@ describe('howToFor — timing', () => {
 
   test('a sunscreen is suggested for the morning', () => {
     const spf = product('Daily Sunscreen', 'spf', 'am', ['Zinc Oxide']);
-    expect(howToFor(spf, [spf], 'en', 'long').timing?.time).toBe('am');
+    expect(howToFor(spf, [spf], 'en').timing?.time).toBe('am');
   });
 
   /** Most products work at either end of the day; inventing advice is noise. */
   test('a plain moisturizer gets no timing line at all', () => {
     const cream = product('Simple Cream', 'moisturizer', 'both', ['Glycerin']);
-    expect(howToFor(cream, [cream], 'en', 'long').timing).toBeNull();
+    expect(howToFor(cream, [cream], 'en').timing).toBeNull();
   });
 
   test('the timing reason is translated', () => {
     const retinol = product('Retinol Night Serum', 'serum', 'pm', ['Retinol']);
-    const en = howToFor(retinol, [retinol], 'en', 'long');
-    const tr = howToFor(retinol, [retinol], 'tr', 'long');
+    const en = howToFor(retinol, [retinol], 'en');
+    const tr = howToFor(retinol, [retinol], 'tr');
     expect(en.timing!.rule.reason).not.toBe(tr.timing!.rule.reason);
     // The recommendation itself is a fact about the molecule, not the language.
     expect(en.timing!.time).toBe(tr.timing!.time);
@@ -126,7 +126,7 @@ describe('howToFor — conflicts', () => {
     const shelf = [retinol, acid];
 
     for (const item of shelf) {
-      const guidance = howToFor(item, shelf, 'en', 'long');
+      const guidance = howToFor(item, shelf, 'en');
       expect(guidance.conflicts.length).toBeGreaterThan(0);
       expect(guidance.conflicts[0]!.severity).toBe('high');
       expect(guidance.conflicts[0]!.recommendation.length).toBeGreaterThan(0);
@@ -140,7 +140,7 @@ describe('howToFor — conflicts', () => {
     const shelf = [retinol, acid];
 
     for (const item of shelf) {
-      expect(howToFor(item, shelf, 'en', 'long').conflicts).toEqual([]);
+      expect(howToFor(item, shelf, 'en').conflicts).toEqual([]);
     }
   });
 
@@ -151,7 +151,7 @@ describe('howToFor — conflicts', () => {
     const cream = product('Simple Cream', 'moisturizer', 'both', ['Glycerin']);
     const shelf = [retinol, acid, cream];
 
-    expect(howToFor(cream, shelf, 'en', 'long').conflicts).toEqual([]);
+    expect(howToFor(cream, shelf, 'en').conflicts).toEqual([]);
   });
 
   /**
@@ -164,7 +164,7 @@ describe('howToFor — conflicts', () => {
     const shelf = [serum];
 
     // The finding exists on the shelf...
-    expect(howToFor(serum, shelf, 'en', 'long').conflicts).toEqual([]);
+    expect(howToFor(serum, shelf, 'en').conflicts).toEqual([]);
   });
 
   /**
@@ -175,7 +175,7 @@ describe('howToFor — conflicts', () => {
     const acid = product('Glycolic Acid Toner', 'exfoliant', 'pm', ['Glycolic Acid']);
     const draft = product('Retinol Night Serum', 'serum', 'pm', ['Retinol']);
 
-    const guidance = howToFor(draft, [acid], 'en', 'short');
+    const guidance = howToFor(draft, [acid], 'en');
     expect(guidance.conflicts.length).toBeGreaterThan(0);
     expect(guidance.conflicts[0]!.products.map((p) => p.name)).toContain(draft.name);
   });
@@ -185,8 +185,8 @@ describe('howToFor — conflicts', () => {
     const acid = product('Glycolic Acid Toner', 'exfoliant', 'pm', ['Glycolic Acid']);
     const shelf = [retinol, acid];
 
-    const en = howToFor(retinol, shelf, 'en', 'long').conflicts[0]!;
-    const tr = howToFor(retinol, shelf, 'tr', 'long').conflicts[0]!;
+    const en = howToFor(retinol, shelf, 'en').conflicts[0]!;
+    const tr = howToFor(retinol, shelf, 'tr').conflicts[0]!;
     expect(en.recommendation).not.toBe(tr.recommendation);
     expect(en.key).toBe(tr.key);
   });
@@ -197,26 +197,53 @@ describe('howToFor — conflicts', () => {
 // ---------------------------------------------------------------------------
 
 describe('howToFor — both layers', () => {
-  test('long carries the detailed copy, short the concise one', () => {
+  /**
+   * One call carries BOTH lengths, because both are shown in one place — the
+   * short line by default, the long one when the reader expands it. Asking for
+   * guidance can no longer return a partial answer, which is what made the two
+   * screens disagree about the same bottle.
+   */
+  test('both lengths come back from a single lookup', () => {
     const retinol = product('Retinol Night Serum', 'serum', 'pm', ['Retinol']);
-    const long = howToFor(retinol, [retinol], 'en', 'long');
-    const short = howToFor(retinol, [retinol], 'en', 'short');
+    const guidance = howToFor(retinol, [retinol], 'en');
 
-    expect(long.apply).toBe(applyCopy('serum', 'en', 'long'));
-    expect(short.apply).toBe(applyCopy('serum', 'en', 'short'));
-    // The dynamic half does not depend on how much static copy is shown.
-    expect(short.timing!.time).toBe(long.timing!.time);
+    expect(guidance.applyShort).toBe(applyCopy('serum', 'en', 'short'));
+    expect(guidance.applyLong).toBe(applyCopy('serum', 'en', 'long'));
+    // The disclosure has something to reveal: the two are genuinely different.
+    expect(guidance.applyShort).not.toBe(guidance.applyLong);
+  });
+
+  test('both lengths are bilingual, and the dynamic half is unaffected', () => {
+    const retinol = product('Retinol Night Serum', 'serum', 'pm', ['Retinol']);
+    const en = howToFor(retinol, [retinol], 'en');
+    const tr = howToFor(retinol, [retinol], 'tr');
+
+    expect(en.applyShort).not.toBe(tr.applyShort);
+    expect(en.applyLong).not.toBe(tr.applyLong);
+    // Expanding is a presentation change, not a different suggestion.
+    expect(en.timing!.time).toBe(tr.timing!.time);
+  });
+
+  /** Every step the disclosure can appear on has a longer version to show. */
+  test('every step type has something behind the disclosure', () => {
+    for (const step of STEP_ORDER) {
+      const item = product(`A ${step}`, step, 'both');
+      const guidance = howToFor(item, [item], 'en');
+      expect(guidance.applyShort).not.toBeNull();
+      expect(guidance.applyLong).not.toBeNull();
+      expect(guidance.applyLong).not.toBe(guidance.applyShort);
+    }
   });
 
   test('every step type produces something worth rendering', () => {
     for (const step of STEP_ORDER) {
       const item = product(`A ${step}`, step, 'both');
-      expect(isEmptyGuidance(howToFor(item, [item], 'en', 'long'))).toBe(false);
+      expect(isEmptyGuidance(howToFor(item, [item], 'en'))).toBe(false);
     }
   });
 
   test('a product whose step has no copy and no rules renders nothing', () => {
     const orphan = product('Mystery', 'not_a_step' as StepType, 'both');
-    expect(isEmptyGuidance(howToFor(orphan, [orphan], 'en', 'long'))).toBe(true);
+    expect(isEmptyGuidance(howToFor(orphan, [orphan], 'en'))).toBe(true);
   });
 });

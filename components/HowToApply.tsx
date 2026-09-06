@@ -8,7 +8,6 @@ import {
   howToFor,
   howtoDisclaimer,
   isEmptyGuidance,
-  type HowToDetail,
   type HowToProduct,
 } from '../lib/howto';
 import type { Severity } from '../lib/conflicts';
@@ -57,63 +56,98 @@ export type HowToApplyProps = {
   /** The shelf the dynamic half is evaluated against. See `howToFor`. */
   shelf: ShelfProduct[];
   language: Language;
-  detail: HowToDetail;
   /**
-   * Collapse behind a disclosure, closed by default.
+   * Render the timing rule's reason and citations inline.
    *
-   * On the Routine screen this is on: a routine is a list to work down, and a
-   * paragraph plus citations under every one of six steps turns it into an
-   * essay. The guidance is one tap away and the routine stays scannable.
-   * Off on the product screen, where there is one product and the guidance is
-   * the point of the block.
+   * On by default. The product screen turns it off — and only that half, not
+   * the timing line itself — because its own `TimingSuggestion` card sits
+   * directly above and already carries both. Two copies of one citation on one
+   * screen is not more evidence, it is noise.
    */
-  collapsible?: boolean;
+  showTimingEvidence?: boolean;
 };
 
 /**
- * The two guidance layers, rendered together.
+ * "How to use" — both static lengths in one place, plus the dynamic layer.
+ *
+ * ## The disclosure
+ *
+ * The short apply line is always visible: one sentence is cheap enough to show
+ * under every step, and a routine where each step says nothing until tapped is
+ * a routine that reads as empty. Pressing "Show" swaps the LONG copy into the
+ * same slot rather than adding it below — the long version already contains
+ * everything the short one says, so stacking them would make the reader parse
+ * the same instruction twice to find the extra detail.
+ *
+ * Identical on the Routine step cards and the product screen. The earlier
+ * split — long on one screen, short on the other — meant the same bottle got
+ * different amounts of advice depending on where you looked at it, and there
+ * was no way to get the detail without leaving the screen you were on.
+ *
+ * ## What is never behind the tap
+ *
+ * The timing line, the conflicts and the disclaimer stay visible in both
+ * states. That is deliberate for the conflicts especially: this app does not
+ * collapse a warning behind a control the reader has to know to press, the
+ * same rule the Discover feed follows with its evidence grades. The disclaimer
+ * stays for the same reason — advice is on screen while collapsed, so the
+ * caveat has to be too.
  *
  * ## What is static and what is not
  *
- * The apply paragraph is per step type and identical for everyone — it gets no
- * badge and no citation, because it has none to give, and the file's own
- * disclaimer sits under the block saying so.
- *
- * Everything below it came from an engine and keeps the treatment that engine's
- * output already has elsewhere in the app: the timing line carries its evidence
- * badge and its sources exactly as `TimingEvidence` shows them on the add
- * screen, and a conflict carries its severity badge, its recommendation and its
- * sources exactly as `ConflictCheck` shows them on the Routine screen. Nothing
- * here restates a claim in this component's own words — a user who has seen the
- * conflict section should recognise the same finding here.
- *
- * ## Short vs long
- *
- * `short` drops the static copy to one line and the timing to its badge and
- * heading, because the full reason and its citations are already on screen in
- * the product form's own timing card. It keeps the conflict in full: that is
- * the one thing the product screen has no other way to say.
+ * The apply copy is per step type and identical for everyone, so it gets no
+ * badge and no citation — it has none to give. Everything below it came from
+ * an engine and keeps that engine's own treatment: the timing line carries the
+ * evidence badge and sources `TimingEvidence` shows on the add screen, and a
+ * conflict carries the severity badge, recommendation and sources
+ * `ConflictCheck` shows on the Routine screen. Nothing is restated in this
+ * component's words.
  */
 export function HowToApply({
   product,
   shelf,
   language,
-  detail,
-  collapsible = false,
+  showTimingEvidence = true,
 }: HowToApplyProps) {
-  const [open, setOpen] = useState(!collapsible);
+  const [open, setOpen] = useState(false);
   const t = COPY[language];
 
-  const guidance = howToFor(product, shelf, language, detail);
+  const guidance = howToFor(product, shelf, language);
   if (isEmptyGuidance(guidance)) return null;
 
-  const long = detail === 'long';
+  // The long copy takes the short one's slot when expanded. Falls back to
+  // whichever exists, so a step with only one of the two still renders.
+  const apply = open
+    ? (guidance.applyLong ?? guidance.applyShort)
+    : (guidance.applyShort ?? guidance.applyLong);
+  const canExpand = guidance.applyLong !== null && guidance.applyLong !== guidance.applyShort;
 
-  const body = (
-    <View style={styles.body}>
-      {guidance.apply ? (
+  return (
+    <View style={styles.block}>
+      <View style={styles.header}>
+        <Text variant="caption" tone="muted" style={styles.heading}>
+          {t.heading.toUpperCase()}
+        </Text>
+
+        {canExpand ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ expanded: open }}
+            accessibilityLabel={`${t.heading} — ${product.name}`}
+            onPress={() => setOpen((value) => !value)}
+            hitSlop={8}
+            style={({ pressed }) => [styles.toggle, pressed && styles.pressed]}
+          >
+            <Text variant="caption" tone="primary" style={styles.toggleAction}>
+              {open ? t.hide : t.show}
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+
+      {apply ? (
         <Text variant="caption" style={styles.apply}>
-          {guidance.apply}
+          {apply}
         </Text>
       ) : null}
 
@@ -129,9 +163,7 @@ export function HowToApply({
             />
           </View>
 
-          {/* The reason and its citations only on the long form — the product
-              screen already shows both in its own timing card. */}
-          {long ? (
+          {showTimingEvidence ? (
             <>
               <Text variant="caption" tone="muted">
                 {guidance.timing.rule.reason}
@@ -175,45 +207,6 @@ export function HowToApply({
       </Text>
     </View>
   );
-
-  if (!collapsible) {
-    return (
-      <View style={styles.block}>
-        <Text variant="caption" tone="muted" style={styles.heading}>
-          {t.heading.toUpperCase()}
-        </Text>
-        {body}
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.block}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ expanded: open }}
-        accessibilityLabel={`${t.heading} — ${product.name}`}
-        onPress={() => setOpen((value) => !value)}
-        style={({ pressed }) => [styles.toggle, pressed && styles.pressed]}
-      >
-        <Text variant="caption" tone="muted" style={styles.heading}>
-          {t.heading.toUpperCase()}
-        </Text>
-        {/* A conflict is the one thing worth seeing while the block is shut. */}
-        {guidance.conflicts.length > 0 ? (
-          <Badge
-            label={guidance.conflicts[0]!.severityLabel.toUpperCase()}
-            tone={SEVERITY_TONE[guidance.conflicts[0]!.severity]}
-          />
-        ) : null}
-        <Text variant="caption" tone="primary" style={styles.toggleAction}>
-          {open ? t.hide : t.show}
-        </Text>
-      </Pressable>
-
-      {open ? body : null}
-    </View>
-  );
 }
 
 function Sources({
@@ -240,21 +233,23 @@ function Sources({
 }
 
 const styles = StyleSheet.create({
-  block: { marginTop: spacing.md, gap: spacing.xs },
+  block: { marginTop: spacing.md, gap: spacing.sm },
+  header: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   heading: { letterSpacing: 1.1 },
   toggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    // 44pt: this is the control that reveals the guidance, and it sits in a
-    // list where a short row would be easy to miss.
+    // Pushes the control to the right of the section label.
+    marginLeft: 'auto',
+    // 44pt: this is the control that reveals the detail, and it sits in a list
+    // where a bare word would be an easy miss.
     minHeight: 44,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
+    // Cancels the padding so the label stays flush with the card's edge.
+    marginRight: -spacing.sm,
   },
   pressed: { opacity: 0.7 },
-  // Pushes the show/hide action to the right of the heading and the badge.
-  toggleAction: { marginLeft: 'auto', fontFamily: fonts.bodyMedium },
+  toggleAction: { fontFamily: fonts.bodyMedium },
 
-  body: { gap: spacing.sm },
   apply: { color: colors.text },
 
   line: {

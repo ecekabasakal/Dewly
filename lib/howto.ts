@@ -49,11 +49,12 @@ type RawFile = {
 const FILE = howtoFile as unknown as RawFile;
 
 /**
- * How much of the static copy to show.
+ * Which of the two static lengths to read out of the file.
  *
- * `long` on the Routine screen, where the user is working through the routine
- * and has room to read; `short` on the product screen, where the guidance sits
- * among form fields and a paragraph would bury them.
+ * Both are now fetched for every product and shown in the same place — the
+ * short line by default, the long one when the reader asks for it — so this is
+ * an argument to the lookup rather than a mode a screen picks. See
+ * `components/HowToApply`.
  */
 export type HowToDetail = 'long' | 'short';
 
@@ -83,8 +84,17 @@ export type HowToProduct = Pick<
 >;
 
 export type HowToGuidance = {
-  /** Static, from the step type. Null when the step has no entry. */
-  apply: string | null;
+  /**
+   * Static, from the step type. Null when the step has no entry.
+   *
+   * BOTH lengths, because both are shown in one place: `applyShort` is what a
+   * step card carries by default, and `applyLong` takes its slot when the
+   * reader expands the block. Returning both here rather than making the
+   * caller choose is what keeps the two screens from drifting into different
+   * amounts of advice about the same bottle.
+   */
+  applyShort: string | null;
+  applyLong: string | null;
   /**
    * Dynamic. Null when no timing rule fires — most products genuinely work at
    * either end of the day, and inventing a suggestion for them would be noise.
@@ -112,8 +122,7 @@ export type HowToGuidance = {
 export function howToFor(
   product: HowToProduct,
   shelf: ShelfProduct[],
-  language: Language,
-  detail: HowToDetail
+  language: Language
 ): HowToGuidance {
   const timingMatch = suggestTiming(product.name, product.ingredientNames);
   // `suggestTiming` returns `both` with a null rule when nothing fires. A
@@ -134,13 +143,19 @@ export function howToFor(
     .filter((finding) => finding.products.some((p) => p.id === product.id))
     .map((finding) => resolveFinding(finding, language));
 
-  return { apply: applyCopy(product.stepType, language, detail), timing, conflicts };
+  return {
+    applyShort: applyCopy(product.stepType, language, 'short'),
+    applyLong: applyCopy(product.stepType, language, 'long'),
+    timing,
+    conflicts,
+  };
 }
 
 /** True when there is nothing to render, so a caller can skip the block. */
 export function isEmptyGuidance(guidance: HowToGuidance): boolean {
   return (
-    guidance.apply === null &&
+    guidance.applyShort === null &&
+    guidance.applyLong === null &&
     guidance.timing === null &&
     guidance.conflicts.length === 0
   );

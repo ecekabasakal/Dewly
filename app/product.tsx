@@ -534,12 +534,16 @@ function ProductForm({
           overridden={timeTouched && timing.rule !== null && timeOfDay !== timing.time}
         />
 
-        {/* The guidance block. The SHORT static line for the chosen step, plus
-            the conflict this product would cause on the shelf as it stands —
-            asked before the product is saved, which is the one thing this
-            screen has no other way to say. The timing half stays compact
-            because `TimingSuggestion` directly above already carries the full
-            reason and its citations. */}
+        {/* The same guidance block the Routine step cards carry: short line by
+            default, "Show" expands the full instructions in place. It also
+            carries the conflict this product would cause on the shelf as it
+            stands — asked before the product is saved, which is the one thing
+            this screen has no other way to say.
+
+            `showTimingEvidence` is off because `TimingSuggestion` directly
+            above already prints the same reason and the same citations. The
+            timing LINE still shows; only its evidence is left to the card that
+            owns it. */}
         {stepType ? (
           <HowToApply
             product={{
@@ -551,7 +555,7 @@ function ProductForm({
             }}
             shelf={shelf}
             language={language}
-            detail="short"
+            showTimingEvidence={false}
           />
         ) : null}
 
