@@ -210,6 +210,67 @@ comment on column routine_steps.step_type is
 create index if not exists routine_steps_routine_idx on routine_steps (routine_id);
 
 -- ---------------------------------------------------------------------------
+-- Weekly planner (idempotent migration — safe to re-run)
+-- ---------------------------------------------------------------------------
+--
+-- The weekly plan hangs off these two tables, which were reserved for exactly
+-- this. Two `routines` rows per user, named 'weekly', one per time_of_day; the
+-- DAY lives on the step, because "my evening routine" is one thing that happens
+-- on several evenings.
+--
+-- The two original unique constraints assumed a routine was a single ordered
+-- list. With a day dimension the same product legitimately appears on Monday
+-- AND Thursday, and step_order restarts within each day, so both constraints
+-- have to gain `day_of_week` or they reject a valid plan.
+
+alter table routine_steps
+  add column if not exists day_of_week smallint not null default 1;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'routine_steps_day_of_week_check'
+  ) then
+    alter table routine_steps
+      add constraint routine_steps_day_of_week_check
+      check (day_of_week between 1 and 7);
+  end if;
+end $$;
+
+comment on column routine_steps.day_of_week is
+  'ISO 8601 day: Monday = 1 … Sunday = 7. Matches extract(isodow), NOT extract(dow).';
+
+alter table routine_steps drop constraint if exists routine_steps_unique_order;
+alter table routine_steps drop constraint if exists routine_steps_unique_product;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'routine_steps_unique_day_order'
+  ) then
+    alter table routine_steps
+      add constraint routine_steps_unique_day_order
+      unique (routine_id, day_of_week, step_order) deferrable initially deferred;
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint where conname = 'routine_steps_unique_day_product'
+  ) then
+    alter table routine_steps
+      add constraint routine_steps_unique_day_product
+      unique (routine_id, day_of_week, product_id);
+  end if;
+end $$;
+
+create index if not exists routine_steps_day_idx
+  on routine_steps (routine_id, day_of_week);
+
+-- One weekly plan per user per slot, so a repeated save cannot fan out into
+-- duplicate routine rows.
+create unique index if not exists routines_user_name_slot_idx
+  on routines (user_id, name, time_of_day);
+
+-- ---------------------------------------------------------------------------
 -- Row Level Security
 -- ---------------------------------------------------------------------------
 

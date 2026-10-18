@@ -288,6 +288,8 @@ export type Database = {
           id: string;
           routine_id: string;
           product_id: string;
+          /** ISO 1-7, Monday = 1. See `types/week.ts` and the weekly-plan migration. */
+          day_of_week: number;
           step_order: number;
           step_type: Database['public']['Enums']['step_type'];
         };
@@ -295,6 +297,8 @@ export type Database = {
           id?: string;
           routine_id: string;
           product_id: string;
+          /** Defaults to 1 in SQL, so a caller with no weekly plan need not set it. */
+          day_of_week?: number;
           step_order: number;
           step_type: Database['public']['Enums']['step_type'];
         };
@@ -302,6 +306,7 @@ export type Database = {
           id?: string;
           routine_id?: string;
           product_id?: string;
+          day_of_week?: number;
           step_order?: number;
           step_type?: Database['public']['Enums']['step_type'];
         };
